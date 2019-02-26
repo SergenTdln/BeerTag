@@ -1,5 +1,6 @@
 package application_projet4_groupe12.data;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -11,6 +12,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+
+import application_projet4_groupe12.exceptions.UnknownPartnerException;
+import application_projet4_groupe12.exceptions.WrongDateFormatException;
+import application_projet4_groupe12.exceptions.WrongEmailFormatException;
 
 
 /**
@@ -164,7 +169,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @throws SQLiteException if an error occurs while reading the DB
      * @return An ArrayList<String> containing all the results, or an empty list if there was none
      */
-    public ArrayList<String> getElementFromDB(String table, String column, String conditionSQL) throws SQLiteException{
+    private ArrayList<String> getElementFromDB(String table, String column, String conditionSQL) throws SQLiteException{
         ArrayList<String> requestResult = new ArrayList<>();
         Cursor c = myDB.query("\""+table+"\"",
                 new String[]{"\""+column+"\""},
@@ -194,7 +199,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param orderBy the SQLite ORDERBY clause. Passing null means the results won't be ordered in any specific way
      * @return A Cursor containing the query result
      */
-    public Cursor getEntriesFromDB(String table, String[] columns, String conditionSQL, String orderBy){
+    private Cursor getEntriesFromDB(String table, String[] columns, String conditionSQL, String orderBy){
         Cursor cursor = myDB.query("\""+table+"\"",
                 columns,
                 conditionSQL,
@@ -205,5 +210,116 @@ public class SQLHelper extends SQLiteOpenHelper {
                 null
         );
         return cursor;
+    }
+
+    private String getUserID(String email){
+        //TODO
+        return null;
+    }
+
+    public boolean doesUsernameExist(String email){
+        //TODO
+        return false;
+    }
+
+    private boolean isValidEmail(String email){
+        //TODO
+        return true;
+    }
+
+    private boolean isValidDate(String date){
+        //TODO
+        return true;
+    }
+
+    private boolean doesPartnerExist(String partnerID){
+        //TODO
+        return false;
+    }
+
+    /**
+     * Inserts a new User in the database.
+     * @param username user's email address.
+     * @param firstName user's first name
+     * @param lastName user's last name
+     * @param creationDate current system date. This has to follow this format : DD/MM/YYYY. (Example: "31/01/2000")
+     * @return True if the insertion was successful, False if it failed (for any reason not covered by a thrown exception).
+     * For example, this could be caused by an SQLite error OR because this username was already present : this means that you should always
+     * call <code>doesUsernameExist()</code> BEFORE trying to insert the user.
+     */
+    public boolean createUser(String username, String firstName, String lastName, String creationDate) throws WrongEmailFormatException, WrongDateFormatException {
+        if(! isValidEmail(username)){
+            throw new WrongEmailFormatException(username + " is not a valid email address");
+        }
+        if (! isValidDate(creationDate)){
+            throw new WrongDateFormatException(creationDate + " is not a valid date format.");
+        }
+        if(doesUsernameExist(username)){
+            return false;
+        }
+
+        ContentValues cv = new ContentValues();
+        cv.put("\"username\"", username);
+        cv.put("\"created_on\"", creationDate);
+        cv.put("\"first_name\"", firstName);
+        cv.put("\"last_name\"", lastName);
+
+        return (myDB.insert("User", null, cv) != -1);
+    }
+
+    /**
+     * Inserts a new Partner into the database.
+     * @param name partner's public name
+     * @param address partner's official address. This might be different from its shop's address.
+     * @param creationDate current system date. This has to follow this format : DD/MM/YYYY. (Example: "31/01/2000")
+     * @return True if the insertion was successful, False if it failed (for any reason not covered by a thrown exception).
+     */
+    public boolean createPartner(String name, String address, String creationDate) throws WrongDateFormatException {
+        if (! isValidDate(creationDate)){
+            throw new WrongDateFormatException(creationDate + " is not a valid date format.");
+        }
+
+        ContentValues cv = new ContentValues();
+        cv.put("\"name\"", name);
+        cv.put("\"address\"", address);
+        cv.put("\"created_on\"", creationDate);
+
+        return (myDB.insert("Partner", null, cv) != -1);
+    }
+
+    /**
+     * Adds <code>amount</code> points to the User's account.
+     * @param username the user's email address
+     * @param amount the amount of points to add. This can be positive or negative.
+     * @param partnerID Please not this is different from the partner's name.
+     * @param validity_span Validity span of those points, in days. Passing 0 will make them last forever //TODO handle this better ? (later)
+     * @return True if the insertion was successful, False if it failed (for any reason not covered by a thrown exception).
+     * @throws UnknownPartnerException
+     */
+    public boolean addPoints(String username, int amount, String partnerID, int validity_span) throws UnknownPartnerException {
+        if(! doesPartnerExist(partnerID)){
+            throw new UnknownPartnerException("Partner with ID " + partnerID + " does not exist in the database.");
+        }
+
+        int currentPoints = this.getPoints(username, partnerID);
+
+        ContentValues cv = new ContentValues();
+        cv.put("\"id_user\"", getUserID(username));
+        cv.put("\"id_partner\"", partnerID);
+        cv.put("\"points\"", (currentPoints + amount));
+        cv.put("\"validity_span_days\"", validity_span);
+
+        return (myDB.insert("User_points", null, cv) != -1);
+    }
+
+    /**
+     *
+     * @param username
+     * @param partnerID
+     * @return
+     */
+    public int getPoints(String username, String partnerID){
+        //TODO use private getElementFromDB methods
+        return 0;
     }
 }

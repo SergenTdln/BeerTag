@@ -222,12 +222,26 @@ public class SQLHelper extends SQLiteOpenHelper {
         return false;
     }
 
+    private int occurences(String pattern, String match){
+        //TODO
+        return 1;
+    }
+
     private boolean isValidEmail(String email){
         //TODO
         return true;
     }
 
+    /**
+     * Checks whether the passed date follows the valid DD/MM/YYYY format.
+     * @param date
+     * @return
+     */
     private boolean isValidDate(String date){
+        if((date.length()!=10) || occurences("/", date)!=2) {
+            return false;
+        }
+        //Split around "/" -> check for ranges (1-30, 1-12, 2019-X)
         //TODO
         return true;
     }

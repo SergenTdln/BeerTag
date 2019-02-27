@@ -158,7 +158,6 @@ public class SQLHelper extends SQLiteOpenHelper {
     //BEGINNING OF THE DB QUERY METHODS
     //*****
 
-
     /**
      * Looks in the DB for all the values of the given column that comply with the given condition. Only works for one column
      * Ex: The name of all members older than 30 => getElementFromDB("Member", "Name", "Age>30")
@@ -212,9 +211,23 @@ public class SQLHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
+    /**
+     * Returns the internal ID of the user identified by the passed <code>email</code> argument.
+     * @param email the email of the user we are looking for
+     * @return The ID of this user as a String, or null if this <code>email</code> is not present in the database.
+     */
     private String getUserID(String email){
-        //TODO
-        return null;
+        ArrayList<String> res = this.getElementFromDB("User", "_id", "User = "+email);
+        int l = res.size();
+        if( l > 1 ){
+            //This means email was NOT unique
+            //TODO
+        }
+        if( l == 0 ){
+            //No user with such email was found in the database
+            return null;
+        }
+        return res.get(0);
     }
 
     public boolean doesUsernameExist(String email){
@@ -222,33 +235,46 @@ public class SQLHelper extends SQLiteOpenHelper {
         return false;
     }
 
-    private int occurences(String pattern, String match){
-        //TODO
-        return 1;
-    }
-
-    private boolean isValidEmail(String email){
-        //TODO
-        return true;
-    }
-
-    /**
-     * Checks whether the passed date follows the valid DD/MM/YYYY format.
-     * @param date
-     * @return
-     */
-    private boolean isValidDate(String date){
-        if((date.length()!=10) || occurences("/", date)!=2) {
-            return false;
-        }
-        //Split around "/" -> check for ranges (1-30, 1-12, 2019-X)
-        //TODO
-        return true;
-    }
-
     private boolean doesPartnerExist(String partnerID){
         //TODO
         return false;
+    }
+    /**
+     * Returns the number of occurrences of the character <code>pattern</code> in the <code>target</code> String.
+     * @param pattern the pattern character to look for
+     * @param target the String in which we are searching
+     * @return the number of occurrences as a long.
+     */
+    private long occurrences(char pattern, String target){
+        return target.codePoints().filter(c -> c==pattern).count();
+    }
+
+    /**
+     * Checks whether <code>email</code> follows a valid email address format. Note this method only checks for a valid format, it does not make sure if this address actually exists.
+     * @param email the email address String to check for validity
+     * @return True if <code>email</code> represents a valid email address, False otherwise.
+     */
+    private boolean isValidEmail(String email){
+        return ! (occurrences('@', email)!=1 //Email has to have exactly one '@' symbol
+                || occurrences('.', email)<1 //Email has to contain at least one '.' character
+                || email.lastIndexOf(".")<email.lastIndexOf("@")); //Email has to contain at least one '.' character after the '@' character
+    }
+
+    /**
+     * Checks whether <code>date</code> follows the valid DD/MM/YYYY format.
+     * @param date the date String to check for validity
+     * @return True if <code>date</code> represents a valid date, False otherwise
+     */
+    private boolean isValidDate(String date){
+        if((date.length()!=10) || occurrences('/', date)!=2) {
+            return false;
+        }
+
+        String[] split = date.split("/");
+        int day = Integer.parseInt(split[0]);
+        int month = Integer.parseInt(split[1]);
+        int year = Integer.parseInt(split[2]);
+        return ! (day<1 || day>31 || month<1 || month>12 || year<2019);
     }
 
     /**
@@ -308,7 +334,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param partnerID Please not this is different from the partner's name.
      * @param validity_span Validity span of those points, in days. Passing 0 will make them last forever //TODO handle this better ? (later)
      * @return True if the insertion was successful, False if it failed (for any reason not covered by a thrown exception).
-     * @throws UnknownPartnerException
+     * @throws UnknownPartnerException if the passed Partner does not exist in the database
      */
     public boolean addPoints(String username, int amount, String partnerID, int validity_span) throws UnknownPartnerException {
         if(! doesPartnerExist(partnerID)){
@@ -327,13 +353,25 @@ public class SQLHelper extends SQLiteOpenHelper {
     }
 
     /**
-     *
-     * @param username
-     * @param partnerID
-     * @return
+     * Returns the amount of points the passed User currently has by the passed Partner.
+     * @param username the username (email) to look for
+     * @param partnerID the internal ID of the partner to look for
+     * @return the amount of points the user has earned as an int. Returns 0 if the User has never earned points by this Partner before.
      */
     public int getPoints(String username, String partnerID){
-        //TODO use private getElementFromDB methods
-        return 0;
+        ArrayList<String> res = this.getElementFromDB("User_points",
+                                                    "points",
+                                                "id_user = "+getUserID(username)+" AND id_partner = "+partnerID);
+        int l = res.size();
+        if( l > 1 ){
+            //This means there is a duplicate entry in the User_points table
+            //TODO
+        }
+        if( l == 0 ){
+            // No pair username - partnerID was found in the User_points table.
+            // This user has never earned points here before.
+            return 0;
+        }
+        return Integer.parseInt(res.get(0));
     }
 }

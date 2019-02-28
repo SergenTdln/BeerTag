@@ -13,6 +13,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
+import application_projet4_groupe12.entities.Partner;
+import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.exceptions.UnknownPartnerException;
 import application_projet4_groupe12.exceptions.WrongDateFormatException;
 import application_projet4_groupe12.exceptions.WrongEmailFormatException;
@@ -97,7 +99,7 @@ public class SQLHelper extends SQLiteOpenHelper {
             checkDB = SQLiteDatabase.openDatabase(path, null , SQLiteDatabase.OPEN_READWRITE);
         }catch (SQLiteException e){
             //The DB couldn't be opened -> it doesn't exist yet
-            //This could be considered abusive use of exceptions
+            //This could be considered abusive use of exceptions (?)
         }
         boolean dbExists = (checkDB != null);
         if(dbExists){
@@ -160,7 +162,7 @@ public class SQLHelper extends SQLiteOpenHelper {
 
     /**
      * Looks in the DB for all the values of the given column that comply with the given condition. Only works for one column
-     * Ex: The name of all members older than 30 => getElementFromDB("Member", "Name", "Age>30")
+     * Ex: The names of all members older than 30 => getElementFromDB("Member", "Name", "Age>30")
      * @param table the name of the table in which elements will be looked for
      * @param column the column whose elements will be returned.
      * @param conditionSQL A filter declaring which rows to return, formatted as an SQL WHERE clause (excluding the WHERE itself).
@@ -217,28 +219,48 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @return The ID of this user as a String, or null if this <code>email</code> is not present in the database.
      */
     private String getUserID(String email){
-        ArrayList<String> res = this.getElementFromDB("User", "_id", "User = "+email);
+        ArrayList<String> res = this.getElementFromDB("User", "_id", "User = \""+email+"\"");
         int l = res.size();
-        if( l > 1 ){
-            //This means email was NOT unique
-            //TODO
-        }
         if( l == 0 ){
             //No user with such email was found in the database
             return null;
+        } else {
+            return res.get(0);
         }
-        return res.get(0);
     }
 
+    /**
+     * Returns whether this email/username is already present in the database
+     * @param email the email/username of the User to look for
+     * @return True if this username already exists, False otherwise
+     */
     public boolean doesUsernameExist(String email){
-        //TODO
-        return false;
+        boolean out;
+        Cursor c = getEntriesFromDB("User",
+                                    new String[]{"username"},
+                                    "username = \""+email+"\"",
+                                    null);
+        out = (c.getCount() > 0);
+        c.close();
+        return out;
     }
 
+    /**
+     * Returns whether this partner is already present in the database
+     * @param partnerID the internal ID of the partner to look for
+     * @return True if this partnerID already exists, False otherwise
+     */
     private boolean doesPartnerExist(String partnerID){
-        //TODO
-        return false;
+        boolean out;
+        Cursor c = getEntriesFromDB("Partner",
+                new String[]{"name"},
+                "_id = \""+partnerID+"\"",
+                null);
+        out = (c.getCount() > 0);
+        c.close();
+        return out;
     }
+
     /**
      * Returns the number of occurrences of the character <code>pattern</code> in the <code>target</code> String.
      * @param pattern the pattern character to look for
@@ -279,50 +301,51 @@ public class SQLHelper extends SQLiteOpenHelper {
 
     /**
      * Inserts a new User in the database.
-     * @param username user's email address.
-     * @param firstName user's first name
-     * @param lastName user's last name
-     * @param creationDate current system date. This has to follow this format : DD/MM/YYYY. (Example: "31/01/2000")
+     * @param user a valid instance of User to insert in the database
+     * @throws WrongEmailFormatException if user.username does not follow a valid email-address format
+     * @throws WrongDateFormatException if user.creationDate does not follow the (DD/MM/YYYY) format
      * @return True if the insertion was successful, False if it failed (for any reason not covered by a thrown exception).
      * For example, this could be caused by an SQLite error OR because this username was already present : this means that you should always
      * call <code>doesUsernameExist()</code> BEFORE trying to insert the user.
      */
-    public boolean createUser(String username, String firstName, String lastName, String creationDate) throws WrongEmailFormatException, WrongDateFormatException {
-        if(! isValidEmail(username)){
-            throw new WrongEmailFormatException(username + " is not a valid email address");
+    public boolean createUser(User user) throws WrongEmailFormatException, WrongDateFormatException {
+        if(! isValidEmail(user.getUsername())){
+            throw new WrongEmailFormatException(user.getUsername() + " is not a valid email address");
         }
-        if (! isValidDate(creationDate)){
-            throw new WrongDateFormatException(creationDate + " is not a valid date format.");
+        if (! isValidDate(user.getCreationDate())){
+            throw new WrongDateFormatException(user.getCreationDate() + " is not a valid date format.");
         }
-        if(doesUsernameExist(username)){
+        if(doesUsernameExist(user.getUsername())){
             return false;
         }
 
         ContentValues cv = new ContentValues();
-        cv.put("\"username\"", username);
-        cv.put("\"created_on\"", creationDate);
-        cv.put("\"first_name\"", firstName);
-        cv.put("\"last_name\"", lastName);
+        cv.put("\"_id\"", user.getId());
+        cv.put("\"oauth_profil_id\"", user.getOauthid());
+        cv.put("\"username\"", user.getUsername());
+        cv.put("\"created_on\"", user.getCreationDate());
+        cv.put("\"first_name\"", user.getFirstName());
+        cv.put("\"last_name\"", user.getLastName());
 
         return (myDB.insert("User", null, cv) != -1);
     }
 
     /**
      * Inserts a new Partner into the database.
-     * @param name partner's public name
-     * @param address partner's official address. This might be different from its shop's address.
-     * @param creationDate current system date. This has to follow this format : DD/MM/YYYY. (Example: "31/01/2000")
+     * @param partner the Partner instance to add to the database
+     * @throws WrongDateFormatException if partner.creationDate does not follow the (DD/MM/YYYY) format
      * @return True if the insertion was successful, False if it failed (for any reason not covered by a thrown exception).
      */
-    public boolean createPartner(String name, String address, String creationDate) throws WrongDateFormatException {
-        if (! isValidDate(creationDate)){
-            throw new WrongDateFormatException(creationDate + " is not a valid date format.");
+    public boolean createPartner(Partner partner) throws WrongDateFormatException {
+        if (! isValidDate(partner.getCreationDate())){
+            throw new WrongDateFormatException(partner.getCreationDate() + " is not a valid date format.");
         }
 
         ContentValues cv = new ContentValues();
-        cv.put("\"name\"", name);
-        cv.put("\"address\"", address);
-        cv.put("\"created_on\"", creationDate);
+        cv.put("\"_id\"", partner.getId());
+        cv.put("\"name\"", partner.getName());
+        cv.put("\"address\"", partner.getAddress());
+        cv.put("\"created_on\"", partner.getCreationDate());
 
         return (myDB.insert("Partner", null, cv) != -1);
     }
@@ -361,17 +384,67 @@ public class SQLHelper extends SQLiteOpenHelper {
     public int getPoints(String username, String partnerID){
         ArrayList<String> res = this.getElementFromDB("User_points",
                                                     "points",
-                                                "id_user = "+getUserID(username)+" AND id_partner = "+partnerID);
+                                                "id_user = \""+getUserID(username)+"\" AND id_partner = \""+partnerID+"\"");
         int l = res.size();
-        if( l > 1 ){
-            //This means there is a duplicate entry in the User_points table
-            //TODO
-        }
         if( l == 0 ){
             // No pair username - partnerID was found in the User_points table.
             // This user has never earned points here before.
             return 0;
+        } else {
+            return Integer.parseInt(res.get(0));
         }
-        return Integer.parseInt(res.get(0));
+    }
+
+    /**
+     * Retrieves information on a User from the database and returns it as an User instance.
+     * @param username the email of the User to retrieve
+     * @return a User instance, or null if this username was not present in the database
+     */
+    public User getUser(String username){
+        Cursor c = getEntriesFromDB("User", null, "username = \""+username+"\"", null);
+        if(c.moveToFirst()){
+            if(c.getCount() != 1){
+                //Duplicate User in the database
+                //TODO how to handle this ?
+            }
+            User out = new User(c.getInt(c.getColumnIndex("_id")),
+                                c.getInt(c.getColumnIndex("oauth_profil_id")),
+                                c.getString(c.getColumnIndex("username")),
+                                c.getString(c.getColumnIndex("created_on")),
+                                c.getString(c.getColumnIndex("first_name")),
+                                c.getString(c.getColumnIndex("last_name"))
+                                );
+            c.close();
+            return out;
+        } else {
+            //No such user in the database
+            return null;
+        }
+    }
+
+    /**
+     * Retrieves information on a Partner from the database and returns it as a Partner instance.
+     * @param id the internal id of the Partner to retrieve
+     * @return a Partner instance, or null if this id was not present in the database
+     */
+    public Partner getPartner(String id){
+        Cursor c = getEntriesFromDB("Partner", null, "_id = \""+id+"\"", null);
+        if(c.moveToFirst()){
+            if(c.getCount() != 1){
+                //Duplicate Partner in the database
+                //TODO how to handle this ?
+            }
+            Partner out = new Partner(c.getInt(c.getColumnIndex("_id")),
+                                    c.getString(c.getColumnIndex("name")),
+                                    c.getString(c.getColumnIndex("address")),
+                                    c.getString(c.getColumnIndex("created_on")),
+                                    c.getString(c.getColumnIndex("image_path")) //TODO how do we handle images ?
+                                    );
+            c.close();
+            return out;
+        } else {
+            //No such user in the database
+            return null;
+        }
     }
 }

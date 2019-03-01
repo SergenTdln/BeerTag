@@ -12,6 +12,7 @@ public class User {
     private String firstName;
     private String lastName;
 
+    // Call SQLHelper.getFreeIDUser to obtain an available ID to use
     public User(int id, int oauthid, String username, String creationDate, String firstName, String lastName) {
         this.id = id;
         this.oauthid = oauthid;

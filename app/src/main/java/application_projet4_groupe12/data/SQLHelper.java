@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import application_projet4_groupe12.entities.Partner;
 import application_projet4_groupe12.entities.User;
@@ -447,4 +449,46 @@ public class SQLHelper extends SQLiteOpenHelper {
             return null;
         }
     }
+
+    /**
+     * Returns an unused id available for a new User
+     * @return an unused ID as an int
+     */
+    public int getFreeIDUser(){
+        List<String> idsAsString = getElementFromDB("User", "_id", null);
+        idsAsString.sort(null);
+        int i = 0;
+        for (String s : idsAsString) {
+            int id = Integer.parseInt(s);
+            if( id==i ){
+                //Advance to next
+                i++;
+            } else {
+                return i;
+            }
+        }
+        return i;
+    }
+
+    /**
+     * Returns an unused id available for a new Partner
+     * @return an unused ID as an int
+     */
+    public int getFreeIDPartner(){
+        List<String> idsAsString = getElementFromDB("Partner", "_id", null);
+        idsAsString.sort(null);
+        int i = 0;
+        for (String s : idsAsString) {
+            int id = Integer.parseInt(s);
+            if( id==i ){
+                //Advance to next
+                i++;
+            } else {
+                return i;
+            }
+        }
+        return i;
+    }
+
+    //TODO getFreeID() methods for all tables
 }

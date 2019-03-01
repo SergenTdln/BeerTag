@@ -11,6 +11,7 @@ public class Partner {
     private String creationDate; //This HAS to follow this format : DD/MM/YYYY. (Example: "31/01/2000")
     private String imagePath; //TODO : Should we store all files in the assets folder or "stream" them from the database ?
 
+    // Call SQLHelper.getFreeIDPartner to obtain an available ID to use
     public Partner(int id, String name, String address, String creationDate, String imagePath) {
         this.id = id;
         this.name = name;

@@ -1,4 +1,14 @@
 <resources>
+
+    <string name="splash_text">Beer Tag</string>
+    <string name="subsplash_text">Beer Tag, le système de fidélité 2.0</string>
+    <string name="menu_scan">Scanner</string>
+    <string name="tapAgain">Encore une fois pour quitter!</string>
+    <string name="permission_not_granted">Permission not granted!</string>
+    <string name="copied">Le résultat a bien été copié.</string>
+    <string name="result">Résultat</string>
+
+
     <string name="app_name">Beer Tag</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

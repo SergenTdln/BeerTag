@@ -6,32 +6,27 @@
     android:layout_height="match_parent"
     tools:context=".activities.MainActivity">
 
-<FrameLayout
-    android:id="@+id/header"
-    android:layout_width="match_parent"
-    android:layout_height="52dp"
-    android:background="@color/colorPrimary">
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:layout_gravity="center"
-        android:src="@drawable/logo_header"/>
-
-</FrameLayout>
-
-    <android.support.design.widget.BottomNavigationView
-        android:id="@+id/navigation"
+    <!-- remplacer par in include?-->
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/header"
-        android:theme="@style/Widget.BottomNavigationView" />
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+
     <View
         android:id="@+id/view"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/placeholder"
-        android:layout_below="@+id/navigation"/>
+        />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"

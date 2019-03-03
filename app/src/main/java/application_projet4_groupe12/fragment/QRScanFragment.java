@@ -2,13 +2,15 @@ package application_projet4_groupe12.fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
@@ -16,6 +18,7 @@ import com.google.zxing.Result;
 import java.util.ArrayList;
 import java.util.List;
 
+import application_projet4_groupe12.activities.MainActivity;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.activities.QRResultActivity;
@@ -23,7 +26,7 @@ import application_projet4_groupe12.data.preference.AppPreference;
 import application_projet4_groupe12.data.preference.PrefKey;
 import application_projet4_groupe12.utils.ActivityUtils;
 
-public class QRScanFragment extends Fragment {
+public class QRScanFragment extends Fragment  {
 
     private Activity mActivity;
     private Context mContext;
@@ -70,7 +73,8 @@ public class QRScanFragment extends Fragment {
 
     private void initView(View rootView) {
         contentFrame = (ViewGroup) rootView.findViewById(R.id.content_frame);
-        initConfigs();
+        //todo : corriger le toolbar sur le scanner
+//        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Scanning");
 
     }
 
@@ -130,6 +134,7 @@ public class QRScanFragment extends Fragment {
         }
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
@@ -157,25 +162,22 @@ public class QRScanFragment extends Fragment {
     }
 
 
-    private void toggleFlash() {
-        //todo
-    }
-
-    private void toggleFocus() {
-        //todo
-    }
-
-    private void toggleCamera() {
-        //todo
-    }
-
-    private void initConfigs() {
-    }
-
     private void loadCams() {
         AppPreference.getInstance(mContext).setInteger(PrefKey.CAM_ID, 0);
-
     }
 
+    //todo : corriger le retour à Home
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+//                finish()
+
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
 }

@@ -32,21 +32,10 @@ public class AppUtils {
     }
 
 
-    public static void vibrateDevice(Context context) {
-        Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-        // Vibrate for 500 milliseconds
-        v.vibrate(500);
-    }
-
-    public static void share(Activity activity, String fileUrl) {//, String text) {
-        // todo
-    }
-
     public static void copyToClipboard(Context context, String text) {
         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("label", text);
         clipboard.setPrimaryClip(clip);
-        vibrateDevice(context);
         showToast(context, context.getResources().getString(R.string.copied));
     }
 

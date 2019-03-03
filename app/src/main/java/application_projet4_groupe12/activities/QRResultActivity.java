@@ -2,6 +2,7 @@ package application_projet4_groupe12.activities;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -83,8 +84,9 @@ public class QRResultActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                finish();
-                return true;
+//                finish()
+                startActivity(new Intent(QRResultActivity.this, MainActivity.class));
+//                return true;
 
             default:
                 return super.onOptionsItemSelected(item);

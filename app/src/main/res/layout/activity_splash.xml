@@ -18,7 +18,7 @@
         android:src="@drawable/logo"
        />
 
-    <customfonts.TextViewSFProDisplayMedium
+    <TextView
         android:id="@+id/text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,7 +29,7 @@
         android:textColor="@color/white"
         android:textSize="40sp" />
 
-    <customfonts.TextViewSFProDisplayRegular
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/text"

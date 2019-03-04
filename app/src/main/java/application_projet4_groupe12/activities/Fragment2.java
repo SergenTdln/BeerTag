@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.application_projet4_groupe12.R;
+import application_projet4_groupe12.R;
 
 import java.io.IOException;
 import java.text.DateFormat;

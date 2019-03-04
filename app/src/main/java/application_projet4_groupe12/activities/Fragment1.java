@@ -40,10 +40,13 @@ public class Fragment1 extends Fragment {
                     EditText password = (EditText)getView().findViewById(R.id.editText2);
 
                     if (db.doesUsernameExist(username.getText().toString())) {
-                        Toast.makeText(getActivity(),  "Valid email", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(),  R.string.valid_email, Toast.LENGTH_SHORT).show();
+
+                        Intent intent = new Intent(getActivity(), MainActivity.class);
+                        startActivity(intent);
                     }
                     else {
-                        Toast.makeText(getActivity(),  "Invalid email", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(),  R.string.invalid_email, Toast.LENGTH_SHORT).show();
                     }
 
                     } catch (IOException e) {

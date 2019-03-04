@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/blue">
+    android:background="#E41252F3">
 
     <EditText
         android:id="@+id/editText3"
@@ -13,6 +13,7 @@
         android:layout_marginBottom="32dp"
         android:fontFamily="@font/roboto"
         android:hint="Email"
+        android:textColorHint="@color/login_text_hint"
         app:layout_constraintBottom_toTopOf="@+id/editText4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -22,10 +23,10 @@
         android:id="@+id/editText4"
         android:layout_width="160dp"
         android:layout_height="41dp"
-        android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:fontFamily="@font/roboto"
         android:hint="Password"
+        android:textColorHint="@color/login_text_hint"
         android:inputType="textPassword"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -40,6 +41,7 @@
         android:layout_marginTop="32dp"
         android:fontFamily="@font/roboto"
         android:hint="Confirm Password"
+        android:textColorHint="@color/login_text_hint"
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -48,13 +50,15 @@
 
     <Button
         android:id="@+id/fragment2_sign_up"
-        style="@android:style/Widget.Holo.Button.Borderless"
+        style="@android:style/Widget.DeviceDefault.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
-        android:fontFamily="@font/roboto"
+        android:layout_marginTop="68dp"
+        android:fontFamily="@font/roboto_black"
         android:text="Sign up"
-        android:textColor="#17456A"
+        android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
+        android:textColor="@color/login_text"
+        android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"

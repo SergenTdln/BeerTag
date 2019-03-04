@@ -31,7 +31,7 @@ import android.support.v4.content.ContextCompat;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
         
-    private Button button;
+//    private Button button;
 
     private Activity mActivity;
     private Context mContext;
@@ -52,19 +52,19 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initQrViews() {
+
         setContentView(R.layout.activity_qrscan);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
 
-        getSupportActionBar().setTitle("Scanner");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+//        getSupportActionBar().setTitle(R.string.menu_scan);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
     }
 
     private void initQrFunctionality() {
-
-
-
         if ((ContextCompat.checkSelfPermission( mActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
                 || (ContextCompat.checkSelfPermission( mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
             ActivityCompat.requestPermissions(
@@ -98,22 +98,26 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        button = (Button) findViewById(R.id.button);
+        /*button = (Button) findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openSignUp();
             }
-        });
+        });*/
     }
 
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+        if (drawer == null) {
+            startActivity(new Intent(MainActivity.this, MainActivity.class));
         } else {
-            super.onBackPressed();
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
+            } else {
+                super.onBackPressed();
+            }
         }
     }
 
@@ -165,10 +169,10 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public void  openSignUp() {
+/*    public void  openSignUp() {
         Intent intent = new Intent(this, SignUp.class);
         startActivity(intent);
-    }
+    }*/
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {

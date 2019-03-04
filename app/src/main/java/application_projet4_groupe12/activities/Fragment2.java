@@ -46,7 +46,7 @@ public class Fragment2 extends Fragment {
                     EditText confirmPassword = (EditText)getView().findViewById(R.id.editText5);
 
                     if (db.doesUsernameExist(username.getText().toString()))  {
-                        Toast.makeText(getActivity(),  "This email already exists", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(),  R.string.existing_email, Toast.LENGTH_SHORT).show();
                     }
                     else {
                         if (password.getText().toString().equals(confirmPassword.getText().toString())) {
@@ -59,10 +59,10 @@ public class Fragment2 extends Fragment {
                             user = new User(id, id, username.getText().toString(), today,  "albert", "le chat");
 
                             db.createUser(user);
-                            Toast.makeText(getActivity(), "Account created", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), R.string.account_done, Toast.LENGTH_SHORT).show();
                         }
                         else {
-                            Toast.makeText(getActivity(), "Passwords do not match", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), R.string.password_no_match, Toast.LENGTH_SHORT).show();
                         }
                     }
 

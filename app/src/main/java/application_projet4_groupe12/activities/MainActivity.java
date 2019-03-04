@@ -1,5 +1,6 @@
 package application_projet4_groupe12.activities;
 
+import android.Manifest;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,10 +14,63 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.example.application_projet4_groupe12.R;
+import application_projet4_groupe12.R;
+import application_projet4_groupe12.utils.AppUtils;
+import java.util.ArrayList;
+import android.support.v4.view.ViewPager;
+import application_projet4_groupe12.item.ItemMainPager;
+import application_projet4_groupe12.data.Constants;
+import android.content.pm.PackageManager;
+import android.app.Activity;
+import android.content.Context;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+
+    private Activity mActivity;
+    private Context mContext;
+
+    private ViewPager mViewPager;
+    private ArrayList<String> mFragmentItems;
+
+    private void startQr(){
+        initQrVars();
+        initQrViews();
+        initQrFunctionality();
+    }
+
+    private void initQrVars() {
+        mActivity = MainActivity.this;
+        mContext = mActivity.getApplicationContext();
+        mFragmentItems = new ArrayList<>();
+    }
+
+    private void initQrViews() {
+        setContentView(R.layout.activity_qrscan);
+        mViewPager = (ViewPager) findViewById(R.id.viewpager);
+
+        getSupportActionBar().setTitle("Scanner");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+    }
+
+    private void initQrFunctionality() {
+
+
+
+        if ((ContextCompat.checkSelfPermission( mActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+                || (ContextCompat.checkSelfPermission( mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
+            ActivityCompat.requestPermissions(
+                    mActivity, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.PERMISSION_REQ);
+        } else {
+            setUpViewPager();
+        }
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,8 +83,7 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                startQr();
             }
         });
 
@@ -69,9 +122,10 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
+        /**
         if (id == R.id.action_settings) {
             return true;
-        }
+        }**/ //TODO removed for sprint01
 
         return super.onOptionsItemSelected(item);
     }
@@ -83,7 +137,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            // Handle the camera action
+
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {
@@ -100,4 +154,27 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        if (requestCode == Constants.PERMISSION_REQ) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                setUpViewPager();
+            } else {
+                AppUtils.showToast(mContext, getString(R.string.permission_not_granted));
+            }
+        }
+    }
+
+    private void setUpViewPager() {
+
+        mFragmentItems.add(getString(R.string.menu_scan));
+
+        ItemMainPager itemMainPager = new ItemMainPager(getSupportFragmentManager(), mFragmentItems);
+        mViewPager.setAdapter(itemMainPager);
+        itemMainPager.notifyDataSetChanged();
+    }
+
+
 }

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/red">
+    android:background="@color/colorPrimary">
 
     <EditText
         android:id="@+id/editText1"
@@ -40,7 +40,7 @@
         android:layout_marginTop="64dp"
         android:fontFamily="@font/roboto"
         android:text="Sign in"
-        android:textColor="@color/colorAccent"
+        android:textColor="@color/colorPrimaryDark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"

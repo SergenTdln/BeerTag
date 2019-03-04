@@ -34,7 +34,8 @@
 
         <activity
             android:name="application_projet4_groupe12.activities.QRResultActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".activities.MainActivity" />
     </application>
 </manifest>
 

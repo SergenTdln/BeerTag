@@ -41,6 +41,9 @@ public class Fragment1 extends Fragment {
 
                     if (db.doesUsernameExist(username.getText().toString())) {
                         Toast.makeText(getActivity(),  R.string.valid_email, Toast.LENGTH_SHORT).show();
+
+                        Intent intent = new Intent(getActivity(), MainActivity.class);
+                        startActivity(intent);
                     }
                     else {
                         Toast.makeText(getActivity(),  R.string.invalid_email, Toast.LENGTH_SHORT).show();

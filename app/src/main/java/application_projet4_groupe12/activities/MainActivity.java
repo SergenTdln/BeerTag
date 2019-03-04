@@ -31,7 +31,7 @@ import android.support.v4.content.ContextCompat;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
         
-    private Button button;
+//    private Button button;
 
     private Activity mActivity;
     private Context mContext;
@@ -98,13 +98,13 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        button = (Button) findViewById(R.id.button);
+        /*button = (Button) findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openSignUp();
             }
-        });
+        });*/
     }
 
     @Override
@@ -165,10 +165,10 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public void  openSignUp() {
+/*    public void  openSignUp() {
         Intent intent = new Intent(this, SignUp.class);
         startActivity(intent);
-    }
+    }*/
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {

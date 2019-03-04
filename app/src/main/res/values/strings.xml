@@ -1,9 +1,19 @@
 <resources>
+
+    <string name="splash_text">Beer Tag</string>
+    <string name="subsplash_text">Beer Tag, le système de fidélité 2.0</string>
+    <string name="menu_scan">Scanner</string>
+    <string name="tapAgain">Encore une fois pour quitter!</string>
+    <string name="permission_not_granted">Permission not granted!</string>
+    <string name="copied">Le résultat a bien été copié.</string>
+    <string name="result">Résultat</string>
+
+
     <string name="app_name">Beer Tag</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_title">Projet P4 </string>
+    <string name="nav_header_subtitle">Groupe 12</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
     <string name="sign_up">Sign up</string>

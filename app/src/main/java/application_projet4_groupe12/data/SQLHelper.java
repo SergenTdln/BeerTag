@@ -242,7 +242,6 @@ public class SQLHelper extends SQLiteOpenHelper {
                                     new String[]{"username"},
                                     "username = \""+email+"\"",
                                     null);
-//        out = (c.getCount() > 0);
         out = (c.moveToFirst());
         c.close();
         return out;
@@ -259,7 +258,7 @@ public class SQLHelper extends SQLiteOpenHelper {
                 new String[]{"name"},
                 "_id = \""+partnerID+"\"",
                 null);
-        out = (c.getCount() > 0);
+        out = (c.moveToFirst());
         c.close();
         return out;
     }
@@ -475,7 +474,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * Returns an unused id available for a new Partner
      * @return an unused ID as an int
      */
-    public int getFreeIDPartner(){
+    public int getFreeIDPartner() {
         List<String> idsAsString = getElementFromDB("Partner", "_id", null);
         idsAsString.sort(null);
         int i = 0;
@@ -490,6 +489,27 @@ public class SQLHelper extends SQLiteOpenHelper {
         }
         return i;
     }
+
+    /**
+     * Returns an unused id available for a new Promotion
+     * @return an unused ID as an int
+     */
+    public int getFreeIDPromotion() {
+        List<String> idsAsString = getElementFromDB("Promotion", "_id", null);
+        idsAsString.sort(null);
+        int i = 0;
+        for (String s : idsAsString) {
+            int id = Integer.parseInt(s);
+            if( id==i ){
+                //Advance to next
+                i++;
+            } else {
+                return i;
+            }
+        }
+        return i;
+    }
+
 
     //TODO getFreeID() methods for all tables
 }

@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_qrscan);
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
 
-        getSupportActionBar().setTitle("Scanner");
+        getSupportActionBar().setTitle(R.string.menu_scan);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 

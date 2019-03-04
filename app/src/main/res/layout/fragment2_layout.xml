@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorAccent">
+    android:background="#E41252F3">
 
     <EditText
         android:id="@+id/editText3"
@@ -22,7 +22,6 @@
         android:id="@+id/editText4"
         android:layout_width="160dp"
         android:layout_height="41dp"
-        android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:fontFamily="@font/roboto"
         android:hint="Password"
@@ -48,14 +47,14 @@
 
     <Button
         android:id="@+id/fragment2_sign_up"
-        style="@android:style/Widget.Holo.Button.Borderless"
+        style="@android:style/Widget.DeviceDefault.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="68dp"
         android:fontFamily="@font/roboto_black"
         android:text="Sign up"
         android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/colorPrimaryDark"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

@@ -1,5 +1,6 @@
 package application_projet4_groupe12.activities;
 
+import android.content.Intent;
 import android.Manifest;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -13,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.utils.AppUtils;
@@ -28,7 +30,8 @@ import android.support.v4.content.ContextCompat;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
+        
+    private Button button;
 
     private Activity mActivity;
     private Context mContext;
@@ -71,7 +74,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,6 +97,14 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        button = (Button) findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openSignUp();
+            }
+        });
     }
 
     @Override
@@ -155,6 +165,10 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    public void  openSignUp() {
+        Intent intent = new Intent(this, SignUp.class);
+        startActivity(intent);
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
@@ -175,6 +189,4 @@ public class MainActivity extends AppCompatActivity
         mViewPager.setAdapter(itemMainPager);
         itemMainPager.notifyDataSetChanged();
     }
-
-
 }

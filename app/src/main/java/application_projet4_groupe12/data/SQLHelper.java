@@ -242,7 +242,8 @@ public class SQLHelper extends SQLiteOpenHelper {
                                     new String[]{"username"},
                                     "username = \""+email+"\"",
                                     null);
-        out = (c.getCount() > 0);
+//        out = (c.getCount() > 0);
+        out = (c.moveToFirst());
         c.close();
         return out;
     }

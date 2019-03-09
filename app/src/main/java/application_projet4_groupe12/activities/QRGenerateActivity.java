@@ -1,6 +1,9 @@
 package application_projet4_groupe12.activities;
 
+import android.content.Intent;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -32,5 +35,19 @@ public class QRGenerateActivity extends AppCompatActivity {
 
     public void setViewPager(int fragmentNumber) {
         mViewPager.setCurrentItem(fragmentNumber);
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer == null) {
+            startActivity(new Intent(QRGenerateActivity.this, MainActivity.class));
+        } else {
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
+            } else {
+                super.onBackPressed();
+            }
+        }
     }
 }

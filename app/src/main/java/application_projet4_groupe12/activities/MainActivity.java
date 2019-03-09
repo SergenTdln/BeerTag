@@ -89,6 +89,15 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        FloatingActionButton fab_gen = (FloatingActionButton) findViewById(R.id.fab_gen);
+        fab_gen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, QRGenerateActivity.class));
+            }
+        });
+
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -153,7 +162,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_scan) {
 
         } else if (id == R.id.nav_generate) {
-
+            startActivity(new Intent(MainActivity.this, QRGenerateActivity.class));
         }
 
 

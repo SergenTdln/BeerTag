@@ -41,7 +41,11 @@
             android:parentActivityName=".activities.MainActivity" />
         <activity android:name="application_projet4_groupe12.activities.QRGenerateActivity"
             android:screenOrientation="portrait"/>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="41392d700fd9c84308e00fbc73c99a03e11941f7" />
     </application>
+    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>
 
 

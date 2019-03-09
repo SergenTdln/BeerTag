@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import java.util.ArrayList;
 
 
+import application_projet4_groupe12.fragment.GenerateFragment;
 import application_projet4_groupe12.fragment.QRScanFragment;
 
 
@@ -27,10 +28,13 @@ public class ItemMainPager extends FragmentStatePagerAdapter {
 
         if(i == 0) {
             fragment = new QRScanFragment();
+        } else if(i == 1){
+            fragment = new GenerateFragment();
         }
 
         return fragment;
     }
+
 
     @Override
     public int getCount() {

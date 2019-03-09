@@ -1,4 +1,4 @@
-package application_projet4_groupe12.activities;
+package application_projet4_groupe12.fragment;
 
 import android.content.Intent;
 import android.support.v4.app.Fragment;
@@ -15,6 +15,7 @@ import application_projet4_groupe12.R;
 
 import java.io.IOException;
 
+import application_projet4_groupe12.activities.MainActivity;
 import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.entities.User;
 

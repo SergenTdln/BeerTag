@@ -1,4 +1,4 @@
-package application_projet4_groupe12.activities;
+package application_projet4_groupe12.fragment;
 
 import android.support.v4.app.Fragment;
 import android.os.Bundle;

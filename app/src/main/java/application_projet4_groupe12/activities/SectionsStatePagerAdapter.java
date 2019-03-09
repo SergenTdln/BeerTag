@@ -33,6 +33,6 @@ public class SectionsStatePagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public float getPageWidth(int position) {
-        return 0.9f;
+        return 1f;
     }
 }

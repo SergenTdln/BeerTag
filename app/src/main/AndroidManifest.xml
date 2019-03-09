@@ -18,7 +18,9 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="application_projet4_groupe12.activities.SignUp"></activity>
+        <activity android:name="application_projet4_groupe12.activities.QRGenerateActivity"
+            android:screenOrientation="portrait">
+        </activity>
         <activity
             android:name="application_projet4_groupe12.activities.SplashActivity"
             android:label="@string/app_name"

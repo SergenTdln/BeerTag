@@ -5,10 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import application_projet4_groupe12.R;
-import application_projet4_groupe12.fragment.Fragment1;
-import application_projet4_groupe12.fragment.Fragment2;
+import application_projet4_groupe12.fragment.GenerateFragment;
 
-public class SignUp extends AppCompatActivity {
+public class QRGenerateActivity extends AppCompatActivity {
 
     private SectionsStatePagerAdapter mSectionsStatePagerAdapter;
     private ViewPager mViewPager;
@@ -16,19 +15,18 @@ public class SignUp extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_up);
+        setContentView(R.layout.activity_qrgenerate);
 
         mSectionsStatePagerAdapter = new SectionsStatePagerAdapter(getSupportFragmentManager());
 
-        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager = (ViewPager) findViewById(R.id.container_gen);
 
         setupViewPager(mViewPager);
     }
 
     private void setupViewPager(ViewPager viewPager){
         SectionsStatePagerAdapter adapter = new SectionsStatePagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new Fragment1(), "Fragment1");
-        adapter.addFragment(new Fragment2(), "Fragment2");
+        adapter.addFragment(new GenerateFragment(), "Generate Fragment");
         viewPager.setAdapter(adapter);
     }
 

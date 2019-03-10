@@ -1,9 +1,18 @@
 package application_projet4_groupe12.entities;
 
+import android.content.Context;
+import android.database.sqlite.SQLiteException;
+
+import java.io.IOException;
+
+import application_projet4_groupe12.data.SQLHelper;
+
 /**
  * Entities of this class represent users of the app.
  */
 public class User {
+
+    public static User connectedUser;
 
     private int id; // Internal ID, should not be displayed to the user. Unique
     private int oauthid; // What object should this be ? //TODO read doc
@@ -22,6 +31,44 @@ public class User {
         this.lastName = lastName;
     }
 
+    /**
+     * Connects the User <code>u</code> to his account in the application. The previous user must have been disconnected
+     * @param u the User instance to connect
+     * @return True if the user was connected, or False if another user was already connected
+     */
+    public boolean connectUser(User u){
+        if(connectedUser!=null){
+            return false;
+        } else {
+            connectedUser = u;
+            return true;
+        }
+    }
+
+    /**
+     * Disconnects the currently connected User from the application. Its data is refreshed in the database before disconnecting.
+     * @return True if the User was successfully disconnected from the application
+     */
+    public boolean disconnectUser(Context c){
+        SQLHelper db = null;
+        try {
+            db = new SQLHelper(c);
+            db.updateUserData(connectedUser);
+        } catch (IOException | SQLiteException e){
+            //Do nothing: worst case scenario is the data from the user on this session not being saved.
+        } finally {
+            if(db!=null) {
+                db.close();
+            }
+        }
+        connectedUser = null;
+        return true;
+    }
+
+
+    //******
+    //Getter and setter methods
+    //******
     public int getId() {
         return id;
     }
@@ -46,8 +93,11 @@ public class User {
         return lastName;
     }
 
-    //TODO : Setter methods should update the DB ?
+    public String getFullName(){
+        return this.firstName+" "+this.lastName;
+    }
 
+    //TODO : Setter methods should update the DB ?
 
     public void setId(int id) {
         this.id = id;

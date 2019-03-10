@@ -52,7 +52,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * Constructor. Instantiates the DB handling utility
      * @param context the application context.
      * @throws IOException if an IO exception occurred when creating a new database.
-     * @throws
+     * @throws SQLiteException if the existing database cannot be opened
      */
     public SQLHelper(Context context) throws IOException, SQLiteException {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -510,6 +510,21 @@ public class SQLHelper extends SQLiteOpenHelper {
         return i;
     }
 
-
     //TODO getFreeID() methods for all tables
+
+    /**
+     *Updates the values of an existing user in the database. Its id is the only field that can not be updated
+     * @param user an instance of User containing the new values
+     * @return True if the row was successfully affected, False otherwise
+     */
+    public boolean updateUserData(User user){
+        ContentValues cv = new ContentValues();
+        cv.put("\"oauth_profil_id\"", user.getOauthid());
+        cv.put("\"username\"", user.getUsername());
+        cv.put("\"created_on\"", user.getCreationDate());
+        cv.put("\"first_name\"", user.getFirstName());
+        cv.put("\"last_name\"", user.getLastName());
+
+        return (myDB.update("User", cv, "_id = \""+user.getId()+"\"", null) >= 1);
+    }
 }

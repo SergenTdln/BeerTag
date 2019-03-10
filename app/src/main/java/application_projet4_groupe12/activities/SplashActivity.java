@@ -27,7 +27,7 @@ public class SplashActivity extends AppCompatActivity {
         relativeLayout.postDelayed(new Runnable() {
             @Override
             public void run() {
-                ActivityUtils.getInstance().invokeActivity(SplashActivity.this, MainActivity.class, true);
+                ActivityUtils.getInstance().invokeActivity(SplashActivity.this, SignUp.class, true);
             }
         }, 2000);
     }

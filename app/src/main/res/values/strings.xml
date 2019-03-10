@@ -24,4 +24,7 @@
     <string name="type_here_bar">Generate barcode</string>
     <string name="type_here_qr">Generate QR code</string>
 
+    <string name="facebook_app_id">586274028466486</string>
+    <string name="fb_login_protocol_scheme">fb586274028466486</string>
+
 </resources>

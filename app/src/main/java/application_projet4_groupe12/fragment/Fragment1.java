@@ -11,6 +11,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+
 import application_projet4_groupe12.R;
 
 import java.io.IOException;
@@ -24,6 +30,7 @@ public class Fragment1 extends Fragment {
     private Button fragment1_sign_in;
     private SQLHelper db;
     private User user;
+    private  CallbackManager callbackManager;
 
     @Nullable
     @Override
@@ -57,6 +64,26 @@ public class Fragment1 extends Fragment {
                     }
             }
         });
+
+        /*callbackManager = CallbackManager.Factory.create();
+
+        LoginManager.getInstance().registerCallback(callbackManager,
+                new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(LoginResult loginResult) {
+                        // App code
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        // App code
+                    }
+
+                    @Override
+                    public void onError(FacebookException exception) {
+                        // App code
+                    }
+                });*/
 
         return view;
     }

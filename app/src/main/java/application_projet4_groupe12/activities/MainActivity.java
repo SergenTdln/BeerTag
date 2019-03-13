@@ -28,6 +28,8 @@ import android.content.Context;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
+import com.facebook.CallbackManager;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -38,6 +40,8 @@ public class MainActivity extends AppCompatActivity
 
     private ViewPager mViewPager;
     private ArrayList<String> mFragmentItems;
+
+    CallbackManager mCallbackManager;
 
     private void startQr(){
         initQrVars();
@@ -194,5 +198,11 @@ public class MainActivity extends AppCompatActivity
         ItemMainPager itemMainPager = new ItemMainPager(getSupportFragmentManager(), mFragmentItems);
         mViewPager.setAdapter(itemMainPager);
         itemMainPager.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

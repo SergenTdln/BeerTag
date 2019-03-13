@@ -61,7 +61,7 @@ public class Fragment2 extends Fragment {
             @Override
             public void onClick(View v) {
                 try {
-                    db = new SQLHelper(getActivity());
+                    db = new SQLHelper(getContext());
 
                     EditText username = (EditText)getView().findViewById(R.id.editText3);
                     EditText password = (EditText)getView().findViewById(R.id.editText4);
@@ -76,8 +76,8 @@ public class Fragment2 extends Fragment {
                             Date date = Calendar.getInstance().getTime();
                             DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                             String today = formatter.format(date);
-                            user = new User(id, id, username.getText().toString(), today,  "albert", "le chat");
-                            db.createUser(user);
+                            user = new User(id, username.getText().toString(), "", today,"albert", "le chat", "01/01/2000", "");
+                            System.out.println("Utilisateur inséré : "+db.createUser(user));
                             dab.collection("Users").add(user);
                             Toast.makeText(getActivity(), "Account created", Toast.LENGTH_SHORT).show();
                         }
@@ -138,7 +138,7 @@ public class Fragment2 extends Fragment {
                                 String today = document.getString("creationDate");
                                 String firstname = document.getString("firstName");
                                 String lastname = document.getString("lastName");
-                                user = new User(id, id, document.getString("username"), today,  firstname, lastname);
+                                user = new User(id, document.getString("username"), "", today, firstname, lastname, "BirthDate", ""); //TODO à refaire
                                 try {
                                     db.createUser(user);
                                 }

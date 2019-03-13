@@ -3,10 +3,12 @@ package application_projet4_groupe12.data;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteCantOpenDatabaseException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,6 +19,7 @@ import java.util.List;
 
 import application_projet4_groupe12.entities.Partner;
 import application_projet4_groupe12.entities.User;
+import application_projet4_groupe12.exceptions.CustomException;
 import application_projet4_groupe12.exceptions.UnknownPartnerException;
 import application_projet4_groupe12.exceptions.WrongDateFormatException;
 import application_projet4_groupe12.exceptions.WrongEmailFormatException;
@@ -45,14 +48,14 @@ public class SQLHelper extends SQLiteOpenHelper {
     /**
      * The database file path.
      */
-    private static String DATABASE_PATH;  // = "/data/data/application_projet4_groupe12/databases/";
+    private static String DATABASE_PATH; // = "/data/data/application_projet4_groupe12/databases/";
     private static String DATABASE_NAME = "database.sqlite";
 
     /***
      * Constructor. Instantiates the DB handling utility
      * @param context the application context.
      * @throws IOException if an IO exception occurred when creating a new database.
-     * @throws
+     * @throws SQLiteException if the existing database cannot be opened
      */
     public SQLHelper(Context context) throws IOException, SQLiteException {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -98,8 +101,9 @@ public class SQLHelper extends SQLiteOpenHelper {
         SQLiteDatabase checkDB = null;
         try{
             String path = DATABASE_PATH + DATABASE_NAME;
+
             checkDB = SQLiteDatabase.openDatabase(path, null , SQLiteDatabase.OPEN_READWRITE);
-        }catch (SQLiteException e){
+        } catch (SQLiteException e){
             //The DB couldn't be opened -> it doesn't exist yet
             //This could be considered abusive use of exceptions (?)
         }
@@ -221,7 +225,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @return The ID of this user as a String, or null if this <code>email</code> is not present in the database.
      */
     private String getUserID(String email){
-        ArrayList<String> res = this.getElementFromDB("User", "_id", "User = \""+email+"\"");
+        ArrayList<String> res = this.getElementFromDB("User", "_id", "username = \""+email+"\"");
         int l = res.size();
         if( l == 0 ){
             //No user with such email was found in the database
@@ -252,7 +256,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param partnerID the internal ID of the partner to look for
      * @return True if this partnerID already exists, False otherwise
      */
-    private boolean doesPartnerExist(String partnerID){
+    private boolean doesPartnerExist(int partnerID){
         boolean out;
         Cursor c = getEntriesFromDB("Partner",
                 new String[]{"name"},
@@ -323,11 +327,13 @@ public class SQLHelper extends SQLiteOpenHelper {
 
         ContentValues cv = new ContentValues();
         cv.put("\"_id\"", user.getId());
-        cv.put("\"oauth_profil_id\"", user.getOauthid());
         cv.put("\"username\"", user.getUsername());
+        cv.put("\"password\"", user.getPasswordHashed());
         cv.put("\"created_on\"", user.getCreationDate());
         cv.put("\"first_name\"", user.getFirstName());
         cv.put("\"last_name\"", user.getLastName());
+        cv.put("\"birthday\"", user.getBirthday());
+        cv.put("\"image_path\"", user.getImagePath());
 
         return (myDB.insert("User", null, cv) != -1);
     }
@@ -348,6 +354,7 @@ public class SQLHelper extends SQLiteOpenHelper {
         cv.put("\"name\"", partner.getName());
         cv.put("\"address\"", partner.getAddress());
         cv.put("\"created_on\"", partner.getCreationDate());
+        cv.put("\"image_path\"", partner.getImagePath());
 
         return (myDB.insert("Partner", null, cv) != -1);
     }
@@ -357,36 +364,34 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param username the user's email address
      * @param amount the amount of points to add. This can be positive or negative.
      * @param partnerID Please not this is different from the partner's name.
-     * @param validity_span Validity span of those points, in days. Passing 0 will make them last forever //TODO handle this better ? (later)
      * @return True if the insertion was successful, False if it failed (for any reason not covered by a thrown exception).
      * @throws UnknownPartnerException if the passed Partner does not exist in the database
      */
-    public boolean addPoints(String username, int amount, String partnerID, int validity_span) throws UnknownPartnerException {
+    public boolean addPoints(String username, int amount, int partnerID) throws UnknownPartnerException {
         if(! doesPartnerExist(partnerID)){
             throw new UnknownPartnerException("Partner with ID " + partnerID + " does not exist in the database.");
         }
 
-        int currentPoints = this.getPoints(username, partnerID);
+        int currentPoints = this.getPoints(Integer.parseInt(getUserID(username)), partnerID);
 
         ContentValues cv = new ContentValues();
         cv.put("\"id_user\"", getUserID(username));
         cv.put("\"id_partner\"", partnerID);
         cv.put("\"points\"", (currentPoints + amount));
-        cv.put("\"validity_span_days\"", validity_span);
 
         return (myDB.insert("User_points", null, cv) != -1);
     }
 
     /**
      * Returns the amount of points the passed User currently has by the passed Partner.
-     * @param username the username (email) to look for
+     * @param userID the username (email) to look for
      * @param partnerID the internal ID of the partner to look for
      * @return the amount of points the user has earned as an int. Returns 0 if the User has never earned points by this Partner before.
      */
-    public int getPoints(String username, String partnerID){
+    public int getPoints(int userID, int partnerID){
         ArrayList<String> res = this.getElementFromDB("User_points",
                                                     "points",
-                                                "id_user = \""+getUserID(username)+"\" AND id_partner = \""+partnerID+"\"");
+                                                "id_user = \""+userID+"\" AND id_partner = \""+partnerID+"\"");
         int l = res.size();
         if( l == 0 ){
             // No pair username - partnerID was found in the User_points table.
@@ -409,12 +414,18 @@ public class SQLHelper extends SQLiteOpenHelper {
                 //Duplicate User in the database
                 //TODO how to handle this ?
             }
+
+            for(int i=0; i<c.getColumnCount(); i++){
+                System.out.println("Column "+i+" is "+c.getColumnName(i));
+            }
             User out = new User(c.getInt(c.getColumnIndex("_id")),
-                                c.getInt(c.getColumnIndex("oauth_profil_id")),
                                 c.getString(c.getColumnIndex("username")),
+                                c.getString(c.getColumnIndex("password")),
                                 c.getString(c.getColumnIndex("created_on")),
                                 c.getString(c.getColumnIndex("first_name")),
-                                c.getString(c.getColumnIndex("last_name"))
+                                c.getString(c.getColumnIndex("last_name")),
+                                c.getString(c.getColumnIndex("birthday")),
+                                c.getString(c.getColumnIndex("image_path"))
                                 );
             c.close();
             return out;
@@ -426,11 +437,11 @@ public class SQLHelper extends SQLiteOpenHelper {
 
     /**
      * Retrieves information on a Partner from the database and returns it as a Partner instance.
-     * @param id the internal id of the Partner to retrieve
+     * @param partnerID the internal id of the Partner to retrieve
      * @return a Partner instance, or null if this id was not present in the database
      */
-    public Partner getPartner(String id){
-        Cursor c = getEntriesFromDB("Partner", null, "_id = \""+id+"\"", null);
+    public Partner getPartner(int partnerID){
+        Cursor c = getEntriesFromDB("Partner", null, "_id = \""+partnerID+"\"", null);
         if(c.moveToFirst()){
             if(c.getCount() != 1){
                 //Duplicate Partner in the database
@@ -440,7 +451,7 @@ public class SQLHelper extends SQLiteOpenHelper {
                                     c.getString(c.getColumnIndex("name")),
                                     c.getString(c.getColumnIndex("address")),
                                     c.getString(c.getColumnIndex("created_on")),
-                                    c.getString(c.getColumnIndex("image_path")) //TODO how do we handle images ?
+                                    c.getString(c.getColumnIndex("image_path"))
                                     );
             c.close();
             return out;
@@ -510,6 +521,23 @@ public class SQLHelper extends SQLiteOpenHelper {
         return i;
     }
 
-
     //TODO getFreeID() methods for all tables
+
+    /**
+     *Updates the values of an existing user in the database. Its _id is the only field that can not be updated
+     * @param user an instance of User containing the new values
+     * @return True if the row was successfully affected, False otherwise
+     */
+    public boolean updateUserData(User user){
+        ContentValues cv = new ContentValues();
+        cv.put("\"username\"", user.getUsername());
+        cv.put("\"password\"", user.getPasswordHashed());
+        cv.put("\"created_on\"", user.getCreationDate());
+        cv.put("\"first_name\"", user.getFirstName());
+        cv.put("\"last_name\"", user.getLastName());
+        cv.put("\"birthday\"", user.getBirthday());
+        cv.put("\"image_path\"", user.getImagePath());
+
+        return (myDB.update("User", cv, "_id = \""+user.getId()+"\"", null) >= 1);
+    }
 }

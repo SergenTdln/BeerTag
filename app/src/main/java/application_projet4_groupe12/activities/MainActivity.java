@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.widget.Button;
 
 import application_projet4_groupe12.R;
+import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.utils.AppUtils;
 import java.util.ArrayList;
 import android.support.v4.view.ViewPager;
@@ -27,8 +28,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-import com.facebook.CallbackManager;
+import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -41,7 +44,9 @@ public class MainActivity extends AppCompatActivity
     private ViewPager mViewPager;
     private ArrayList<String> mFragmentItems;
 
-    CallbackManager mCallbackManager;
+    private ImageView navHeaderImage;
+    private TextView navHeaderText1;
+    private TextView navHeaderText2;
 
     private void startQr(){
         initQrVars();
@@ -101,7 +106,6 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -110,6 +114,13 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        navHeaderImage = (ImageView) findViewById(R.id.mainactivity_navigation_header_image);
+        navHeaderText1 = (TextView) findViewById(R.id.mainactivity_navigation_header_text1);
+        navHeaderText2 = (TextView) findViewById(R.id.mainactivity_navigation_header_text2);
+        // navHeaderImage.setImageResource(); //TODO connected User's profile picture (from Facebook if connected, or custom one otherwise)
+        //navHeaderText1.setText(User.connectedUser.getFullName());
+        //navHeaderText2.setText(User.connectedUser.getUsername());
 
         /*button = (Button) findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
@@ -169,7 +180,6 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(MainActivity.this, QRGenerateActivity.class));
         }
 
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -198,11 +208,5 @@ public class MainActivity extends AppCompatActivity
         ItemMainPager itemMainPager = new ItemMainPager(getSupportFragmentManager(), mFragmentItems);
         mViewPager.setAdapter(itemMainPager);
         itemMainPager.notifyDataSetChanged();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        mCallbackManager.onActivityResult(requestCode, resultCode, data);
-        super.onActivityResult(requestCode, resultCode, data);
     }
 }

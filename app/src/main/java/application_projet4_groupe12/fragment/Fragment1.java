@@ -35,12 +35,14 @@ public class Fragment1 extends Fragment {
             @Override
             public void onClick(View view) {
                 try {
-                    db = new SQLHelper(getActivity());
+                    db = new SQLHelper(getContext());
 
                     EditText username = (EditText)getView().findViewById(R.id.editText1);
                     EditText password = (EditText)getView().findViewById(R.id.editText2);
 
-                    if (db.doesUsernameExist(username.getText().toString())) {
+                    boolean userExists = db.doesUsernameExist(username.getText().toString());
+                    System.out.println("Utilisateur existe :"+userExists);
+                    if (userExists) {
                         Toast.makeText(getActivity(),  R.string.valid_email, Toast.LENGTH_SHORT).show();
 
                         User user = db.getUser(username.getText().toString());

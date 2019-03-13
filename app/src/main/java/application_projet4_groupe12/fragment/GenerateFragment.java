@@ -11,7 +11,6 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -27,7 +26,6 @@ public class GenerateFragment extends Fragment {
     private EditText inputText;
     private ImageView outputBitmap;
     private ImageButton switcher;
-    private Button save;
 
     private static final int TYPE_QR = 0, TYPE_BAR = 1;
     private static int TYPE = TYPE_QR;
@@ -88,7 +86,6 @@ public class GenerateFragment extends Fragment {
                 if(s.length() != 0) {
                     generateCode(s.toString());
                 } else {
-                    save.setVisibility(View.GONE);
                     if(TYPE == TYPE_QR) {
                         outputBitmap.setImageResource(R.drawable.qr_placeholder);
                     } else {

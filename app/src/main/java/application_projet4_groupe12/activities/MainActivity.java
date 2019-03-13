@@ -119,8 +119,8 @@ public class MainActivity extends AppCompatActivity
         navHeaderText1 = (TextView) findViewById(R.id.mainactivity_navigation_header_text1);
         navHeaderText2 = (TextView) findViewById(R.id.mainactivity_navigation_header_text2);
         // navHeaderImage.setImageResource(); //TODO connected User's profile picture (from Facebook if connected, or custom one otherwise)
-        navHeaderText1.setText(User.connectedUser.getFullName());
-        navHeaderText2.setText(User.connectedUser.getUsername());
+        //navHeaderText1.setText(User.connectedUser.getFullName());
+        //navHeaderText2.setText(User.connectedUser.getUsername());
 
         /*button = (Button) findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {

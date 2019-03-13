@@ -118,17 +118,14 @@ public class MainActivity extends AppCompatActivity
         navHeaderImage = (ImageView) findViewById(R.id.mainactivity_navigation_header_image);
         navHeaderText1 = (TextView) findViewById(R.id.mainactivity_navigation_header_text1);
         navHeaderText2 = (TextView) findViewById(R.id.mainactivity_navigation_header_text2);
-        // navHeaderImage.setImageResource(); //TODO connected User's profile picture (from Facebook if connected, or custom one otherwise)
-        //navHeaderText1.setText(User.connectedUser.getFullName());
-        //navHeaderText2.setText(User.connectedUser.getUsername());
 
-        /*button = (Button) findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openSignUp();
-            }
-        });*/
+        // navHeaderImage.setImageResource(); //TODO connected User's profile picture (from Facebook if connected, or custom one otherwise)
+
+        String userFullName = User.connectedUser.getFullName();
+        //if(userFullName != null){ navHeaderText1.setText(userFullName); } //TODO le NullPointerException est causé par le fait que navHeader1 vaut NULL ici - A FIXER
+
+        String userUsername = User.connectedUser.getUsername();
+        //if(userUsername != null){ navHeaderText2.setText(userUsername); }
     }
 
     @Override
@@ -160,10 +157,6 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        /**
-        if (id == R.id.action_settings) {
-            return true;
-        }**/ //TODO removed for sprint01
 
         return super.onOptionsItemSelected(item);
     }

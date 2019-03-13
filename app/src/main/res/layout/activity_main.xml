@@ -21,7 +21,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        app:headerLayout="@layout/mainactivty_navigation_header"
+        app:headerLayout="@layout/mainactivity_navigation_header"
         app:menu="@menu/mainactivity_navigation_drawer"/>
 
     <android.support.v4.view.ViewPager

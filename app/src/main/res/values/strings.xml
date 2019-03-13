@@ -20,11 +20,15 @@
     <string name="existing_email">This email address is already used</string>
     <string name="account_done">Account successfully created</string>
     <string name="password_no_match">Passwords don\'t match</string>
+
     <string name="nav_scan_code">Scan a code</string>
     <string name="nav_generate_code">Generate a code</string>
+    <string name="nav_browse_points">Look up my points</string>
+    <string name="nav_management">Account management</string>
+    <string name="nav_settings">Settings</string>
+    <string name="nav_logout">Log Out</string>
 
-
-
+    <string name="browse_title">Browse my points</string>
     <string name="type_here_bar">Generate barcode</string>
     <string name="type_here_qr">Generate QR code</string>
 

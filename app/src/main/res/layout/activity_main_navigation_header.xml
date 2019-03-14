@@ -14,7 +14,7 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <ImageView
-        android:id="@+id/mainactivity_navigation_header_image"
+        android:id="@+id/activity_main_navigation_header_image"
         android:layout_width="182dp"
         android:layout_height="54dp"
         android:contentDescription="@string/nav_header_desc"
@@ -23,7 +23,7 @@
         app:srcCompat="@drawable/logo_header" />
 
     <TextView
-        android:id="@+id/mainactivity_navigation_header_text1"
+        android:id="@+id/activity_main_navigation_header_text1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
@@ -31,7 +31,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView
-        android:id="@+id/mainactivity_navigation_header_text2"
+        android:id="@+id/activity_main_navigation_header_text2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/nav_header_subtitle" />

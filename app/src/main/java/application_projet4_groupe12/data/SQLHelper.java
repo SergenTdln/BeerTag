@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import application_projet4_groupe12.activities.BrowsePoints.Association;
 import application_projet4_groupe12.entities.Address;
 import application_projet4_groupe12.entities.Partner;
 import application_projet4_groupe12.entities.Shop;
@@ -405,6 +406,55 @@ public class SQLHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * Returns a list of Association instances representing all the points the User has earned from all the Partners/Shops.
+     * @param username the username (email) to look for
+     * @return a list of Association instances. This list might be empty if the User does not currently have any points.
+     */
+    public List<Association> getAllPoints(String username){
+        ArrayList<Association> res = new ArrayList<>();
+        Cursor c = this.getEntriesFromDB("User_points",
+                                null,
+                            "id_user = \""+getUserID(username)+"\"",
+                                null);
+
+        if(c.moveToFirst()){
+            for(int i=0; i<c.getCount(); i++){
+                int shopID = c.getInt(c.getColumnIndex("id_shop"));
+                int partnerID = getPartnerID(shopID);
+                res.add(new Association(context,
+                                        partnerID,
+                                        shopID,
+                                        c.getInt(c.getColumnIndex("points"))
+                                        ));
+                c.moveToNext();
+            }
+        }
+        c.close();
+        return res;
+    }
+
+    /**
+     * Returns the internal ID of the Partner owning/running the Shop passed as argument
+     * @param shopID the Shop_location to look for
+     * @return an internal Partner ID as an int, or -1 if <code>shopID</code> was not present in the database
+     */
+    public int getPartnerID(int shopID){
+        Cursor c = getEntriesFromDB("Shop_location",
+                                    new String[]{"id_partner"},
+                                    "_id = \""+shopID+"\"",
+                                    null);
+        // c should only contain one "cell"
+        if(c.moveToFirst()){
+            int out = c.getInt(c.getColumnIndex("id_partner"));
+            c.close();
+            return out;
+        } else {
+            //This shop does not exist
+            c.close();
+            return -1;
+        }
+    }
+    /**
      * Retrieves information on a User from the database and returns it as an User instance.
      * @param username the email of the User to retrieve
      * @return a User instance, or null if this username was not present in the database
@@ -433,6 +483,7 @@ public class SQLHelper extends SQLiteOpenHelper {
             return out;
         } else {
             //No such user in the database
+            c.close();
             return null;
         }
     }
@@ -459,6 +510,7 @@ public class SQLHelper extends SQLiteOpenHelper {
             return out;
         } else {
             //No such partner in the database
+            c.close();
             return null;
         }
     }
@@ -470,7 +522,7 @@ public class SQLHelper extends SQLiteOpenHelper {
     public int getFreeIDUser(){
         List<String> idsAsString = getElementFromDB("User", "_id", null);
         idsAsString.sort(null);
-        int i = 0;
+        int i = 1;
         for (String s : idsAsString) {
             int id = Integer.parseInt(s);
             if( id==i ){
@@ -490,7 +542,7 @@ public class SQLHelper extends SQLiteOpenHelper {
     public int getFreeIDPartner() {
         List<String> idsAsString = getElementFromDB("Partner", "_id", null);
         idsAsString.sort(null);
-        int i = 0;
+        int i = 1;
         for (String s : idsAsString) {
             int id = Integer.parseInt(s);
             if( id==i ){
@@ -510,7 +562,7 @@ public class SQLHelper extends SQLiteOpenHelper {
     public int getFreeIDPromotion() {
         List<String> idsAsString = getElementFromDB("Promotion", "_id", null);
         idsAsString.sort(null);
-        int i = 0;
+        int i = 1;
         for (String s : idsAsString) {
             int id = Integer.parseInt(s);
             if( id==i ){
@@ -565,6 +617,7 @@ public class SQLHelper extends SQLiteOpenHelper {
             return out;
         } else {
             //No such shop in the database
+            c.close();
             return null;
         }
     }
@@ -590,6 +643,7 @@ public class SQLHelper extends SQLiteOpenHelper {
             return out;
         } else {
             //No such address in the database
+            c.close();
             return null;
         }
     }

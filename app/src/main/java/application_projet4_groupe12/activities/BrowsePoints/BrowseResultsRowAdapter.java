@@ -11,13 +11,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 import java.io.IOException;
 import java.util.List;
 
 import application_projet4_groupe12.R;
-import application_projet4_groupe12.entities.Partner;
 
 public class BrowseResultsRowAdapter extends ArrayAdapter<Association> {
 

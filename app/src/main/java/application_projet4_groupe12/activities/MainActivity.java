@@ -2,7 +2,9 @@ package application_projet4_groupe12.activities;
 
 import android.content.Intent;
 import android.Manifest;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -17,8 +19,11 @@ import android.view.MenuItem;
 import android.widget.Button;
 
 import application_projet4_groupe12.R;
+import application_projet4_groupe12.activities.BrowsePoints.BrowsePointsActivity;
 import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.utils.AppUtils;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import android.support.v4.view.ViewPager;
 import application_projet4_groupe12.item.ItemMainPager;
@@ -30,6 +35,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
@@ -114,12 +120,17 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.bringToFront();
 
-        navHeaderImage = (ImageView) findViewById(R.id.mainactivity_navigation_header_image);
-        navHeaderText1 = (TextView) findViewById(R.id.mainactivity_navigation_header_text1);
-        navHeaderText2 = (TextView) findViewById(R.id.mainactivity_navigation_header_text2);
+        navHeaderImage = (ImageView) findViewById(R.id.activity_main_navigation_header_image);
+        navHeaderText1 = (TextView) findViewById(R.id.activity_main_navigation_header_text1);
+        navHeaderText2 = (TextView) findViewById(R.id.activity_main_navigation_header_text2);
 
-        // navHeaderImage.setImageResource(); //TODO connected User's profile picture (from Facebook if connected, or custom one otherwise)
+        try {
+            navHeaderImage.setImageBitmap(BitmapFactory.decodeStream(this.getAssets().open(User.connectedUser.getImagePath()))); //TODO get picture from Facebook if connected this way
+        } catch (IOException e) {
+            //Do nothing : leave default image
+        }
 
         String userFullName = User.connectedUser.getFullName();
         //if(userFullName != null){ navHeaderText1.setText(userFullName); } //TODO le NullPointerException est causé par le fait que navHeader1 vaut NULL ici - A FIXER
@@ -167,10 +178,16 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_scan) {
+        switch (id){
+            case R.id.nav_scan:
 
-        } else if (id == R.id.nav_generate) {
-            startActivity(new Intent(MainActivity.this, QRGenerateActivity.class));
+
+            case R.id.nav_generate:
+                startActivity(new Intent(MainActivity.this, QRGenerateActivity.class));
+
+            case R.id.nav_browse_points:
+                Toast.makeText(mActivity, "Clicked on Browse points", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(MainActivity.this, BrowsePointsActivity.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -178,13 +195,13 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-/*    public void  openSignUp() {
+    /*public void  openSignUp() {
         Intent intent = new Intent(this, SignUp.class);
         startActivity(intent);
     }*/
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         if (requestCode == Constants.PERMISSION_REQ) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 setUpViewPager();

@@ -29,6 +29,9 @@
     <string name="nav_logout">Log Out</string>
 
     <string name="browse_title">Browse my points</string>
+    <string name="browse_default_partner_name">Default Partner Name</string>
+    <string name="browse_default_shop_address">Default Shop Address</string>
+
     <string name="type_here_bar">Generate barcode</string>
     <string name="type_here_qr">Generate QR code</string>
 
@@ -36,4 +39,5 @@
     <string name="fb_login_protocol_scheme" translatable="false">fb586274028466486</string>
 
     <string name="space" translatable="false"> </string>
+    <string name="hashtag" translatable="false">#</string>
 </resources>

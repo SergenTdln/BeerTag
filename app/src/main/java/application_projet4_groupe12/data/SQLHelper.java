@@ -17,7 +17,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import application_projet4_groupe12.entities.Address;
 import application_projet4_groupe12.entities.Partner;
+import application_projet4_groupe12.entities.Shop;
 import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.exceptions.CustomException;
 import application_projet4_groupe12.exceptions.UnknownPartnerException;
@@ -456,7 +458,7 @@ public class SQLHelper extends SQLiteOpenHelper {
             c.close();
             return out;
         } else {
-            //No such user in the database
+            //No such partner in the database
             return null;
         }
     }
@@ -539,5 +541,56 @@ public class SQLHelper extends SQLiteOpenHelper {
         cv.put("\"image_path\"", user.getImagePath());
 
         return (myDB.update("User", cv, "_id = \""+user.getId()+"\"", null) >= 1);
+    }
+
+    /**
+     * Retrieves information on a Shop location from the database and returns it as a Shop instance.
+     * @param shopID the internal id of the Shop to retrieve
+     * @return a Shop instance, or null if this id was not present in the database
+     */
+    public Shop getShop(int shopID){
+        Cursor c = getEntriesFromDB("Shop_location", null, "_id = \""+shopID+"\"", null);
+        if(c.moveToFirst()){
+            if(c.getCount() != 1){
+                //Duplicate Shop in the database
+                //TODO how to handle this ?
+            }
+            Shop out = new Shop(c.getInt(c.getColumnIndex("_id")),
+                    c.getInt(c.getColumnIndex("id_partner")),
+                    c.getInt(c.getColumnIndex("id_address")),
+                    c.getString(c.getColumnIndex("description")),
+                    c.getString(c.getColumnIndex("created_on"))
+            );
+            c.close();
+            return out;
+        } else {
+            //No such shop in the database
+            return null;
+        }
+    }
+
+    /**
+     * Retrieves information on an Address from the database and returns it as an Address instance.
+     * @param addressID the internal id of the Address to retrieve
+     * @return an Address instance, or null if this id was not present in the database
+     */
+    public Address getAddress(int addressID){
+        Cursor c = getEntriesFromDB("Address", null, "_id = \""+addressID+"\"", null);
+        if(c.moveToFirst()){
+            if(c.getCount() != 1){
+                //Duplicate Address in the database
+                //TODO how to handle this ?
+            }
+            Address out = new Address(c.getInt(c.getColumnIndex("_id")),
+                    c.getString(c.getColumnIndex("city")),
+                    c.getString(c.getColumnIndex("street")),
+                    c.getString(c.getColumnIndex("numbers"))
+            );
+            c.close();
+            return out;
+        } else {
+            //No such address in the database
+            return null;
+        }
     }
 }

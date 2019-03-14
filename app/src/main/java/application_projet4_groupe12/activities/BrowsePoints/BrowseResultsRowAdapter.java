@@ -1,14 +1,19 @@
 package application_projet4_groupe12.activities.BrowsePoints;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
+import java.io.IOException;
 import java.util.List;
 
 import application_projet4_groupe12.R;
@@ -31,21 +36,34 @@ public class BrowseResultsRowAdapter extends ArrayAdapter<Association> {
         if(viewHolder==null)
         {
             viewHolder = new ViewHolder();
-            viewHolder.partnerText = (TextView) convertView.findViewById(R.id.browse_row_adapter_partner_name);
-            //etc TODO
+            viewHolder.partnerName = (TextView) convertView.findViewById(R.id.browse_row_adapter_partner_name);
+            viewHolder.shopAddress = (TextView) convertView.findViewById(R.id.browse_row_adapter_shop_address);
+            viewHolder.partnerPic = (ImageView) convertView.findViewById(R.id.browser_row_adapter_partner_pic);
+            //viewHolder.shopDescr = (TextView) convertView.findViewById(R.id.);
+            viewHolder.pointsAmount = (TextView) convertView.findViewById(R.id.browse_row_adapter_points_amount);
 
             convertView.setTag(viewHolder);
         }
 
         Association assoc = getItem(position);
-        viewHolder.partnerText.setText(assoc.getPartnerName());
-        //etc TODO
+        viewHolder.partnerName.setText(assoc.getPartnerName());
+        viewHolder.shopAddress.setText(assoc.getShopAddress().stringRepresentation());
+        //viewHolder.shopDescr.setText(assoc.getShopDescr());
+        viewHolder.pointsAmount.setText(String.valueOf(assoc.getPoints()));
+        try {
+            viewHolder.partnerPic.setImageBitmap(BitmapFactory.decodeStream(getContext().getAssets().open(assoc.getPartnerImagePath())));
+        } catch (IOException e){
+            //Leave placeholder image
+        }
 
         return convertView;
     }
 
     private class ViewHolder{
-        TextView partnerText;
+        TextView partnerName;
+        ImageView partnerPic;
+        TextView shopAddress;
+        //TextView shopDescr;
         TextView pointsAmount;
     }
 }

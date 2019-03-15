@@ -55,7 +55,7 @@ public class Fragment1 extends Fragment {
                 String pass = password.getText().toString();
 
                 if (TextUtils.isEmpty(email) || TextUtils.isEmpty(pass)) {
-                    Toast.makeText(getActivity(),"Fields are empty", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(),R.string.login_fields, Toast.LENGTH_SHORT).show();
                 }
                 else {
 
@@ -63,12 +63,12 @@ public class Fragment1 extends Fragment {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-                                Toast.makeText(getActivity(),"Firebase login success", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(),R.string.login_success, Toast.LENGTH_SHORT).show();
 
                                 signIn(email);
                             }
                             else {
-                                Toast.makeText(getActivity(),  R.string.invalid_email, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(),  R.string.login_check_credentials, Toast.LENGTH_SHORT).show();
                             }
                         }
                     });

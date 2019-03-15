@@ -1,5 +1,6 @@
 package application_projet4_groupe12.fragment;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -37,6 +39,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import application_projet4_groupe12.activities.MainActivity;
 import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.exceptions.WrongDateFormatException;
@@ -135,14 +138,18 @@ public class Fragment2 extends Fragment {
     }
 
     private void signUp() {
+        String email = username.getText().toString();
+        String pass = password.getText().toString();
+        String confirmPass = confirmPassword.getText().toString();
+
         try {
             db = new SQLHelper(getContext());
 
-            if (db.doesUsernameExist(username.getText().toString()))  {
+            if (db.doesUsernameExist(email))  {
                 Toast.makeText(getActivity(),  "This email already exists", Toast.LENGTH_SHORT).show();
             }
             else {
-                if (password.getText().toString().equals(confirmPassword.getText().toString())) {
+                if (pass.equals(confirmPass)) {
                     int id = db.getFreeIDUser();
                     Date date = Calendar.getInstance().getTime();
                     DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -151,6 +158,21 @@ public class Fragment2 extends Fragment {
                     System.out.println("Utilisateur inséré : "+db.createUser(user));
                     dab.collection("Users").add(user);
                     Toast.makeText(getActivity(), "Account created", Toast.LENGTH_SHORT).show();
+
+                    mAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(getActivity(),R.string.login_success, Toast.LENGTH_SHORT).show();
+
+                                signIn(email);
+                            }
+                            else {
+                                Toast.makeText(getActivity(),"Firebase Failed", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+
                 }
                 else {
                     Toast.makeText(getActivity(), "Passwords do not match", Toast.LENGTH_SHORT).show();
@@ -162,6 +184,30 @@ public class Fragment2 extends Fragment {
         } catch (WrongEmailFormatException e) {
             e.printStackTrace();
         } catch (WrongDateFormatException e) {
+            e.printStackTrace();
+        } finally {
+            db.close();
+        }
+    }
+
+    private void  signIn(String email) {
+        try {
+            db = new SQLHelper(getContext());
+
+            boolean userExists = db.doesUsernameExist(email);
+            System.out.println("Utilisateur existe :" + userExists);
+            if (userExists) {
+
+                User user = db.getUser(email);
+                User.connectUser(getContext(), user);
+
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);
+            } else {
+                Toast.makeText(getActivity(),"not in database", Toast.LENGTH_SHORT).show();
+            }
+
+        } catch (IOException e) {
             e.printStackTrace();
         } finally {
             db.close();

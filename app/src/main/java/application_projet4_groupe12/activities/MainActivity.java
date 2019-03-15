@@ -34,10 +34,10 @@ import android.support.v4.content.ContextCompat;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
-//    private Button button;
 
     private Activity mActivity;
     private Context mContext;
@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity
         fab_gen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, QRGenerateActivity.class));
+               startActivity(new Intent(MainActivity.this, QRGenerateActivity.class));
             }
         });
 
@@ -201,6 +201,9 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_settings:
                 startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                 break;
+            case  R.id.nav_logout:
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(MainActivity.this, SignUp.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

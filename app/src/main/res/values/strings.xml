@@ -32,6 +32,8 @@
     <string name="browse_default_partner_name">Default Partner Name</string>
     <string name="browse_default_shop_address">Default Shop Address</string>
 
+    <string name="settings_title">Settings</string>
+
     <string name="type_here_bar">Generate barcode</string>
     <string name="type_here_qr">Generate QR code</string>
 

@@ -1,4 +1,4 @@
-package application_projet4_groupe12.activities.BrowsePoints;
+package application_projet4_groupe12.activities.browse_points;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
@@ -43,16 +43,17 @@ public class BrowseResultsRowAdapter extends ArrayAdapter<Association> {
         }
 
         Association assoc = getItem(position);
-        viewHolder.partnerName.setText(assoc.getPartnerName());
-        viewHolder.shopAddress.setText(assoc.getShopAddress().stringRepresentation());
-        //viewHolder.shopDescr.setText(assoc.getShopDescr());
-        viewHolder.pointsAmount.setText(String.valueOf(assoc.getPoints()));
-        try {
-            viewHolder.partnerPic.setImageBitmap(BitmapFactory.decodeStream(getContext().getAssets().open(assoc.getPartnerImagePath())));
-        } catch (IOException e){
-            //Leave placeholder image
+        if(assoc!=null) {
+            viewHolder.partnerName.setText(assoc.getPartnerName());
+            viewHolder.shopAddress.setText(assoc.getShopAddress().stringRepresentation());
+            //viewHolder.shopDescr.setText(assoc.getShopDescr());
+            viewHolder.pointsAmount.setText(String.valueOf(assoc.getPoints()));
+            try {
+                viewHolder.partnerPic.setImageBitmap(BitmapFactory.decodeStream(getContext().getAssets().open(assoc.getPartnerImagePath())));
+            } catch (IOException e) {
+                //Leave placeholder image
+            }
         }
-
         return convertView;
     }
 

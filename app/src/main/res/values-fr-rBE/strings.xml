@@ -31,4 +31,5 @@
     <string name="browse_title">Consulter mes points</string>
     <string name="browse_default_partner_name">Nom Partenaire par défaut</string>
     <string name="browse_default_shop_address">Addresse par défaut</string>
+    <string name="settings_title">Paramètres</string>
 </resources>

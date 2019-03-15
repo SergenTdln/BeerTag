@@ -1,4 +1,4 @@
-package application_projet4_groupe12.activities.BrowsePoints;
+package application_projet4_groupe12.activities.browse_points;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteException;

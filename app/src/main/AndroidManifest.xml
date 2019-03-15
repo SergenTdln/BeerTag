@@ -21,10 +21,9 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name="application_projet4_groupe12.activities.SignUp" />
-
-        <activity android:name=".activities.BrowsePoints.BrowsePointsActivity" />
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
 
         <activity
             android:name="application_projet4_groupe12.activities.SplashActivity"
@@ -36,9 +35,8 @@
             </intent-filter>
         </activity>
 
-        <meta-data
-            android:name="preloaded_fonts"
-            android:resource="@array/preloaded_fonts" />
+        <activity android:name="application_projet4_groupe12.activities.SignUp"
+            android:screenOrientation="portrait"/>
 
         <activity android:name="application_projet4_groupe12.activities.MainActivity"
             android:screenOrientation="portrait"/>
@@ -50,6 +48,11 @@
 
         <activity android:name="application_projet4_groupe12.activities.QRGenerateActivity"
             android:screenOrientation="portrait"/>
+
+        <activity android:name=".activities.browse_points.BrowsePointsActivity" />
+
+        <activity android:name=".activities.SettingsActivity"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="io.fabric.ApiKey"

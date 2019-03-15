@@ -3,26 +3,22 @@ package application_projet4_groupe12.data;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteCantOpenDatabaseException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
-import application_projet4_groupe12.activities.BrowsePoints.Association;
+import application_projet4_groupe12.activities.browse_points.Association;
 import application_projet4_groupe12.entities.Address;
 import application_projet4_groupe12.entities.Partner;
 import application_projet4_groupe12.entities.Shop;
 import application_projet4_groupe12.entities.User;
-import application_projet4_groupe12.exceptions.CustomException;
 import application_projet4_groupe12.exceptions.UnknownPartnerException;
 import application_projet4_groupe12.exceptions.WrongDateFormatException;
 import application_projet4_groupe12.exceptions.WrongEmailFormatException;

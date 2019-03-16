@@ -37,6 +37,9 @@ import java.security.NoSuchAlgorithmException;
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.fragment.Fragment1;
 import application_projet4_groupe12.fragment.Fragment2;
+import application_projet4_groupe12.activities.SignUp;
+import application_projet4_groupe12.utils.Global;
+import application_projet4_groupe12.utils.ActivityUtils;
 
 
 public class SignUp extends AppCompatActivity {
@@ -55,6 +58,9 @@ public class SignUp extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(ActivityUtils.getInstance().isLoggedInFacebook()){
+            startActivity(new Intent(SignUp.this, MainActivity.class));
+        }
         //FacebookSdk.sdkInitialize(getApplicationContext());
 
         setContentView(R.layout.activity_sign_up);
@@ -83,7 +89,7 @@ public class SignUp extends AppCompatActivity {
             public void onSuccess(LoginResult loginResult) {
 
                 Log.i(TAG,"Hello"+loginResult.getAccessToken().getToken());
-                Toast.makeText(SignUp.this, "Token:"+loginResult.getAccessToken(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(SignUp.this, "Token:"+loginResult.getAccessToken(), Toast.LENGTH_SHORT).show();
 
                 handleFacebookAccessToken(loginResult.getAccessToken());
             }
@@ -145,12 +151,16 @@ public class SignUp extends AppCompatActivity {
 
                         if (task.isSuccessful()) {
                             Log.w(TAG, "signInWithCredential", task.getException());
-                            Toast.makeText(SignUp.this, "Success",
-                                    Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(SignUp.this, "Success",
+//                                    Toast.LENGTH_SHORT).show();
+
+                            //TODO : récupérer le prénom, l'adresse email et la photo de profil.
+                            //sauvegarder prénom email et photo en bdd local
+                            //synchroniser photo dans le cloud
+                            startActivity(new Intent(SignUp.this, MainActivity.class));
                         }else{
                             Toast.makeText(SignUp.this, "Authentication error",
                                     Toast.LENGTH_SHORT).show();
-
                         }
 
 
@@ -159,10 +169,13 @@ public class SignUp extends AppCompatActivity {
     }
 
     private void setupViewPager(ViewPager viewPager){
-        SectionsStatePagerAdapter adapter = new SectionsStatePagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new Fragment1(), "Fragment1");
-        adapter.addFragment(new Fragment2(), "Fragment2");
-        viewPager.setAdapter(adapter);
+        if(!ActivityUtils.getInstance().isLoggedInFacebook()){
+            SectionsStatePagerAdapter adapter = new SectionsStatePagerAdapter(getSupportFragmentManager());
+            adapter.addFragment(new Fragment1(), "Fragment1");
+            adapter.addFragment(new Fragment2(), "Fragment2");
+            viewPager.setAdapter(adapter);
+        }
+
     }
 
     public void setViewPager(int fragmentNumber) {

@@ -3,6 +3,8 @@ package application_projet4_groupe12.utils;
 import android.app.Activity;
 import android.content.Intent;
 
+import com.facebook.AccessToken;
+
 
 public class ActivityUtils {
 
@@ -20,6 +22,17 @@ public class ActivityUtils {
         activity.startActivity(intent);
         if (shouldFinish) {
             activity.finish();
+        }
+    }
+
+    public boolean isLoggedInFacebook() {
+        AccessToken token;
+        token = AccessToken.getCurrentAccessToken();
+
+        if (token == null) {
+            return false;
+        } else{
+            return true;
         }
     }
 

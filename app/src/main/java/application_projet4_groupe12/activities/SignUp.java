@@ -38,6 +38,7 @@ import application_projet4_groupe12.R;
 import application_projet4_groupe12.fragment.Fragment1;
 import application_projet4_groupe12.fragment.Fragment2;
 
+//TODO : refaire tous les commits apd de ce backup
 
 public class SignUp extends AppCompatActivity {
 

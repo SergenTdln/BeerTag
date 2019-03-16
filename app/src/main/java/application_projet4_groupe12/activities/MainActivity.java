@@ -135,15 +135,15 @@ public class MainActivity extends AppCompatActivity
         ImageView navHeaderImage = (ImageView) findViewById(R.id.activity_main_navigation_header_image);
         TextView navHeaderText1 = (TextView) findViewById(R.id.activity_main_navigation_header_text1);
         TextView navHeaderText2 = (TextView) findViewById(R.id.activity_main_navigation_header_text2);
-        try {
-            navHeaderImage.setImageBitmap(BitmapFactory.decodeStream(this.getAssets().open(User.connectedUser.getImagePath()))); //TODO get picture from Facebook if connected this way
-        } catch (IOException e) {
-            //Do nothing : leave default image
-        }
-        String userFullName = User.connectedUser.getFullName();
-        if(navHeaderText1 != null){ navHeaderText1.setText(userFullName); } //TODO le NullPointerException était causé par le fait que navHeader1 vaut NULL ici - A FIXER
-        String userUsername = User.connectedUser.getUsername();
-        if(navHeaderText2 != null){ navHeaderText2.setText(userUsername); } //TODO le NullPointerException était causé par le fait que navHeader2 vaut NULL ici - A FIXER
+//        try {
+//            navHeaderImage.setImageBitmap(BitmapFactory.decodeStream(this.getAssets().open(User.connectedUser.getImagePath()))); //TODO get picture from Facebook if connected this way
+//        } catch (IOException e) {
+//            //Do nothing : leave default image
+//        }
+//        String userFullName = User.connectedUser.getFullName();
+//        if(navHeaderText1 != null){ navHeaderText1.setText(userFullName); } //TODO le NullPointerException était causé par le fait que navHeader1 vaut NULL ici - A FIXER
+//        String userUsername = User.connectedUser.getUsername();
+//        if(navHeaderText2 != null){ navHeaderText2.setText(userUsername); } //TODO le NullPointerException était causé par le fait que navHeader2 vaut NULL ici - A FIXER
     }
 
     @Override

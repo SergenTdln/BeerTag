@@ -97,10 +97,10 @@ public class Fragment1 extends Fragment {
             System.out.println("Utilisateur existe :" + userExists);
             if (userExists) {
 
-                User user = db.getUser(email);
-                User.connectUser(getContext(), user);
+                user = db.getUser(email);
+                User.connectUser(getActivity(), user);
 
-                Intent intent = new Intent(getActivity(), MainActivity.class);
+                Intent intent = new Intent(getContext(), MainActivity.class);
                 startActivity(intent);
             } else {
                 Toast.makeText(getActivity(),"not in database", Toast.LENGTH_SHORT).show();

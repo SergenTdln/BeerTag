@@ -198,7 +198,7 @@ public class Fragment2 extends Fragment {
             System.out.println("Utilisateur existe :" + userExists);
             if (userExists) {
 
-                User user = db.getUser(email);
+                user = db.getUser(email);
                 User.connectUser(getContext(), user);
 
                 Intent intent = new Intent(getActivity(), MainActivity.class);

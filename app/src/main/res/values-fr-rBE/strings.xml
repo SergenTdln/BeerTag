@@ -32,4 +32,9 @@
     <string name="browse_default_partner_name">Nom Partenaire par défaut</string>
     <string name="browse_default_shop_address">Addresse par défaut</string>
     <string name="settings_title">Paramètres</string>
+
+    <!--<string name="login_fields">Veuillez completer tous les champs</string>-->
+    <!--<string name="login_success">Connection</string>-->
+    <!--<string name="login_check_credentials">Veuillez vérifier vos identifiants</string>-->
+
 </resources>

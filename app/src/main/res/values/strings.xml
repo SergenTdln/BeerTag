@@ -42,4 +42,9 @@
 
     <string name="space" translatable="false"> </string>
     <string name="hashtag" translatable="false">#</string>
+
+    <string name="login_fields">Please complete all fields</string>
+    <string name="login_success">Login success</string>
+    <string name="login_check_credentials">Check credentials</string>
+
 </resources>

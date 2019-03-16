@@ -34,10 +34,13 @@ import android.support.v4.content.ContextCompat;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.login.LoginManager;
+import com.google.firebase.auth.FirebaseAuth;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-//    private Button button;
+   protected static boolean global_fblogin;
 
     private Activity mActivity;
     private Context mContext;
@@ -109,7 +112,7 @@ public class MainActivity extends AppCompatActivity
         fab_gen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, QRGenerateActivity.class));
+               startActivity(new Intent(MainActivity.this, QRGenerateActivity.class));
             }
         });
 
@@ -135,15 +138,15 @@ public class MainActivity extends AppCompatActivity
         ImageView navHeaderImage = (ImageView) findViewById(R.id.activity_main_navigation_header_image);
         TextView navHeaderText1 = (TextView) findViewById(R.id.activity_main_navigation_header_text1);
         TextView navHeaderText2 = (TextView) findViewById(R.id.activity_main_navigation_header_text2);
-        try {
-            navHeaderImage.setImageBitmap(BitmapFactory.decodeStream(this.getAssets().open(User.connectedUser.getImagePath()))); //TODO get picture from Facebook if connected this way
-        } catch (IOException e) {
-            //Do nothing : leave default image
-        }
-        String userFullName = User.connectedUser.getFullName();
-        if(navHeaderText1 != null){ navHeaderText1.setText(userFullName); } //TODO le NullPointerException était causé par le fait que navHeader1 vaut NULL ici - A FIXER
-        String userUsername = User.connectedUser.getUsername();
-        if(navHeaderText2 != null){ navHeaderText2.setText(userUsername); } //TODO le NullPointerException était causé par le fait que navHeader2 vaut NULL ici - A FIXER
+//        try {
+//            navHeaderImage.setImageBitmap(BitmapFactory.decodeStream(this.getAssets().open(User.connectedUser.getImagePath()))); //TODO get picture from Facebook if connected this way
+//        } catch (IOException e) {
+//            //Do nothing : leave default image
+//        }
+//        String userFullName = User.connectedUser.getFullName();
+//        if(navHeaderText1 != null){ navHeaderText1.setText(userFullName); } //TODO le NullPointerException était causé par le fait que navHeader1 vaut NULL ici - A FIXER
+//        String userUsername = User.connectedUser.getUsername();
+//        if(navHeaderText2 != null){ navHeaderText2.setText(userUsername); } //TODO le NullPointerException était causé par le fait que navHeader2 vaut NULL ici - A FIXER
     }
 
     @Override
@@ -201,6 +204,12 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_settings:
                 startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                 break;
+            case  R.id.nav_logout:
+                //couper la session firebase
+                FirebaseAuth.getInstance().signOut();
+                //couper la session facebook
+                LoginManager.getInstance().logOut();
+                startActivity(new Intent(MainActivity.this, SignUp.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

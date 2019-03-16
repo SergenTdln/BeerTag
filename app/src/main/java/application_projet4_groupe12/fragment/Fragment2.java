@@ -1,5 +1,6 @@
 package application_projet4_groupe12.fragment;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -15,6 +16,8 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -36,6 +39,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import application_projet4_groupe12.activities.MainActivity;
 import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.exceptions.WrongDateFormatException;
@@ -50,51 +54,28 @@ public class Fragment2 extends Fragment {
     private SQLHelper db;
     private User user;
     private FirebaseFirestore dab = FirebaseFirestore.getInstance();
+    private FirebaseAuth mAuth;
+    private EditText username;
+    private EditText password;
+    private EditText confirmPassword;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment2_layout, container, false);
-        fragment2_sign_up= (Button) view.findViewById(R.id.fragment2_sign_up);
+        fragment2_sign_up= view.findViewById(R.id.fragment2_sign_up);
+
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
 
         fragment2_sign_up.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    db = new SQLHelper(getContext());
+                username = getView().findViewById(R.id.editText3);
+                password = getView().findViewById(R.id.editText4);
+                confirmPassword = getView().findViewById(R.id.editText5);
 
-                    EditText username = (EditText)getView().findViewById(R.id.editText3);
-                    EditText password = (EditText)getView().findViewById(R.id.editText4);
-                    EditText confirmPassword = (EditText)getView().findViewById(R.id.editText5);
-
-                    if (db.doesUsernameExist(username.getText().toString()))  {
-                        Toast.makeText(getActivity(),  "This email already exists", Toast.LENGTH_SHORT).show();
-                    }
-                    else {
-                        if (password.getText().toString().equals(confirmPassword.getText().toString())) {
-                            int id = db.getFreeIDUser();
-                            Date date = Calendar.getInstance().getTime();
-                            DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-                            String today = formatter.format(date);
-                            user = new User(id, username.getText().toString(), "", today,"albert", "le chat", "01/01/2000", "");
-                            System.out.println("Utilisateur inséré : "+db.createUser(user));
-                            dab.collection("Users").add(user);
-                            Toast.makeText(getActivity(), "Account created", Toast.LENGTH_SHORT).show();
-                        }
-                        else {
-                            Toast.makeText(getActivity(), "Passwords do not match", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (WrongEmailFormatException e) {
-                    e.printStackTrace();
-                } catch (WrongDateFormatException e) {
-                    e.printStackTrace();
-                } finally {
-                    db.close();
-                }
+                signUp();
             }
         });
 
@@ -154,5 +135,82 @@ public class Fragment2 extends Fragment {
                         }
                     }
                 });
+    }
+
+    private void signUp() {
+        String email = username.getText().toString();
+        String pass = password.getText().toString();
+        String confirmPass = confirmPassword.getText().toString();
+
+        try {
+            db = new SQLHelper(getContext());
+
+            if (db.doesUsernameExist(email))  {
+                Toast.makeText(getActivity(),  "This email already exists", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                if (pass.equals(confirmPass)) {
+                    int id = db.getFreeIDUser();
+                    Date date = Calendar.getInstance().getTime();
+                    DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                    String today = formatter.format(date);
+                    user = new User(id, username.getText().toString(), "", today,"albert", "le chat", "01/01/2000", "");
+                    System.out.println("Utilisateur inséré : "+db.createUser(user));
+                    dab.collection("Users").add(user);
+                    Toast.makeText(getActivity(), "Account created", Toast.LENGTH_SHORT).show();
+
+                    mAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(getActivity(),R.string.login_success, Toast.LENGTH_SHORT).show();
+
+                                signIn(email);
+                            }
+                            else {
+                                Toast.makeText(getActivity(),"Firebase Failed", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+
+                }
+                else {
+                    Toast.makeText(getActivity(), "Passwords do not match", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (WrongEmailFormatException e) {
+            e.printStackTrace();
+        } catch (WrongDateFormatException e) {
+            e.printStackTrace();
+        } finally {
+            db.close();
+        }
+    }
+
+    private void  signIn(String email) {
+        try {
+            db = new SQLHelper(getContext());
+
+            boolean userExists = db.doesUsernameExist(email);
+            System.out.println("Utilisateur existe :" + userExists);
+            if (userExists) {
+
+                User user = db.getUser(email);
+                User.connectUser(getContext(), user);
+
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);
+            } else {
+                Toast.makeText(getActivity(),"not in database", Toast.LENGTH_SHORT).show();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            db.close();
+        }
     }
 }

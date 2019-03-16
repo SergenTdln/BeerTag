@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,7 +30,9 @@ public class BrowsePointsActivity extends AppCompatActivity {
         try{
             db = new SQLHelper(this);
             elements = db.getAllPoints(User.connectedUser.getUsername());
-
+            //if(elements.isEmpty()){
+            //    Toast.makeText(getApplicationContext(), "Empty list", Toast.LENGTH_SHORT).show();
+            //}
         } catch (IOException e) {
             //TODO what do we do here ?
             // (exception in SQLHelper constructor)

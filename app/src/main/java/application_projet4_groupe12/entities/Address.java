@@ -14,6 +14,11 @@ public class Address {
         this.numbers = numbers;
     }
 
+    public String stringRepresentation(){
+        //TODO Representation of this Address as a unique String
+        return null;
+    }
+
     //******
     //Getter and setter methods
     //******

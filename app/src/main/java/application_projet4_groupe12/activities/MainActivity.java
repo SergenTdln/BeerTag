@@ -49,6 +49,8 @@ import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
 
+import static com.facebook.FacebookSdk.getApplicationContext;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -154,8 +156,11 @@ public class MainActivity extends AppCompatActivity
         TextView navHeaderText1 = (TextView) findViewById(R.id.activity_main_navigation_header_text1);
         TextView navHeaderText2 = (TextView) findViewById(R.id.activity_main_navigation_header_text2);
 
-        URL profile_pic = new FacebookUtils().getFacebookProfilePic();
-        Log.i("beertag","profile pic main activity"+ profile_pic);
+        if(ActivityUtils.getInstance().isLoggedInFacebook()){
+            URL profile_pic = new FacebookUtils().getFacebookProfilePic();
+            Log.i(Global.debug_text,"profile pic main activity"+ profile_pic);
+
+        }
 //        try {
 //            navHeaderImage.setImageBitmap(BitmapFactory.decodeStream(this.getAssets().open(User.connectedUser.getImagePath()))); //TODO get picture from Facebook if connected this way
 //        } catch (IOException e) {
@@ -258,10 +263,21 @@ public class MainActivity extends AppCompatActivity
                 startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                 break;
             case  R.id.nav_logout:
+                //reset la session globale fb ou standar
+                if(ActivityUtils.getInstance().isLoggedInFacebook()){
+                    String session_id = new FacebookUtils().getFacebookId();
+                    SharedPreferences fb_login = getApplicationContext().getSharedPreferences(session_id, Context.MODE_PRIVATE);
+                    fb_login.edit().clear().apply();
+                } else {
+                    SharedPreferences standard_login = getApplicationContext().getSharedPreferences("session", Context.MODE_PRIVATE);
+                    standard_login.edit().clear().apply();
+                }
+
                 //couper la session firebase
                 FirebaseAuth.getInstance().signOut();
                 //couper la session facebook
                 LoginManager.getInstance().logOut();
+
                 startActivity(new Intent(MainActivity.this, SignUp.class));
         }
 

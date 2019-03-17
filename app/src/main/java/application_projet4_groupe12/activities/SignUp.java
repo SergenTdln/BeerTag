@@ -1,5 +1,6 @@
 package application_projet4_groupe12.activities;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -38,11 +39,20 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import application_projet4_groupe12.R;
+import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.entities.User;
+import application_projet4_groupe12.exceptions.WrongDateFormatException;
+import application_projet4_groupe12.exceptions.WrongEmailFormatException;
 import application_projet4_groupe12.fragment.Fragment1;
 import application_projet4_groupe12.fragment.Fragment2;
 import application_projet4_groupe12.activities.SignUp;
@@ -60,6 +70,8 @@ public class SignUp extends AppCompatActivity {
 
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseAuth mAuth;
+    private SQLHelper db;
+
     LoginButton loginButton;
     CallbackManager mCallbackManager;
     String TAG ="debug";
@@ -210,17 +222,68 @@ public class SignUp extends AppCompatActivity {
                             //sauvegarder prénom email et photo en bdd local
                             //synchroniser photo dans le cloud
                             /* synchroniser avec le cloud > firebase */
+
+                            String session_id = new FacebookUtils().getFacebookId();
+                            SharedPreferences shared = getSharedPreferences(session_id, MODE_PRIVATE);
+                            String session_name = shared.getString("name", "");
+                            String session_email = shared.getString("email", "");
+
+                            /* on split l'username name en firstname et lastname*/
+                            String[] str = session_name.split(" ");  //now str[0] is "hello" and str[1] is "goodmorning,2,1"
+                            String firstname = str[0];  //hello
+                            String lastname = str[1];  //hello
+                            URL imagepath = new FacebookUtils().getFacebookProfilePic();
+
 //                            User user = new User(
-//                                    user_id,
-//                                    username,
-//                                    password,
-//                                    date,
+//                                    Integer.valueOf(session_id),
+//                                    name,
+//                                    null,
+//                                    "04/05/2010",
 //                                    firstname,
 //                                    lastname,
-//                                    birthday,
-//                                    imagepath);
+//                                    "04/05/2010",
+//                                    imagepath.toString());
 
+                            /*
+                            TODO : faire l'ajout en DB
+                             */
 
+//                            Context ct = getApplicationContext();
+//                            try {
+//                                db = new SQLHelper(ct);
+////                                db = new SQLHelper(getContext());
+//
+//                                if(db.doesUsernameExist(session_email)){
+//                                    Log.d(Global.debug_text, "fb user already exists in db");
+//                                } else {
+////                                    int id = Integer.valueOf(session_id);
+//                                    int id = Integer.valueOf(session_id);
+//                                    Date date = Calendar.getInstance().getTime();
+//                                    DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+//                                    String today = formatter.format(date);
+//
+//                                    User user = new User(
+//                                            id,
+//                                            name,
+//                                            null,
+//                                            today,
+//                                            firstname,
+//                                            lastname,
+//                                            "04/05/2010",
+//                                            imagepath.toString()
+//                                    );
+//
+//                                    Log.d(Global.debug_text, "utilisateur fb inséré");
+//
+//                                    db_firebase.collection("Users").add(user);
+//                                    Log.d(Global.debug_text, "utilisateur fb inséré à firebase");
+//
+//                                }
+//
+//                            } catch (IOException e) {
+//                                e.printStackTrace();
+//                                Log.d(Global.debug_text, "fb login db error"+e);
+//                            }
 
 
                             startActivity(new Intent(SignUp.this, MainActivity.class));

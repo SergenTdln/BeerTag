@@ -202,6 +202,7 @@ public class MainActivity extends AppCompatActivity
 
         ImageView navHeaderImage = (ImageView) findViewById(R.id.activity_main_navigation_header_image);
         TextView navHeaderText1 = (TextView) findViewById(R.id.activity_main_navigation_header_text1);
+        TextView navHeaderText2 = (TextView) findViewById(R.id.activity_main_navigation_header_text2);
         /* Remplacer le logo par la photo de profil fb*/
         if(ActivityUtils.getInstance().isLoggedInFacebook()){
             URL fbUrl = new FacebookUtils().getFacebookProfilePic();
@@ -211,7 +212,10 @@ public class MainActivity extends AppCompatActivity
             String id = new FacebookUtils().getFacebookId();
             SharedPreferences shared = getSharedPreferences(id, MODE_PRIVATE);
             String session_name = shared.getString("name", "");
+            String session_email = shared.getString("email", "");
             navHeaderText1.setText(session_name);
+            navHeaderText2.setText(session_email);
+
         }
 
         return true;

@@ -1,5 +1,6 @@
 package application_projet4_groupe12.activities;
 
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
@@ -20,6 +21,8 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.Profile;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -30,14 +33,20 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import application_projet4_groupe12.R;
+import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.fragment.Fragment1;
 import application_projet4_groupe12.fragment.Fragment2;
 import application_projet4_groupe12.activities.SignUp;
+import application_projet4_groupe12.utils.FacebookUtils;
 import application_projet4_groupe12.utils.Global;
 import application_projet4_groupe12.utils.ActivityUtils;
 
@@ -47,6 +56,7 @@ public class SignUp extends AppCompatActivity {
     private SectionsStatePagerAdapter mSectionsStatePagerAdapter;
     private ViewPager mViewPager;
 
+    private FirebaseFirestore db_firebase = FirebaseFirestore.getInstance();
 
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseAuth mAuth;
@@ -76,7 +86,7 @@ public class SignUp extends AppCompatActivity {
             for (Signature signature : info.signatures) {
                 MessageDigest md = MessageDigest.getInstance("SHA");
                 md.update(signature.toByteArray());
-                Log.i(TAG, Base64.encodeToString(md.digest(), Base64.DEFAULT));
+                Log.i(Global.debug_text, Base64.encodeToString(md.digest(), Base64.DEFAULT));
             }
         } catch (PackageManager.NameNotFoundException e) {
         } catch (NoSuchAlgorithmException e) {
@@ -91,6 +101,45 @@ public class SignUp extends AppCompatActivity {
 
                 Log.i(TAG,"Hello"+loginResult.getAccessToken().getToken());
 //                Toast.makeText(SignUp.this, "Token:"+loginResult.getAccessToken(), Toast.LENGTH_SHORT).show();
+
+                GraphRequest request = GraphRequest.newMeRequest(
+                        loginResult.getAccessToken(),
+                        new GraphRequest.GraphJSONObjectCallback() {
+                            @Override
+                            public void onCompleted(JSONObject object, GraphResponse response) {
+                                Log.v("LoginActivity", response.toString());
+
+                                // Retrieve facebook user data
+                                try {
+                                    String id = object.getString("id");
+                                    String email = object.getString("email");
+                                    String name = object.getString("name");
+
+                                    Log.v(Global.debug_text, "id fb"+id);
+                                    Log.v(Global.debug_text, "email fb"+email);
+                                    Log.v(Global.debug_text, "name fb"+name);
+//
+                                    /* initalize facebook session
+                                    * src: https://webkul.com/blog/how-to-manage-session-in-android-app/ */
+                                    SharedPreferences shared = getApplicationContext().getSharedPreferences(id, MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = shared.edit();
+
+                                    editor.putBoolean("loggedIn", true); // Storing boolean - true/false
+                                    editor.putString("id_facebook", id); // Storing boolean - true/false
+                                    editor.putString("email", email); // Storing string value
+                                    editor.putString("name", name); // Storing integer value
+                                    editor.commit();
+                                    /* end */
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                Bundle parameters = new Bundle();
+                parameters.putString("fields", "id,name,email");
+                request.setParameters(parameters);
+                request.executeAsync();
 
                 handleFacebookAccessToken(loginResult.getAccessToken());
             }
@@ -118,7 +167,7 @@ public class SignUp extends AppCompatActivity {
                 if (user!=null){
                     name = user.getDisplayName();
                     Toast.makeText(SignUp.this,""+user.getDisplayName(),Toast.LENGTH_LONG).show();
-                    Log.d(TAG, "user connected"+user.getDisplayName());
+                    Log.d(Global.debug_text, "user connected"+user.getDisplayName());
                 }else {
                     Toast.makeText(SignUp.this,"something went wrong",Toast.LENGTH_LONG).show();
                 }
@@ -142,7 +191,7 @@ public class SignUp extends AppCompatActivity {
     }
 
     private void handleFacebookAccessToken(AccessToken token) {
-        Log.d(TAG, "handleFacebookAccessToken:" + token);
+        Log.d(Global.debug_text, "handleFacebookAccessToken:" + token);
 
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential)
@@ -151,15 +200,29 @@ public class SignUp extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
                         if (task.isSuccessful()) {
-                            Log.w(TAG, "signInWithCredential", task.getException());
+                            Log.w(Global.debug_text, "signInWithCredential", task.getException());
+                            String user_id = Profile.getCurrentProfile().getId();
+                            Log.w(Global.debug_text, "facebook user ud "+user_id, task.getException());
 //                            Toast.makeText(SignUp.this, "Success",
 //                                    Toast.LENGTH_SHORT).show();
 
                             //TODO : récupérer le prénom, l'adresse email et la photo de profil.
                             //sauvegarder prénom email et photo en bdd local
                             //synchroniser photo dans le cloud
-                            String user_id = Profile.getCurrentProfile().getId();
-                            Log.w(TAG, "facebook user ud "+user_id, task.getException());
+                            /* synchroniser avec le cloud > firebase */
+//                            User user = new User(
+//                                    user_id,
+//                                    username,
+//                                    password,
+//                                    date,
+//                                    firstname,
+//                                    lastname,
+//                                    birthday,
+//                                    imagepath);
+
+
+
+
                             startActivity(new Intent(SignUp.this, MainActivity.class));
                         }else{
                             Toast.makeText(SignUp.this, "Authentication error",

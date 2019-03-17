@@ -12,6 +12,7 @@ import com.facebook.GraphResponse;
 import com.facebook.Profile;
 import com.squareup.picasso.Request;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -31,7 +32,7 @@ public class FacebookUtils {
 
         try {
             profile_pic = new URL("https://graph.facebook.com/" + id + "/picture?type=large");
-            Log.i("beertag", "photo de profil: "+profile_pic);
+            Log.i(Global.debug_text, "photo de profil: "+profile_pic);
         } catch (MalformedURLException e) {
             e.printStackTrace();
             return null;
@@ -39,47 +40,10 @@ public class FacebookUtils {
         return profile_pic;
     }
 
-    public String getFacebookUsername(){
+    public String getFacebookId(){
         String id = Profile.getCurrentProfile().getId();
-        URL profile_pic;
-        JSONObject object;
-        String username;
-
-
-        AccessToken accesToken;
-        accesToken = AccessToken.getCurrentAccessToken();
-
-        GraphRequest request = GraphRequest.newMeRequest(
-                accesToken,
-                new GraphRequest.GraphJSONObjectCallback() {
-                    @Override
-                    public void onCompleted(
-                            JSONObject object,
-                            GraphResponse response) {
-                        // Application code
-                    }
-                });
-
-        Bundle parameters = new Bundle();
-        parameters.putString("fields", "id,name,link");
-        request.setParameters(parameters);
-        request.executeAsync();
-
         return id;
     }
-
-//    public Bitmap get_fb_image(URL profile_pic) {
-//
-//        Bitmap image = null;
-//        try {
-//            image = BitmapFactory.decodeStream(profile_pic.openConnection().getInputStream());
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        return image;
-//    }
-//
 
 
 }

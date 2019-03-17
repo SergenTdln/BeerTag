@@ -2,6 +2,7 @@ package application_projet4_groupe12.activities;
 
 import android.content.Intent;
 import android.Manifest;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -34,6 +35,8 @@ import java.util.ArrayList;
 import android.support.v4.view.ViewPager;
 import application_projet4_groupe12.item.ItemMainPager;
 import application_projet4_groupe12.data.Constants;
+import application_projet4_groupe12.utils.Global;
+
 import android.content.pm.PackageManager;
 import android.app.Activity;
 import android.content.Context;
@@ -190,10 +193,6 @@ public class MainActivity extends AppCompatActivity
                 super.onBackPressed();
             }
         }
-
-
-
-
     }
 
     @Override
@@ -202,11 +201,17 @@ public class MainActivity extends AppCompatActivity
         getMenuInflater().inflate(R.menu.main, menu);
 
         ImageView navHeaderImage = (ImageView) findViewById(R.id.activity_main_navigation_header_image);
+        TextView navHeaderText1 = (TextView) findViewById(R.id.activity_main_navigation_header_text1);
         /* Remplacer le logo par la photo de profil fb*/
         if(ActivityUtils.getInstance().isLoggedInFacebook()){
             URL fbUrl = new FacebookUtils().getFacebookProfilePic();
-            Log.i("beertag","nav"+ navHeaderImage);
+            Log.i(Global.debug_text,"nav"+ navHeaderImage);
             Picasso.with(this).load(String.valueOf(fbUrl)).into(navHeaderImage);
+
+            String id = new FacebookUtils().getFacebookId();
+            SharedPreferences shared = getSharedPreferences(id, MODE_PRIVATE);
+            String session_name = shared.getString("name", "");
+            navHeaderText1.setText(session_name);
         }
 
         return true;

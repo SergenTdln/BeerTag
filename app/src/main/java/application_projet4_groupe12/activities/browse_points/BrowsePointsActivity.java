@@ -1,8 +1,10 @@
 package application_projet4_groupe12.activities.browse_points;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.ListView;
 
 import java.io.IOException;
@@ -12,6 +14,7 @@ import java.util.List;
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.entities.User;
+import application_projet4_groupe12.utils.Global;
 
 public class BrowsePointsActivity extends AppCompatActivity {
 
@@ -28,10 +31,14 @@ public class BrowsePointsActivity extends AppCompatActivity {
         SQLHelper db = null;
         try{
             db = new SQLHelper(this);
-            elements = db.getAllPoints(User.connectedUser.getUsername());
+            SharedPreferences shared = getSharedPreferences("session", MODE_PRIVATE);
+            String session_email = shared.getString("email", "");
+            Log.i(Global.debug_text, "login session email "+session_email);
+            elements = db.getAllPoints(session_email);
 
         } catch (IOException e) {
             //TODO what do we do here ?
+            Log.i(Global.debug_text, "Browse points error "+e);
             // (exception in SQLHelper constructor)
         } finally {
             if(db != null) {

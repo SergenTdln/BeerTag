@@ -1,6 +1,8 @@
 package application_projet4_groupe12.fragment;
 
 import android.content.Intent;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -34,6 +36,9 @@ import java.io.IOException;
 import application_projet4_groupe12.activities.MainActivity;
 import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.entities.User;
+
+import static android.content.Context.MODE_PRIVATE;
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class Fragment1 extends Fragment {
 
@@ -133,6 +138,14 @@ public class Fragment1 extends Fragment {
                 User.connectUser(getContext(), user);
 
                 Intent intent = new Intent(getActivity(), MainActivity.class);
+
+                /* creation d'une sessions globale lors du login */
+                SharedPreferences shared = getApplicationContext().getSharedPreferences("session", MODE_PRIVATE);
+                SharedPreferences.Editor editor = shared.edit();
+                editor.putString("email", email); // Storing string value
+                editor.commit();
+                /* end */
+
                 startActivity(intent);
             } else {
                 Toast.makeText(getActivity(),"not in database", Toast.LENGTH_SHORT).show();

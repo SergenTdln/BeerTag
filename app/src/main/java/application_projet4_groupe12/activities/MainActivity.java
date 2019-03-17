@@ -2,10 +2,14 @@ package application_projet4_groupe12.activities;
 
 import android.content.Intent;
 import android.Manifest;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,13 +23,20 @@ import android.view.MenuItem;
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.activities.browse_points.BrowsePointsActivity;
 import application_projet4_groupe12.entities.User;
+import application_projet4_groupe12.fragment.QRScanFragment;
+import application_projet4_groupe12.utils.ActivityUtils;
 import application_projet4_groupe12.utils.AppUtils;
+import application_projet4_groupe12.utils.FacebookUtils;
+import application_projet4_groupe12.utils.DownloadImageTask;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import android.support.v4.view.ViewPager;
 import application_projet4_groupe12.item.ItemMainPager;
 import application_projet4_groupe12.data.Constants;
+import application_projet4_groupe12.utils.Global;
+
 import android.content.pm.PackageManager;
 import android.app.Activity;
 import android.content.Context;
@@ -36,6 +47,7 @@ import android.widget.TextView;
 
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
+import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -47,6 +59,8 @@ public class MainActivity extends AppCompatActivity
 
     private ViewPager mViewPager;
     private ArrayList<String> mFragmentItems;
+
+    private ImageView fbImage;
 
     private void startQr(){
         initQrVars();
@@ -128,6 +142,7 @@ public class MainActivity extends AppCompatActivity
         /*
          * Navigation view
          */
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.bringToFront();
@@ -138,16 +153,33 @@ public class MainActivity extends AppCompatActivity
         ImageView navHeaderImage = (ImageView) findViewById(R.id.activity_main_navigation_header_image);
         TextView navHeaderText1 = (TextView) findViewById(R.id.activity_main_navigation_header_text1);
         TextView navHeaderText2 = (TextView) findViewById(R.id.activity_main_navigation_header_text2);
+
+        URL profile_pic = new FacebookUtils().getFacebookProfilePic();
+        Log.i("beertag","profile pic main activity"+ profile_pic);
 //        try {
 //            navHeaderImage.setImageBitmap(BitmapFactory.decodeStream(this.getAssets().open(User.connectedUser.getImagePath()))); //TODO get picture from Facebook if connected this way
 //        } catch (IOException e) {
 //            //Do nothing : leave default image
 //        }
 //        String userFullName = User.connectedUser.getFullName();
+
 //        if(navHeaderText1 != null){ navHeaderText1.setText(userFullName); } //TODO le NullPointerException était causé par le fait que navHeader1 vaut NULL ici - A FIXER
 //        String userUsername = User.connectedUser.getUsername();
 //        if(navHeaderText2 != null){ navHeaderText2.setText(userUsername); } //TODO le NullPointerException était causé par le fait que navHeader2 vaut NULL ici - A FIXER
+
+//        Handler handler = new Handler();
+//
+//        handler.postDelayed(new Runnable() {
+//            public void run() {
+//                finish();
+//            }
+//        }, 100);
+
     }
+
+    /*
+        Quand on appuie sur le boutton de retour en arrière
+     */
 
     @Override
     public void onBackPressed() {
@@ -167,7 +199,28 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+
+        ImageView navHeaderImage = (ImageView) findViewById(R.id.activity_main_navigation_header_image);
+        TextView navHeaderText1 = (TextView) findViewById(R.id.activity_main_navigation_header_text1);
+        TextView navHeaderText2 = (TextView) findViewById(R.id.activity_main_navigation_header_text2);
+        /* Remplacer le logo par la photo de profil fb*/
+        if(ActivityUtils.getInstance().isLoggedInFacebook()){
+            URL fbUrl = new FacebookUtils().getFacebookProfilePic();
+            Log.i(Global.debug_text,"nav"+ navHeaderImage);
+            Picasso.with(this).load(String.valueOf(fbUrl)).into(navHeaderImage);
+
+            String id = new FacebookUtils().getFacebookId();
+            SharedPreferences shared = getSharedPreferences(id, MODE_PRIVATE);
+            String session_name = shared.getString("name", "");
+            String session_email = shared.getString("email", "");
+            navHeaderText1.setText(session_name);
+            navHeaderText2.setText(session_email);
+
+        }
+
         return true;
+
+
     }
 
     @Override
@@ -190,7 +243,7 @@ public class MainActivity extends AppCompatActivity
 
         switch (id){
             case R.id.nav_scan:
-
+//                startActivity(new Intent(MainActivity.this, QRScanFragment.class));
                 break;
 
             case R.id.nav_generate:

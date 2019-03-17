@@ -157,6 +157,8 @@ public class SignUp extends AppCompatActivity {
                             //TODO : récupérer le prénom, l'adresse email et la photo de profil.
                             //sauvegarder prénom email et photo en bdd local
                             //synchroniser photo dans le cloud
+                            String user_id = Profile.getCurrentProfile().getId();
+                            Log.w(TAG, "facebook user ud "+user_id, task.getException());
                             startActivity(new Intent(SignUp.this, MainActivity.class));
                         }else{
                             Toast.makeText(SignUp.this, "Authentication error",

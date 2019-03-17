@@ -5,6 +5,7 @@ import android.Manifest;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
@@ -140,7 +141,6 @@ public class MainActivity extends AppCompatActivity
          */
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.bringToFront();
 
@@ -163,7 +163,20 @@ public class MainActivity extends AppCompatActivity
 //        if(navHeaderText1 != null){ navHeaderText1.setText(userFullName); } //TODO le NullPointerException était causé par le fait que navHeader1 vaut NULL ici - A FIXER
 //        String userUsername = User.connectedUser.getUsername();
 //        if(navHeaderText2 != null){ navHeaderText2.setText(userUsername); } //TODO le NullPointerException était causé par le fait que navHeader2 vaut NULL ici - A FIXER
+
+//        Handler handler = new Handler();
+//
+//        handler.postDelayed(new Runnable() {
+//            public void run() {
+//                finish();
+//            }
+//        }, 100);
+
     }
+
+    /*
+        Quand on appuie sur le boutton de retour en arrière
+     */
 
     @Override
     public void onBackPressed() {

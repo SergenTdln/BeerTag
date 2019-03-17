@@ -59,6 +59,7 @@ public class SignUp extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(ActivityUtils.getInstance().isLoggedInFacebook()){
+            finish();
             startActivity(new Intent(SignUp.this, MainActivity.class));
         }
         //FacebookSdk.sdkInitialize(getApplicationContext());

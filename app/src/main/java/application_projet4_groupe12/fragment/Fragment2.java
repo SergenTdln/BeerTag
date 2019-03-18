@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
@@ -65,6 +66,8 @@ public class Fragment2 extends Fragment {
     private EditText firstName;
     private EditText lastName;
     private EditText birthDate;
+
+    private int MIN_PASSWD_LENGTH = 6; //This is a Firebase limitation
 
     @Nullable
     @Override
@@ -159,41 +162,46 @@ public class Fragment2 extends Fragment {
                 Toast.makeText(getActivity(),  "This email already exists", Toast.LENGTH_SHORT).show();
             }
             else {
-                if (pass.equals(confirmPass)) {
-                    int id = db.getFreeIDUser();
+                if(pass.length() >= MIN_PASSWD_LENGTH) {
+                    if (pass.equals(confirmPass)) {
+                        int id = db.getFreeIDUser();
 
-                    Date date = Calendar.getInstance().getTime();
-                    DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-                    String today = formatter.format(date); //TODO ceci ne retourne-t-il pas plus que juste la date ? Genre l'heure etc aussi ?
+                        Date date = Calendar.getInstance().getTime();
+                        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                        String today = formatter.format(date);
 
-                    user = new User(id, email, Hash.hash(pass), today, firstName.getText().toString(), lastName.getText().toString(), birthDate.getText().toString(), "");
+                        user = new User(id, email, Hash.hash(pass), today, firstName.getText().toString(), lastName.getText().toString(), birthDate.getText().toString(), "");
 
-                    System.out.println("Utilisateur inséré : "+db.createUser(user));
-                    dab.collection("Users").add(user);
-                    Toast.makeText(getActivity(), "Account created", Toast.LENGTH_SHORT).show();
+                        System.out.println("Utilisateur inséré : " + db.createUser(user));
+                        dab.collection("Users").add(user);
+                        Toast.makeText(getActivity(), "Account created", Toast.LENGTH_SHORT).show();
 
-                    Log.d(Global.debug_text, "firebase instance: "+mAuth);
-                    mAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                Toast.makeText(getActivity(),R.string.login_success, Toast.LENGTH_SHORT).show();
+                        Log.d(Global.debug_text, "firebase instance: " + mAuth);
+                        mAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(getActivity(), R.string.login_success, Toast.LENGTH_SHORT).show();
 
-                                signIn(email);
+                                    signIn(email);
+                                } else {
+                                    Exception e = task.getException();
+                                    if (e instanceof FirebaseNetworkException){
+                                        Toast.makeText(getActivity(), "Could not create your account. Are you offline ?", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(getActivity(), "Firebase Failed" + e, Toast.LENGTH_SHORT).show();
+                                    }
+                                }
                             }
-                            else {
-                                FirebaseAuthException e = (FirebaseAuthException) task.getException();
-                                Toast.makeText(getActivity(),"Firebase Failed"+e, Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+                        });
 
-                }
-                else {
-                    Toast.makeText(getActivity(), "Passwords do not match", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getActivity(), "Passwords do not match", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(getActivity(), "Password must be at least 6 characters long", Toast.LENGTH_SHORT).show();
                 }
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         } catch (WrongEmailFormatException e) {

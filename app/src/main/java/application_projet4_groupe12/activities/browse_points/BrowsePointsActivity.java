@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,10 +32,17 @@ public class BrowsePointsActivity extends AppCompatActivity {
         SQLHelper db = null;
         try{
             db = new SQLHelper(this);
+
             SharedPreferences shared = getSharedPreferences("session", MODE_PRIVATE);
             String session_email = shared.getString("email", "");
             Log.i(Global.debug_text, "login session email "+session_email);
             elements = db.getAllPoints(session_email);
+
+
+//            elements = db.getAllPoints(User.connectedUser.getUsername());
+            //if(elements.isEmpty()){
+            //    Toast.makeText(getApplicationContext(), "Empty list", Toast.LENGTH_SHORT).show();
+            //}
 
         } catch (IOException e) {
             //TODO what do we do here ?

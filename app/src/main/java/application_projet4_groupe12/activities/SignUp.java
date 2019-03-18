@@ -72,6 +72,7 @@ public class SignUp extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private SQLHelper db;
 
+
     LoginButton loginButton;
     CallbackManager mCallbackManager;
     String TAG ="debug";
@@ -136,10 +137,15 @@ public class SignUp extends AppCompatActivity {
                                     SharedPreferences shared = getApplicationContext().getSharedPreferences(id, MODE_PRIVATE);
                                     SharedPreferences.Editor editor = shared.edit();
 
+//                                    URL image_url = new FacebookUtils().getFacebookProfilePic();
+//                                    Log.i(Global.debug_text,"login session image url string"+image_url);
+
+
                                     editor.putBoolean("loggedIn", true); // Storing boolean - true/false
                                     editor.putString("id_facebook", id); // Storing boolean - true/false
                                     editor.putString("email", email); // Storing string value
                                     editor.putString("name", name); // Storing integer value
+//                                    editor.putString("session_img_url", String.valueOf(image_url)); // Storing integer value
                                     editor.commit();
                                     /* end */
 

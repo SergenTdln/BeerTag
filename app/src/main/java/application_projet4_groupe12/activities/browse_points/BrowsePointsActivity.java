@@ -37,6 +37,11 @@ public class BrowsePointsActivity extends AppCompatActivity {
             String session_email = shared.getString("email", "");
             Log.i(Global.debug_text, "login session email "+session_email);
             elements = db.getAllPoints(session_email);
+            
+            //elements = db.getAllPoints(User.connectedUser.getUsername());
+            //if(elements.isEmpty()){
+            //    Toast.makeText(getApplicationContext(), "Empty list", Toast.LENGTH_SHORT).show();
+            //}
 
 
 //            elements = db.getAllPoints(User.connectedUser.getUsername());

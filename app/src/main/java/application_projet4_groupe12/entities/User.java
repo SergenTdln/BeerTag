@@ -42,7 +42,9 @@ public class User {
      */
     public static boolean connectUser(Context c, User u){
         if(connectedUser!=null){
-            return (u.disconnectUser(c));
+            disconnectUser(c);
+            connectedUser = u;
+            return true;
         } else {
             connectedUser = u;
             return true;
@@ -53,7 +55,7 @@ public class User {
      * Disconnects the currently connected User from the application. Its data is refreshed in the database before disconnecting.
      * @return True if the User was successfully disconnected from the application
      */
-    public boolean disconnectUser(Context c){
+    public static boolean disconnectUser(Context c){
         SQLHelper db = null;
         try {
             db = new SQLHelper(c);

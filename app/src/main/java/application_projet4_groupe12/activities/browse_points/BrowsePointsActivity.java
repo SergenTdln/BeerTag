@@ -43,6 +43,12 @@ public class BrowsePointsActivity extends AppCompatActivity {
             //    Toast.makeText(getApplicationContext(), "Empty list", Toast.LENGTH_SHORT).show();
             //}
 
+
+//            elements = db.getAllPoints(User.connectedUser.getUsername());
+            //if(elements.isEmpty()){
+            //    Toast.makeText(getApplicationContext(), "Empty list", Toast.LENGTH_SHORT).show();
+            //}
+
         } catch (IOException e) {
             //TODO what do we do here ?
             Log.i(Global.debug_text, "Browse points error "+e);

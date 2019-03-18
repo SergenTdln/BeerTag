@@ -49,6 +49,9 @@
         <activity android:name="application_projet4_groupe12.activities.QRGenerateActivity"
             android:screenOrientation="portrait"/>
 
+        <activity android:name="application_projet4_groupe12.activities.QRScanActivity"
+            android:screenOrientation="portrait"/>
+
         <activity android:name=".activities.browse_points.BrowsePointsActivity" />
 
         <activity android:name=".activities.SettingsActivity"

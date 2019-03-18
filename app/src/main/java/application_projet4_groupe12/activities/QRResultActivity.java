@@ -14,11 +14,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import application_projet4_groupe12.R;
+import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.data.preference.AppPreference;
 import application_projet4_groupe12.data.preference.PrefKey;
+import application_projet4_groupe12.entities.User;
+import application_projet4_groupe12.exceptions.UnknownPartnerException;
 import application_projet4_groupe12.utils.AppUtils;
 import application_projet4_groupe12.utils.Encryption;
 
@@ -28,6 +32,7 @@ public class QRResultActivity extends AppCompatActivity {
     private Activity mActivity;
     private Context mContext;
 
+    private SQLHelper db;
     private TextView result;
     private FloatingActionButton copyButton;
 
@@ -71,7 +76,17 @@ public class QRResultActivity extends AppCompatActivity {
             result.setText(Html.fromHtml(lastResult));
         }
         result.setMovementMethod(LinkMovementMethod.getInstance());
-
+        try {
+            db = new SQLHelper(this);
+            db.addPoints(User.connectedUser.getUsername(), Integer.parseInt(encryptedQrCode), 1); //TODO à terminer : il me faut accès à l'ID du partner qui a généré le qr code
+        } catch (IOException e){
+            e.printStackTrace();
+        } catch (UnknownPartnerException e){
+            //this should not ever happen, but if it does, let's just ignore for now.
+            e.printStackTrace();
+        } finally {
+            db.close();
+        }
     }
 
     private void initListeners() {

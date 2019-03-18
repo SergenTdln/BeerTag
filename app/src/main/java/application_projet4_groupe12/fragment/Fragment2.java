@@ -154,7 +154,14 @@ public class Fragment2 extends Fragment {
         String email = username.getText().toString();
         String pass = password.getText().toString();
         String confirmPass = confirmPassword.getText().toString();
-
+        if( email.equals("") || pass.equals("") || confirmPass.equals("") ||
+            firstName.getText().toString().equals("") ||
+            lastName.getText().toString().equals("") ||
+            birthDate.getText().toString().equals("") )
+        {
+            Toast.makeText(getActivity(), "Please fill in all the fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
         try {
             db = new SQLHelper(getContext());
 
@@ -171,12 +178,21 @@ public class Fragment2 extends Fragment {
                         String today = formatter.format(date);
 
                         user = new User(id, email, Hash.hash(pass), today, firstName.getText().toString(), lastName.getText().toString(), birthDate.getText().toString(), "");
-
-                        System.out.println("Utilisateur inséré : " + db.createUser(user));
+                        try {
+                            System.out.println("Utilisateur inséré : " + db.createUser(user));
+                        } catch (WrongEmailFormatException e){
+                            e.printStackTrace();
+                            Toast.makeText(getActivity(), "Invalid email format", Toast.LENGTH_SHORT).show();
+                            return;
+                        } catch (WrongDateFormatException e){
+                            e.printStackTrace();
+                            Toast.makeText(getActivity(), "Invalid date format : please use DD/MM/YYYY", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
                         dab.collection("Users").add(user);
                         Toast.makeText(getActivity(), "Account created", Toast.LENGTH_SHORT).show();
 
-                        Log.d(Global.debug_text, "firebase instance: " + mAuth);
+                        Log.d(Global.debug_text, "Firebase instance: " + mAuth);
                         mAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -203,10 +219,6 @@ public class Fragment2 extends Fragment {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (WrongEmailFormatException e) {
-            e.printStackTrace();
-        } catch (WrongDateFormatException e) {
             e.printStackTrace();
         } finally {
             db.close();

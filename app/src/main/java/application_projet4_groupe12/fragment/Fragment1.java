@@ -78,24 +78,27 @@ public class Fragment1 extends Fragment {
                 else {
                     try {
                         db = new SQLHelper(getContext());
+                        if(db.doesUsernameExist(email)) {
+                            if (db.getHashedPassword(email).equals(Hash.hash(pass))) { //If password is correct
 
-                        if(db.getHashedPassword(email).equals(Hash.hash(pass))) { //If password is correct
+                                mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                        if (task.isSuccessful()) {
+                                            Toast.makeText(getActivity(), R.string.login_success, Toast.LENGTH_SHORT).show();
 
-                            mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (task.isSuccessful()) {
-                                        Toast.makeText(getActivity(), R.string.login_success, Toast.LENGTH_SHORT).show();
-
-                                        signIn(email);
-                                    } else {
-                                        Toast.makeText(getActivity(), R.string.login_check_credentials, Toast.LENGTH_SHORT).show();
+                                            signIn(email);
+                                        } else {
+                                            Toast.makeText(getActivity(), R.string.login_check_credentials, Toast.LENGTH_SHORT).show();
+                                        }
                                     }
-                                }
-                            });
+                                });
 
+                            } else {
+                                Toast.makeText(getActivity(), "Wrong password", Toast.LENGTH_SHORT).show();
+                            }
                         } else {
-                            Toast.makeText(getActivity(), "Wrong password", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "This username does not exist", Toast.LENGTH_SHORT).show();
                         }
                     } catch (IOException e) {
                         e.printStackTrace();

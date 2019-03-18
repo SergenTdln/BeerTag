@@ -53,7 +53,7 @@ dependencies {
 
     implementation 'me.dm7.barcodescanner:zbar:1.9.3'
     implementation 'me.dm7.barcodescanner:zxing:1.9.3'
-    implementation 'com.google.firebase:firebase-core:16.0.7'
+    implementation 'com.google.firebase:firebase-core:16.0.8'
     implementation 'com.google.firebase:firebase-firestore:18.1.0'
     implementation 'com.google.firebase:firebase-auth:16.2.0'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.9'

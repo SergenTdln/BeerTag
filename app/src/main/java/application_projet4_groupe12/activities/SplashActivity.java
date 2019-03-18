@@ -22,7 +22,7 @@ public class SplashActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_splash);
-        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.splashBody);
+        RelativeLayout relativeLayout = findViewById(R.id.splashBody);
 
         relativeLayout.postDelayed(new Runnable() {
             @Override

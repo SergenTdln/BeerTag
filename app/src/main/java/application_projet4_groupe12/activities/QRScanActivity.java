@@ -44,7 +44,7 @@ public class QRScanActivity extends AppCompatActivity {
 
         mSectionsStatePagerAdapter = new SectionsStatePagerAdapter(getSupportFragmentManager());
 
-        mViewPager = (ViewPager) findViewById(R.id.viewpager);
+        mViewPager = findViewById(R.id.viewpager);
 
 
         initQrFunctionality();
@@ -69,7 +69,7 @@ public class QRScanActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer == null) {
             finish();
             startActivity(new Intent(QRScanActivity.this, MainActivity.class));

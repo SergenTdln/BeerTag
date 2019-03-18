@@ -25,7 +25,7 @@ public class BrowsePointsActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browse_points);
-        listView = (ListView) findViewById(R.id.browse_listview);
+        listView = findViewById(R.id.browse_listview);
 
         //Obtain list of "Associations"
         List<Association> elements = new ArrayList<>();

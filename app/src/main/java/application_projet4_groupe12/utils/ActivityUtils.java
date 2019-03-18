@@ -47,11 +47,7 @@ public class ActivityUtils {
         AccessToken token;
         token = AccessToken.getCurrentAccessToken();
 
-        if (token == null) {
-            return false;
-        } else {
-            return true;
-        }
+        return token != null;
     }
 
     public void return_user() {

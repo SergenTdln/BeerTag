@@ -88,7 +88,7 @@ public class SignUp extends AppCompatActivity {
         //FacebookSdk.sdkInitialize(getApplicationContext());
 
         setContentView(R.layout.activity_sign_up);
-        loginButton = (LoginButton) findViewById(R.id.login_button);
+        loginButton = findViewById(R.id.login_button);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -195,7 +195,7 @@ public class SignUp extends AppCompatActivity {
         };
 
         mSectionsStatePagerAdapter = new SectionsStatePagerAdapter(getSupportFragmentManager());
-        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager = findViewById(R.id.container);
         setupViewPager(mViewPager);
 
     }

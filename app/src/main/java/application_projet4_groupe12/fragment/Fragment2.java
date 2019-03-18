@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
@@ -45,6 +46,7 @@ import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.exceptions.WrongDateFormatException;
 import application_projet4_groupe12.exceptions.WrongEmailFormatException;
+import application_projet4_groupe12.utils.Hash;
 import application_projet4_groupe12.utils.Global;
 
 import static android.content.ContentValues.TAG;
@@ -57,15 +59,21 @@ public class Fragment2 extends Fragment {
     private User user;
     private FirebaseFirestore dab = FirebaseFirestore.getInstance();
     private FirebaseAuth mAuth;
+
     private EditText username;
     private EditText password;
     private EditText confirmPassword;
+    private EditText firstName;
+    private EditText lastName;
+    private EditText birthDate;
+
+    private int MIN_PASSWD_LENGTH = 6; //This is a Firebase limitation
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment2_layout, container, false);
-        fragment2_sign_up= view.findViewById(R.id.fragment2_sign_up);
+        fragment2_sign_up = view.findViewById(R.id.sign_up_button_out);
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
@@ -73,9 +81,12 @@ public class Fragment2 extends Fragment {
         fragment2_sign_up.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                username = getView().findViewById(R.id.editText3);
-                password = getView().findViewById(R.id.editText4);
-                confirmPassword = getView().findViewById(R.id.editText5);
+                username = getView().findViewById(R.id.sign_up_input_email);
+                password = getView().findViewById(R.id.sign_up_input_password);
+                confirmPassword = getView().findViewById(R.id.sign_up_input_password_confirm);
+                firstName = getView().findViewById(R.id.sign_up_input_first_name);
+                lastName = getView().findViewById(R.id.sign_up_input_last_name);
+                birthDate = getView().findViewById(R.id.sign_up_input_birthday);
 
                 signUp();
             }
@@ -151,38 +162,46 @@ public class Fragment2 extends Fragment {
                 Toast.makeText(getActivity(),  "This email already exists", Toast.LENGTH_SHORT).show();
             }
             else {
-                if (pass.equals(confirmPass)) {
-                    int id = db.getFreeIDUser();
-                    Date date = Calendar.getInstance().getTime();
-                    DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-                    String today = formatter.format(date);
-                    user = new User(id, username.getText().toString(), "", today,"albert", "le chat", "01/01/2000", "");
-                    System.out.println("Utilisateur inséré : "+db.createUser(user));
-                    dab.collection("Users").add(user);
-                    Toast.makeText(getActivity(), "Account created", Toast.LENGTH_SHORT).show();
+                if(pass.length() >= MIN_PASSWD_LENGTH) {
+                    if (pass.equals(confirmPass)) {
+                        int id = db.getFreeIDUser();
 
-                    Log.d(Global.debug_text, "firebase instance: "+mAuth);
-                    mAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                Toast.makeText(getActivity(),R.string.login_success, Toast.LENGTH_SHORT).show();
+                        Date date = Calendar.getInstance().getTime();
+                        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                        String today = formatter.format(date);
 
-                                signIn(email);
+                        user = new User(id, email, Hash.hash(pass), today, firstName.getText().toString(), lastName.getText().toString(), birthDate.getText().toString(), "");
+
+                        System.out.println("Utilisateur inséré : " + db.createUser(user));
+                        dab.collection("Users").add(user);
+                        Toast.makeText(getActivity(), "Account created", Toast.LENGTH_SHORT).show();
+
+                        Log.d(Global.debug_text, "firebase instance: " + mAuth);
+                        mAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(getActivity(), R.string.login_success, Toast.LENGTH_SHORT).show();
+
+                                    signIn(email);
+                                } else {
+                                    Exception e = task.getException();
+                                    if (e instanceof FirebaseNetworkException){
+                                        Toast.makeText(getActivity(), "Could not create your account. Are you offline ?", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(getActivity(), "Firebase Failed" + e, Toast.LENGTH_SHORT).show();
+                                    }
+                                }
                             }
-                            else {
-                                FirebaseAuthException e = (FirebaseAuthException) task.getException();
-                                Toast.makeText(getActivity(),"Firebase Failed"+e, Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+                        });
 
-                }
-                else {
-                    Toast.makeText(getActivity(), "Passwords do not match", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getActivity(), "Passwords do not match", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(getActivity(), "Password must be at least 6 characters long", Toast.LENGTH_SHORT).show();
                 }
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         } catch (WrongEmailFormatException e) {

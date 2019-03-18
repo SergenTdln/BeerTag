@@ -118,6 +118,9 @@ public class MainActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
 
+        /*
+         * Navigation view header data
+         */
         ImageView navHeaderImage = (ImageView) findViewById(R.id.activity_main_navigation_header_image);
         TextView navHeaderText1 = (TextView) findViewById(R.id.activity_main_navigation_header_text1);
         TextView navHeaderText2 = (TextView) findViewById(R.id.activity_main_navigation_header_text2);
@@ -202,10 +205,13 @@ public class MainActivity extends AppCompatActivity
                     standard_login.edit().clear().apply();
                 }
 
+                //Déconnecter en local
+                User.disconnectUser(this);
                 //couper la session firebase
                 FirebaseAuth.getInstance().signOut();
                 //couper la session facebook
                 LoginManager.getInstance().logOut();
+
 
                 startActivity(new Intent(MainActivity.this, SignUp.class));
         }

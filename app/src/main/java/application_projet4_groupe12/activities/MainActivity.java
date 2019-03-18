@@ -48,13 +48,13 @@ public class MainActivity extends AppCompatActivity
         /*
          * Toolbar
          */
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         /*
          * Floating button - scan QR
          */
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity
         /*
          * Floating button - generate QR
          */
-        FloatingActionButton fab_gen = (FloatingActionButton) findViewById(R.id.fab_gen);
+        FloatingActionButton fab_gen = findViewById(R.id.fab_gen);
         fab_gen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity
         /*
          * Sliding drawer
          */
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity
         /*
          * Navigation view
          */
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.bringToFront();
 
@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity
         if(active){
             AppUtils.tapToExit(this);
         }
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer == null) {
             startActivity(new Intent(MainActivity.this, MainActivity.class));
         } else {
@@ -121,9 +121,9 @@ public class MainActivity extends AppCompatActivity
         /*
          * Navigation view header data
          */
-        ImageView navHeaderImage = (ImageView) findViewById(R.id.activity_main_navigation_header_image);
-        TextView navHeaderText1 = (TextView) findViewById(R.id.activity_main_navigation_header_text1);
-        TextView navHeaderText2 = (TextView) findViewById(R.id.activity_main_navigation_header_text2);
+        ImageView navHeaderImage = findViewById(R.id.activity_main_navigation_header_image);
+        TextView navHeaderText1 = findViewById(R.id.activity_main_navigation_header_text1);
+        TextView navHeaderText2 = findViewById(R.id.activity_main_navigation_header_text2);
 
         /* Remplacer le logo par la photo de profil fb*/
         if (ActivityUtils.getInstance().isLoggedInFacebook()) {
@@ -202,11 +202,11 @@ public class MainActivity extends AppCompatActivity
                     fb_login.edit().clear().apply();
                 } else {
                     SharedPreferences standard_login = getApplicationContext().getSharedPreferences("session", Context.MODE_PRIVATE);
+                    //Déconnecter en local
+                    User.disconnectUser(this);
                     standard_login.edit().clear().apply();
                 }
 
-                //Déconnecter en local
-                User.disconnectUser(this);
                 //couper la session firebase
                 FirebaseAuth.getInstance().signOut();
                 //couper la session facebook
@@ -216,7 +216,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(new Intent(MainActivity.this, SignUp.class));
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

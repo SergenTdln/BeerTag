@@ -33,11 +33,11 @@ public class BrowseResultsRowAdapter extends ArrayAdapter<Association> {
         if(viewHolder==null)
         {
             viewHolder = new ViewHolder();
-            viewHolder.partnerName = (TextView) convertView.findViewById(R.id.browse_row_adapter_partner_name);
-            viewHolder.shopAddress = (TextView) convertView.findViewById(R.id.browse_row_adapter_shop_address);
-            viewHolder.partnerPic = (ImageView) convertView.findViewById(R.id.browser_row_adapter_partner_pic);
+            viewHolder.partnerName = convertView.findViewById(R.id.browse_row_adapter_partner_name);
+            viewHolder.shopAddress = convertView.findViewById(R.id.browse_row_adapter_shop_address);
+            viewHolder.partnerPic = convertView.findViewById(R.id.browser_row_adapter_partner_pic);
             //viewHolder.shopDescr = (TextView) convertView.findViewById(R.id.);
-            viewHolder.pointsAmount = (TextView) convertView.findViewById(R.id.browse_row_adapter_points_amount);
+            viewHolder.pointsAmount = convertView.findViewById(R.id.browse_row_adapter_points_amount);
 
             convertView.setTag(viewHolder);
         }

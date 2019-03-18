@@ -643,4 +643,19 @@ public class SQLHelper extends SQLiteOpenHelper {
             return null;
         }
     }
+
+    /**
+     * TODO
+     * @param email
+     * @return
+     */
+    public String getHashedPassword(String email){
+        ArrayList<String> res = getElementFromDB("User", "password", "username = \""+email+"\"");
+        if(res.isEmpty()){
+            //TODO
+        } else {
+            return res.get(0);
+        }
+        return null;
+    }
 }

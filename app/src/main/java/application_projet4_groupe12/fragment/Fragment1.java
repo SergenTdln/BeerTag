@@ -36,6 +36,7 @@ import java.io.IOException;
 import application_projet4_groupe12.activities.MainActivity;
 import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.entities.User;
+import application_projet4_groupe12.utils.Hash;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.facebook.FacebookSdk.getApplicationContext;
@@ -65,8 +66,8 @@ public class Fragment1 extends Fragment {
         fragment1_sign_in.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                username = getView().findViewById(R.id.editText1);
-                password = getView().findViewById(R.id.editText2);
+                username = getView().findViewById(R.id.sign_in_input_email);
+                password = getView().findViewById(R.id.sign_in_input_password);
 
                 String email = username.getText().toString();
                 String pass = password.getText().toString();
@@ -75,20 +76,33 @@ public class Fragment1 extends Fragment {
                     Toast.makeText(getActivity(),R.string.login_fields, Toast.LENGTH_SHORT).show();
                 }
                 else {
+                    try {
+                        db = new SQLHelper(getContext());
 
-                    mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                Toast.makeText(getActivity(),R.string.login_success, Toast.LENGTH_SHORT).show();
+                        if(db.getHashedPassword(email).equals(Hash.hash(pass))) { //If password is correct
 
-                                signIn(email);
-                            }
-                            else {
-                                Toast.makeText(getActivity(),  R.string.login_check_credentials, Toast.LENGTH_SHORT).show();
-                            }
+                            mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(getActivity(), R.string.login_success, Toast.LENGTH_SHORT).show();
+
+                                        signIn(email);
+                                    } else {
+                                        Toast.makeText(getActivity(), R.string.login_check_credentials, Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+
+                        } else {
+                            Toast.makeText(getActivity(), "Wrong password", Toast.LENGTH_SHORT).show();
                         }
-                    });
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } finally {
+                        db.close();
+                    }
+
                 }
             }
         });

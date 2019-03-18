@@ -11,7 +11,15 @@ import android.os.Vibrator;
 import android.widget.Toast;
 
 
+import com.facebook.login.LoginManager;
+import com.google.firebase.auth.FirebaseAuth;
+
 import application_projet4_groupe12.R;
+import application_projet4_groupe12.activities.MainActivity;
+import application_projet4_groupe12.activities.QRGenerateActivity;
+import application_projet4_groupe12.activities.SignUp;
+import application_projet4_groupe12.activities.SplashActivity;
+import application_projet4_groupe12.utils.ActivityUtils;
 
 public class AppUtils {
 
@@ -19,6 +27,12 @@ public class AppUtils {
 
     public static void tapToExit(Activity activity) {
         if (backPressed + 2500 > System.currentTimeMillis()){
+            if(activity.isTaskRoot()){
+                //TODO deco de la db locale
+                FirebaseAuth.getInstance().signOut();
+                LoginManager.getInstance().logOut();
+                ActivityUtils.getInstance().invokeActivity(activity, SignUp.class, true);
+            }
             activity.finish();
         }
         else{

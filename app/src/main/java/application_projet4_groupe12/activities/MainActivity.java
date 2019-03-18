@@ -19,6 +19,7 @@ import application_projet4_groupe12.R;
 import application_projet4_groupe12.activities.browse_points.BrowsePointsActivity;
 import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.utils.ActivityUtils;
+import application_projet4_groupe12.utils.AppUtils;
 import application_projet4_groupe12.utils.FacebookUtils;
 
 import java.net.URL;
@@ -36,9 +37,12 @@ import com.squareup.picasso.Picasso;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    static boolean active = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         /*
@@ -86,12 +90,6 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.bringToFront();
 
-        /*
-         * Navigation view header data
-         */
-        ImageView navHeaderImage = (ImageView) findViewById(R.id.activity_main_navigation_header_image);
-        TextView navHeaderText1 = (TextView) findViewById(R.id.activity_main_navigation_header_text1);
-        TextView navHeaderText2 = (TextView) findViewById(R.id.activity_main_navigation_header_text2);
     }
 
     /*
@@ -100,6 +98,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
+        if(active){
+            AppUtils.tapToExit(this);
+        }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer == null) {
             startActivity(new Intent(MainActivity.this, MainActivity.class));
@@ -154,6 +155,18 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        active = true;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        active = false;
     }
 
     @SuppressWarnings("StatementWithEmptyBody")

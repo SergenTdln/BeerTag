@@ -71,6 +71,7 @@ public class QRScanActivity extends AppCompatActivity {
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer == null) {
+            finish();
             startActivity(new Intent(QRScanActivity.this, MainActivity.class));
         } else {
             if (drawer.isDrawerOpen(GravityCompat.START)) {

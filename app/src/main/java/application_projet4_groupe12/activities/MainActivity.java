@@ -1,11 +1,10 @@
 package application_projet4_groupe12.activities;
 
 import android.content.Intent;
-import android.Manifest;
-import android.graphics.BitmapFactory;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,69 +18,23 @@ import android.view.MenuItem;
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.activities.browse_points.BrowsePointsActivity;
 import application_projet4_groupe12.entities.User;
-import application_projet4_groupe12.utils.AppUtils;
+import application_projet4_groupe12.utils.ActivityUtils;
+import application_projet4_groupe12.utils.FacebookUtils;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import android.support.v4.view.ViewPager;
-import application_projet4_groupe12.item.ItemMainPager;
-import application_projet4_groupe12.data.Constants;
-import android.content.pm.PackageManager;
-import android.app.Activity;
+import java.net.URL;
+
+import application_projet4_groupe12.utils.Global;
+
 import android.content.Context;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
+import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
-   protected static boolean global_fblogin;
-
-    private Activity mActivity;
-    private Context mContext;
-
-    private ViewPager mViewPager;
-    private ArrayList<String> mFragmentItems;
-
-    private void startQr(){
-        initQrVars();
-        initQrViews();
-        initQrFunctionality();
-    }
-
-    private void initQrVars() {
-        mActivity = MainActivity.this;
-        mContext = mActivity.getApplicationContext();
-        mFragmentItems = new ArrayList<>();
-    }
-
-    private void initQrViews() {
-
-        setContentView(R.layout.activity_qrscan);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        mViewPager = (ViewPager) findViewById(R.id.viewpager);
-
-//        getSupportActionBar().setTitle(R.string.menu_scan);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-    }
-
-    private void initQrFunctionality() {
-        if ((ContextCompat.checkSelfPermission( mActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
-                || (ContextCompat.checkSelfPermission( mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
-            ActivityCompat.requestPermissions(
-                    mActivity, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.PERMISSION_REQ);
-        } else {
-            setUpViewPager();
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +54,7 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startQr();
+                startActivity(new Intent(MainActivity.this, QRScanActivity.class));
             }
         });
 
@@ -112,7 +65,8 @@ public class MainActivity extends AppCompatActivity
         fab_gen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               startActivity(new Intent(MainActivity.this, QRGenerateActivity.class));
+                finish();
+                startActivity(new Intent(MainActivity.this, QRGenerateActivity.class));
             }
         });
 
@@ -138,16 +92,11 @@ public class MainActivity extends AppCompatActivity
         ImageView navHeaderImage = (ImageView) findViewById(R.id.activity_main_navigation_header_image);
         TextView navHeaderText1 = (TextView) findViewById(R.id.activity_main_navigation_header_text1);
         TextView navHeaderText2 = (TextView) findViewById(R.id.activity_main_navigation_header_text2);
-//        try {
-//            navHeaderImage.setImageBitmap(BitmapFactory.decodeStream(this.getAssets().open(User.connectedUser.getImagePath()))); //TODO get picture from Facebook if connected this way
-//        } catch (IOException e) {
-//            //Do nothing : leave default image
-//        }
-//        String userFullName = User.connectedUser.getFullName();
-//        if(navHeaderText1 != null){ navHeaderText1.setText(userFullName); } //TODO le NullPointerException était causé par le fait que navHeader1 vaut NULL ici - A FIXER
-//        String userUsername = User.connectedUser.getUsername();
-//        if(navHeaderText2 != null){ navHeaderText2.setText(userUsername); } //TODO le NullPointerException était causé par le fait que navHeader2 vaut NULL ici - A FIXER
     }
+
+    /*
+        Quand on appuie sur le boutton de retour en arrière
+     */
 
     @Override
     public void onBackPressed() {
@@ -167,6 +116,32 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+
+        ImageView navHeaderImage = (ImageView) findViewById(R.id.activity_main_navigation_header_image);
+        TextView navHeaderText1 = (TextView) findViewById(R.id.activity_main_navigation_header_text1);
+        TextView navHeaderText2 = (TextView) findViewById(R.id.activity_main_navigation_header_text2);
+
+        /* Remplacer le logo par la photo de profil fb*/
+        if (ActivityUtils.getInstance().isLoggedInFacebook()) {
+            URL fbUrl = new FacebookUtils().getFacebookProfilePic();
+            Log.i(Global.debug_text, "nav" + navHeaderImage);
+            String id = new FacebookUtils().getFacebookId();
+            SharedPreferences shared = getSharedPreferences(id, MODE_PRIVATE);
+            String session_name = shared.getString("name", "");
+            String session_email = shared.getString("email", "");
+            URL image_url = new FacebookUtils().getFacebookProfilePic();
+            Log.i(Global.debug_text, "session img url / name / email " + image_url + session_name + session_email);
+            Picasso.with(this).load(String.valueOf(image_url)).into(navHeaderImage);
+            navHeaderText1.setText(session_name);
+            navHeaderText2.setText(session_email);
+        } else {
+            String userFullName = User.connectedUser.getFullName();
+            Log.i(Global.debug_text, "userFullName" + userFullName);
+            navHeaderText1.setText(userFullName);
+            String userUsername = User.connectedUser.getUsername();
+            Log.i(Global.debug_text, "getUsername" + userUsername);
+            navHeaderText2.setText(userUsername);
+        }
         return true;
     }
 
@@ -178,7 +153,6 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -188,9 +162,9 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        switch (id){
+        switch (id) {
             case R.id.nav_scan:
-
+                startActivity(new Intent(MainActivity.this, QRScanActivity.class));
                 break;
 
             case R.id.nav_generate:
@@ -204,41 +178,27 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_settings:
                 startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                 break;
-            case  R.id.nav_logout:
+            case R.id.nav_logout:
+                //reset la session globale fb ou standar
+                if (ActivityUtils.getInstance().isLoggedInFacebook()) {
+                    String session_id = new FacebookUtils().getFacebookId();
+                    SharedPreferences fb_login = getApplicationContext().getSharedPreferences(session_id, Context.MODE_PRIVATE);
+                    fb_login.edit().clear().apply();
+                } else {
+                    SharedPreferences standard_login = getApplicationContext().getSharedPreferences("session", Context.MODE_PRIVATE);
+                    standard_login.edit().clear().apply();
+                }
+
                 //couper la session firebase
                 FirebaseAuth.getInstance().signOut();
                 //couper la session facebook
                 LoginManager.getInstance().logOut();
+
                 startActivity(new Intent(MainActivity.this, SignUp.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    /*public void  openSignUp() {
-        Intent intent = new Intent(this, SignUp.class);
-        startActivity(intent);
-    }*/
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
-        if (requestCode == Constants.PERMISSION_REQ) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                setUpViewPager();
-            } else {
-                AppUtils.showToast(mContext, getString(R.string.permission_not_granted));
-            }
-        }
-    }
-
-    private void setUpViewPager() {
-
-        mFragmentItems.add(getString(R.string.menu_scan));
-
-        ItemMainPager itemMainPager = new ItemMainPager(getSupportFragmentManager(), mFragmentItems);
-        mViewPager.setAdapter(itemMainPager);
-        itemMainPager.notifyDataSetChanged();
     }
 }

@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -45,6 +46,7 @@ import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.exceptions.WrongDateFormatException;
 import application_projet4_groupe12.exceptions.WrongEmailFormatException;
 import application_projet4_groupe12.utils.Hash;
+import application_projet4_groupe12.utils.Global;
 
 import static android.content.ContentValues.TAG;
 import static java.lang.System.err;
@@ -170,6 +172,7 @@ public class Fragment2 extends Fragment {
                     dab.collection("Users").add(user);
                     Toast.makeText(getActivity(), "Account created", Toast.LENGTH_SHORT).show();
 
+                    Log.d(Global.debug_text, "firebase instance: "+mAuth);
                     mAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
@@ -179,7 +182,8 @@ public class Fragment2 extends Fragment {
                                 signIn(email);
                             }
                             else {
-                                Toast.makeText(getActivity(),"Firebase Failed", Toast.LENGTH_SHORT).show();
+                                FirebaseAuthException e = (FirebaseAuthException) task.getException();
+                                Toast.makeText(getActivity(),"Firebase Failed"+e, Toast.LENGTH_SHORT).show();
                             }
                         }
                     });

@@ -186,14 +186,14 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_generate:
                 startActivity(new Intent(MainActivity.this, QRGenerateActivity.class));
                 break;
-
-            case R.id.nav_browse_points:
+            //TODO désactivé pour le sprint 02
+            //case R.id.nav_browse_points:
                 //Toast.makeText(getApplicationContext(), "Clicked on Browse points", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(MainActivity.this, BrowsePointsActivity.class));
-                break;
-            case R.id.nav_settings:
-                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-                break;
+                //startActivity(new Intent(MainActivity.this, BrowsePointsActivity.class));
+                //break;
+            //case R.id.nav_settings:
+                //startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                //break;
             case R.id.nav_logout:
                 //reset la session globale fb ou standar
                 if (ActivityUtils.getInstance().isLoggedInFacebook()) {

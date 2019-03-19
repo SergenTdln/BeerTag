@@ -8,6 +8,8 @@ import android.widget.RelativeLayout;
 
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.utils.ActivityUtils;
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
 
 
 public class SplashActivity extends AppCompatActivity {
@@ -15,11 +17,12 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_splash);
-        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.splashBody);
+        RelativeLayout relativeLayout = findViewById(R.id.splashBody);
 
         relativeLayout.postDelayed(new Runnable() {
             @Override
@@ -29,4 +32,3 @@ public class SplashActivity extends AppCompatActivity {
         }, 2000);
     }
 }
-

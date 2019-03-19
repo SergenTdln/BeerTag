@@ -20,4 +20,21 @@
     <string name="existing_email">Cette addresse e-mail est déjà utilisée</string>
     <string name="account_done">Compte créé avec succès</string>
     <string name="password_no_match">Les mots de passe ne correspondent pas</string>
+    <string name="nav_scan_code">Scanner un code</string>
+    <string name="nav_generate_code">Générer un code</string>
+    <string name="type_here_bar">Générer un code-barres</string>
+    <string name="type_here_qr">Générer un code QR</string>
+    <string name="nav_browse_points">Consulter mes points</string>
+    <string name="nav_settings">Paramètres</string>
+    <string name="nav_logout">Déconnexion</string>
+    <string name="nav_management">Gestion du compte</string>
+    <string name="browse_title">Consulter mes points</string>
+    <string name="browse_default_partner_name">Nom Partenaire par défaut</string>
+    <string name="browse_default_shop_address">Addresse par défaut</string>
+    <string name="settings_title">Paramètres</string>
+
+    <!--<string name="login_fields">Veuillez completer tous les champs</string>-->
+    <!--<string name="login_success">Connection</string>-->
+    <!--<string name="login_check_credentials">Veuillez vérifier vos identifiants</string>-->
+
 </resources>

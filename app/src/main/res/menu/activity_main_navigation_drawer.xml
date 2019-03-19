@@ -12,10 +12,10 @@
             android:id="@+id/nav_generate"
             android:icon="@drawable/ic_menu_gallery"
             android:title="@string/nav_generate_code" />
-        <item
+        <!-- <item
             android:id="@+id/nav_browse_points"
             android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/nav_browse_points" />
+            android:title="@string/nav_browse_points" /> -->
         <!--<item-->
             <!--android:id="@+id/nav_manage"-->
             <!--android:icon="@drawable/ic_menu_manage"-->
@@ -25,10 +25,10 @@
     <item
         android:title="@string/nav_management" >
         <menu>
-            <item
+            <!-- <item
                 android:id="@+id/nav_settings"
                 android:icon="@drawable/ic_menu_share"
-                android:title="@string/nav_settings" />
+                android:title="@string/nav_settings" /> -->
             <item
                 android:id="@+id/nav_logout"
                 android:icon="@drawable/ic_menu_send"

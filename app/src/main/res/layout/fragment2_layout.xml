@@ -21,7 +21,7 @@
 
     <EditText
         android:id="@+id/sign_up_user_input_email"
-        android:layout_width="wrap_content"
+        android:layout_width="160dp"
         android:layout_height="45dp"
         android:layout_marginTop="150dp"
         android:fontFamily="@font/roboto"
@@ -89,7 +89,7 @@
 
     <EditText
         android:id="@+id/sign_up_user_input_birthday"
-        android:layout_width="wrap_content"
+        android:layout_width="160dp"
         android:layout_height="45dp"
         android:layout_marginTop="16dp"
         android:fontFamily="@font/roboto"

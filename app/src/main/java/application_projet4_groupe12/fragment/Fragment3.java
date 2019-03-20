@@ -1,6 +1,5 @@
 package application_projet4_groupe12.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,16 +11,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseNetworkException;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -34,16 +29,11 @@ import java.util.Calendar;
 import java.util.Date;
 
 import application_projet4_groupe12.R;
-import application_projet4_groupe12.activities.MainActivity;
 import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.entities.Partner;
-import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.exceptions.UnknownUserException;
 import application_projet4_groupe12.exceptions.WrongDateFormatException;
-import application_projet4_groupe12.exceptions.WrongEmailFormatException;
-import application_projet4_groupe12.utils.AppUtils;
 import application_projet4_groupe12.utils.Global;
-import application_projet4_groupe12.utils.Hash;
 import application_projet4_groupe12.utils.Pair;
 
 import static android.content.ContentValues.TAG;
@@ -75,9 +65,16 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
 
         adminPair = new Pair(null, null);
 
-        String allUsernames[] = new String[]{}; //TODO populate
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.fragment3_spinner_adapter, allUsernames);
-        dropDownUsers.setAdapter(adapter);
+        try {
+            db = new SQLHelper(getContext());
+            String allUsernames[] = db.getAllUsernames().toArray(new String[0]);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.fragment3_spinner_adapter, allUsernames);
+            dropDownUsers.setAdapter(adapter);
+        } catch (IOException e) {
+            Toast.makeText(getContext(), "IOException : could not retrieve existing users", Toast.LENGTH_SHORT).show();
+        } finally {
+            db.close();
+        }
 
         dropDownUsers.setOnItemSelectedListener(this);
 
@@ -169,7 +166,7 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
 
             /**
              * Deleted those lines because two Partners could have the same name.
-             * //TODO Maybe check if a Partner with ALL same fields exist ? Then stop creating a duplicate
+             * //TODO Maybe check if a Partner with ALL same fields exist ? THEN stop creating a duplicate
              if (db.doesPartnerExist(name))  {
              Toast.makeText(getActivity(),  "This email already exists", Toast.LENGTH_SHORT).show();
              }

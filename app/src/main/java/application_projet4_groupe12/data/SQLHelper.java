@@ -653,18 +653,17 @@ public class SQLHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * TODO
-     * @param email
-     * @return
+     * Returns the hashed password of the User identified by <code>email</code>.
+     * @param email the username/e-mail of the User to look for
+     * @return the hashed password of this User as a String
      */
-    public String getHashedPassword(String email){
+    public String getHashedPassword(String email) throws UnknownUserException {
         ArrayList<String> res = getElementFromDB("User", "password", "username = \""+email+"\"");
         if(res.isEmpty()){
-            //TODO
+            throw new UnknownUserException("User \""+email+"\" is not present in the database");
         } else {
             return res.get(0);
         }
-        return null;
     }
 
     /**
@@ -682,5 +681,9 @@ public class SQLHelper extends SQLiteOpenHelper {
         cv.put("\"id_partner\"", (Integer) adminPair.getB());
 
         return ( myDB.insert("Admin_user", null, cv) != -1);
+    }
+
+    public List<String> getAllUsernames(){
+        return getElementFromDB("User", "username", null);
     }
 }

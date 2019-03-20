@@ -14,6 +14,8 @@ import android.widget.Toast;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.List;
+
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.activities.MainActivity;
 import application_projet4_groupe12.activities.QRGenerateActivity;
@@ -44,7 +46,6 @@ public class AppUtils {
     public static void showToast(Context context, String msg) {
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
     }
-
 
     public static void copyToClipboard(Context context, String text) {
         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);

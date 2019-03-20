@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,7 +13,6 @@ import java.util.List;
 
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.data.SQLHelper;
-import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.utils.Global;
 
 public class BrowsePointsActivity extends AppCompatActivity {
@@ -28,7 +26,7 @@ public class BrowsePointsActivity extends AppCompatActivity {
         listView = findViewById(R.id.browse_listview);
 
         //Obtain list of "Associations"
-        List<Association> elements = new ArrayList<>();
+        List<BrowsePointsAssociation> elements = new ArrayList<>();
         SQLHelper db = null;
         try{
             db = new SQLHelper(this);

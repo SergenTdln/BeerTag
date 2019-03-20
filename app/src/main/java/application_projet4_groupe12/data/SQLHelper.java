@@ -13,17 +13,18 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
-import application_projet4_groupe12.activities.browse_points.Association;
+import application_projet4_groupe12.activities.browse_points.BrowsePointsAssociation;
 import application_projet4_groupe12.entities.Address;
 import application_projet4_groupe12.entities.Partner;
 import application_projet4_groupe12.entities.Shop;
 import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.exceptions.UnknownPartnerException;
+import application_projet4_groupe12.exceptions.UnknownUserException;
 import application_projet4_groupe12.exceptions.WrongDateFormatException;
 import application_projet4_groupe12.exceptions.WrongEmailFormatException;
+import application_projet4_groupe12.utils.Pair;
 
 
 /**
@@ -223,16 +224,16 @@ public class SQLHelper extends SQLiteOpenHelper {
     /**
      * Returns the internal ID of the user identified by the passed <code>email</code> argument.
      * @param email the email of the user we are looking for
-     * @return The ID of this user as a String, or null if this <code>email</code> is not present in the database.
+     * @return The ID of this user as an instance of Integer, or null if this <code>email</code> is not present in the database.
      */
-    private String getUserID(String email){
+    private Integer getUserID(String email){
         ArrayList<String> res = this.getElementFromDB("User", "_id", "username = \""+email+"\"");
         int l = res.size();
         if( l == 0 ){
             //No user with such email was found in the database
             return null;
         } else {
-            return res.get(0);
+            return Integer.parseInt(res.get(0));
         }
     }
 
@@ -257,7 +258,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param partnerID the internal ID of the partner to look for
      * @return True if this partnerID already exists, False otherwise
      */
-    private boolean doesPartnerExist(int partnerID){
+    public boolean doesPartnerExist(int partnerID){
         boolean out;
         Cursor c = getEntriesFromDB("Partner",
                 new String[]{"name"},
@@ -378,7 +379,7 @@ public class SQLHelper extends SQLiteOpenHelper {
             throw new UnknownPartnerException("Partner with ID " + partnerID + " does not exist in the database.");
         }
 
-        int currentPoints = this.getPoints(Integer.parseInt(getUserID(username)), partnerID);
+        int currentPoints = this.getPoints(getUserID(username), partnerID);
 
         ContentValues cv = new ContentValues();
         cv.put("\"id_user\"", getUserID(username));
@@ -409,12 +410,12 @@ public class SQLHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Returns a list of Association instances representing all the points the User has earned from all the Partners/Shops.
+     * Returns a list of BrowsePointsAssociation instances representing all the points the User has earned from all the Partners/Shops.
      * @param username the username (email) to look for
-     * @return a list of Association instances. This list might be empty if the User does not currently have any points.
+     * @return a list of BrowsePointsAssociation instances. This list might be empty if the User does not currently have any points.
      */
-    public List<Association> getAllPoints(String username){
-        ArrayList<Association> res = new ArrayList<>();
+    public List<BrowsePointsAssociation> getAllPoints(String username){
+        ArrayList<BrowsePointsAssociation> res = new ArrayList<>();
         Cursor c = this.getEntriesFromDB("User_points",
                                 null,
                             "id_user = \""+getUserID(username)+"\"",
@@ -424,7 +425,7 @@ public class SQLHelper extends SQLiteOpenHelper {
             for(int i=0; i<c.getCount(); i++){
                 int shopID = c.getInt(c.getColumnIndex("id_shop"));
                 int partnerID = getPartnerID(shopID);
-                res.add(new Association(context,
+                res.add(new BrowsePointsAssociation(context,
                                         partnerID,
                                         shopID,
                                         c.getInt(c.getColumnIndex("points"))
@@ -664,5 +665,22 @@ public class SQLHelper extends SQLiteOpenHelper {
             return res.get(0);
         }
         return null;
+    }
+
+    /**
+     * Adds an association between an existing User and a Partner.
+     * @param adminPair a pair instance. a must contain the User's username/e-mail address as a String, and b must be the Partner's ID in the local database as an Integer
+     * @return True if the operation succeeded, false otherwise
+     */
+    public boolean addAdmin(Pair adminPair) throws UnknownUserException {
+        if(! doesUsernameExist((String) adminPair.getA())){
+            throw new UnknownUserException("User with username \""+adminPair.getA()+"\" does not exist.");
+        }
+
+        ContentValues cv = new ContentValues();
+        cv.put("\"id_user\"", getUserID((String) adminPair.getA()));
+        cv.put("\"id_partner\"", (Integer) adminPair.getB());
+
+        return ( myDB.insert("Admin_user", null, cv) != -1);
     }
 }

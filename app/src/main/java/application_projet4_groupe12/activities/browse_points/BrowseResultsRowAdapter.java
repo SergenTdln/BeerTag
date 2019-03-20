@@ -16,9 +16,9 @@ import java.util.List;
 
 import application_projet4_groupe12.R;
 
-public class BrowseResultsRowAdapter extends ArrayAdapter<Association> {
+public class BrowseResultsRowAdapter extends ArrayAdapter<BrowsePointsAssociation> {
 
-    public BrowseResultsRowAdapter(Context context, @NonNull List<Association> elements){
+    public BrowseResultsRowAdapter(Context context, @NonNull List<BrowsePointsAssociation> elements){
         super(context, 0, elements);
     }
 
@@ -42,7 +42,7 @@ public class BrowseResultsRowAdapter extends ArrayAdapter<Association> {
             convertView.setTag(viewHolder);
         }
 
-        Association assoc = getItem(position);
+        BrowsePointsAssociation assoc = getItem(position);
         if(assoc!=null) {
             viewHolder.partnerName.setText(assoc.getPartnerName());
             viewHolder.shopAddress.setText(assoc.getShopAddress().stringRepresentation());

@@ -56,6 +56,7 @@ import application_projet4_groupe12.exceptions.WrongEmailFormatException;
 import application_projet4_groupe12.fragment.Fragment1;
 import application_projet4_groupe12.fragment.Fragment2;
 import application_projet4_groupe12.activities.SignUp;
+import application_projet4_groupe12.fragment.Fragment3;
 import application_projet4_groupe12.utils.FacebookUtils;
 import application_projet4_groupe12.utils.Global;
 import application_projet4_groupe12.utils.ActivityUtils;
@@ -308,6 +309,7 @@ public class SignUp extends AppCompatActivity {
             SectionsStatePagerAdapter adapter = new SectionsStatePagerAdapter(getSupportFragmentManager());
             adapter.addFragment(new Fragment1(), "Fragment1");
             adapter.addFragment(new Fragment2(), "Fragment2");
+            adapter.addFragment(new Fragment3(), "Fragment3");
             viewPager.setAdapter(adapter);
         }
 

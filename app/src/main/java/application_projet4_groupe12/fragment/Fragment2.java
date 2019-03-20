@@ -73,7 +73,7 @@ public class Fragment2 extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment2_layout, container, false);
-        fragment2_sign_up = view.findViewById(R.id.sign_up_button_out);
+        fragment2_sign_up = view.findViewById(R.id.sign_up_user_button_out);
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
@@ -81,12 +81,12 @@ public class Fragment2 extends Fragment {
         fragment2_sign_up.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                username = getView().findViewById(R.id.sign_up_input_email);
-                password = getView().findViewById(R.id.sign_up_input_password);
-                confirmPassword = getView().findViewById(R.id.sign_up_input_password_confirm);
-                firstName = getView().findViewById(R.id.sign_up_input_first_name);
-                lastName = getView().findViewById(R.id.sign_up_input_last_name);
-                birthDate = getView().findViewById(R.id.sign_up_input_birthday);
+                username = getView().findViewById(R.id.sign_up_user_input_email);
+                password = getView().findViewById(R.id.sign_up_user_input_password);
+                confirmPassword = getView().findViewById(R.id.sign_up_user_input_password_confirm);
+                firstName = getView().findViewById(R.id.sign_up_user_input_first_name);
+                lastName = getView().findViewById(R.id.sign_up_user_input_last_name);
+                birthDate = getView().findViewById(R.id.sign_up_user_input_birthday);
 
                 signUp();
             }

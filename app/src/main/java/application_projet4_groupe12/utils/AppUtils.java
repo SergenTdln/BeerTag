@@ -52,6 +52,4 @@ public class AppUtils {
         clipboard.setPrimaryClip(clip);
         showToast(context, context.getResources().getString(R.string.copied));
     }
-
-
 }

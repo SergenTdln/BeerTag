@@ -52,7 +52,7 @@ public class CodeGenerator extends AsyncTask<Void, Void, Bitmap>{
     }
 
     public interface ResultListener {
-        public void onResult(Bitmap bitmap);
+        void onResult(Bitmap bitmap);
     }
 
     private Bitmap createQRCode(String str) throws WriterException {

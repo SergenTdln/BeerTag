@@ -14,12 +14,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import application_projet4_groupe12.R;
+import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.data.preference.AppPreference;
 import application_projet4_groupe12.data.preference.PrefKey;
+import application_projet4_groupe12.entities.User;
+import application_projet4_groupe12.exceptions.UnknownPartnerException;
 import application_projet4_groupe12.utils.AppUtils;
+import application_projet4_groupe12.utils.Encryption;
 
 
 public class QRResultActivity extends AppCompatActivity {
@@ -27,6 +32,7 @@ public class QRResultActivity extends AppCompatActivity {
     private Activity mActivity;
     private Context mContext;
 
+    private SQLHelper db;
     private TextView result;
     private FloatingActionButton copyButton;
 
@@ -47,11 +53,11 @@ public class QRResultActivity extends AppCompatActivity {
 
     private void initViews() {
         setContentView(R.layout.activity_qrscan_result);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        result = (TextView) findViewById(R.id.result);
-        copyButton = (FloatingActionButton) findViewById(R.id.copy);
+        result = findViewById(R.id.result);
+        copyButton = findViewById(R.id.copy);
     }
 
     private void initFunctionality() {
@@ -62,13 +68,25 @@ public class QRResultActivity extends AppCompatActivity {
 
         ArrayList<String> arrayList = AppPreference.getInstance(mContext).getStringArray(PrefKey.RESULT_LIST);
         String lastResult = arrayList.get(arrayList.size()-1);
+        String encryptedQrCode = Encryption.decryptQrCode(lastResult);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            result.setText(Html.fromHtml(lastResult, Html.FROM_HTML_MODE_LEGACY));
+//            result.setText(Html.fromHtml(lastResult, Html.FROM_HTML_MODE_LEGACY));
+            result.setText(Html.fromHtml("qr code crypté= "+ lastResult + "| qr code  décrypté= " + encryptedQrCode, Html.FROM_HTML_MODE_LEGACY));
         } else {
             result.setText(Html.fromHtml(lastResult));
         }
         result.setMovementMethod(LinkMovementMethod.getInstance());
-
+        try {
+            db = new SQLHelper(this);
+            db.addPoints(User.connectedUser.getUsername(), Integer.parseInt(encryptedQrCode), 1); //TODO à terminer : il me faut accès à l'ID du partner qui a généré le qr code
+        } catch (IOException e){
+            e.printStackTrace();
+        } catch (UnknownPartnerException e){
+            //this should not ever happen, but if it does, let's just ignore for now.
+            e.printStackTrace();
+        } finally {
+            db.close();
+        }
     }
 
     private void initListeners() {

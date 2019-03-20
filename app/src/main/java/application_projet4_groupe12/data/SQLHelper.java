@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import application_projet4_groupe12.activities.browse_points.Association;
@@ -301,7 +303,9 @@ public class SQLHelper extends SQLiteOpenHelper {
         int day = Integer.parseInt(split[0]);
         int month = Integer.parseInt(split[1]);
         int year = Integer.parseInt(split[2]);
-        return ! (day<1 || day>31 || month<1 || month>12 || year<2019);
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+
+        return ! (day<1 || day>31 || month<1 || month>12 || year<1900 || year>currentYear);
     }
 
     /**
@@ -317,8 +321,11 @@ public class SQLHelper extends SQLiteOpenHelper {
         if(! isValidEmail(user.getUsername())){
             throw new WrongEmailFormatException(user.getUsername() + " is not a valid email address");
         }
-        if (! isValidDate(user.getCreationDate())){
+        if ( !isValidDate(user.getCreationDate()) ){
             throw new WrongDateFormatException(user.getCreationDate() + " is not a valid date format.");
+        }
+        if( !isValidDate(user.getBirthday()) ){
+            throw new WrongDateFormatException(user.getBirthday() + " is not a valid date format.");
         }
         if(doesUsernameExist(user.getUsername())){
             return false;

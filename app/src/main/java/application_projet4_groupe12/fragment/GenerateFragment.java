@@ -17,6 +17,7 @@ import android.widget.ImageView;
 
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.utils.CodeGenerator;
+import application_projet4_groupe12.utils.Encryption;
 
 public class GenerateFragment extends Fragment {
 
@@ -59,8 +60,8 @@ public class GenerateFragment extends Fragment {
     }
 
     private void initView(View rootView) {
-        inputText = (EditText) rootView.findViewById(R.id.inputText);
-        outputBitmap = (ImageView) rootView.findViewById(R.id.outputBitmap);
+        inputText = rootView.findViewById(R.id.inputText);
+        outputBitmap = rootView.findViewById(R.id.outputBitmap);
 
     }
 
@@ -84,7 +85,8 @@ public class GenerateFragment extends Fragment {
             public void onTextChanged(CharSequence s, int start,
                                       int before, int count) {
                 if(s.length() != 0) {
-                    generateCode(s.toString());
+                    String encryptedQrCode = Encryption.encryptQrCode(s.toString());
+                    generateCode(encryptedQrCode);
                 } else {
                     if(TYPE == TYPE_QR) {
                         outputBitmap.setImageResource(R.drawable.qr_placeholder);

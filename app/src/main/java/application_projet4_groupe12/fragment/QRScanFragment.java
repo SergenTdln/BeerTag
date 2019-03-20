@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import application_projet4_groupe12.activities.MainActivity;
+import application_projet4_groupe12.utils.Encryption;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.activities.QRResultActivity;
@@ -72,7 +73,7 @@ public class QRScanFragment extends Fragment  {
     }
 
     private void initView(View rootView) {
-        contentFrame = (ViewGroup) rootView.findViewById(R.id.content_frame);
+        contentFrame = rootView.findViewById(R.id.content_frame);
         //todo : corriger le toolbar sur le scanner
 //        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Scanning");
 

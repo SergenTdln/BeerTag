@@ -66,7 +66,7 @@ public class SQLHelper extends SQLiteOpenHelper {
 
         try{
             this.createDataBase();
-        }catch (IOException e){
+        } catch (IOException e){
             throw new IOException("Error while creating the DB");
         }
         try{
@@ -481,7 +481,8 @@ public class SQLHelper extends SQLiteOpenHelper {
                                 c.getString(c.getColumnIndex("first_name")),
                                 c.getString(c.getColumnIndex("last_name")),
                                 c.getString(c.getColumnIndex("birthday")),
-                                c.getString(c.getColumnIndex("image_path"))
+                                c.getString(c.getColumnIndex("image_path")),
+                                this.isAdmin(username)
                                 );
             c.close();
             return out;
@@ -683,6 +684,21 @@ public class SQLHelper extends SQLiteOpenHelper {
         return ( myDB.insert("Admin_user", null, cv) != -1);
     }
 
+    /**
+     * Returns whether this user is an Admin, that is if he appears in the Admin_user table.
+     * @param username the username to look for
+     * @return True if the user identified by <code>username</code> is an Admin for any Partner, or False otherwise
+     */
+    public boolean isAdmin(String username){
+        int id = getUserID(username);
+        return (getElementFromDB("Admin_user", "id_user", "id_user = \""+id+"\"")
+                .size() > 0);
+    }
+
+    /**
+     * Returns a <code>List</code> of all the usernames currently present in the local database, as Strings
+     * @return a <code>List<String></code> of all the usernames in the database
+     */
     public List<String> getAllUsernames(){
         return getElementFromDB("User", "username", null);
     }

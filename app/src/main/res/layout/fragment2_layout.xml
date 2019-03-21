@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
         android:fontFamily="@font/roboto_black"
+        android:gravity="center_horizontal"
         android:text="Create a new User account"
         android:textColor="@color/login_text"
         android:textSize="30sp"

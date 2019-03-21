@@ -27,10 +27,12 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.entities.Partner;
+import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.exceptions.UnknownUserException;
 import application_projet4_groupe12.exceptions.WrongDateFormatException;
 import application_projet4_groupe12.utils.Global;
@@ -67,11 +69,16 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
 
         try {
             db = new SQLHelper(getContext());
-            String allUsernames[] = db.getAllUsernames().toArray(new String[0]);
+
+            List<String> allUsernamesList = db.getAllUsernames();
+            allUsernamesList.add(0, "Please select an User");
+            String allUsernames[] = allUsernamesList.toArray(new String[0]);
+
             ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.fragment3_spinner_adapter, allUsernames);
             dropDownUsers.setAdapter(adapter);
         } catch (IOException e) {
-            Toast.makeText(getContext(), "IOException : could not retrieve existing users", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+            Toast.makeText(getContext(), "IOException : could not retrieve existing users. Try refreshing the view", Toast.LENGTH_SHORT).show();
         } finally {
             db.close();
         }
@@ -94,7 +101,17 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String selectedUsername = (String) parent.getItemAtPosition(position);
-        adminPair.setA(selectedUsername);
+        if(position==0) {
+            //Default item is selected : do nothing
+        } else if(User.isAdmin(getContext(), selectedUsername)){
+            //An User cannot be admin of two Partners at the same time
+            Toast.makeText(getContext(), "This User is already an admin for another Partner. Please select another User account", Toast.LENGTH_SHORT).show();
+            //Do nothing
+            dropDownUsers.setSelection(0);
+        } else {
+            adminPair.setA(selectedUsername);
+            Toast.makeText(getContext(), "You selected User \""+selectedUsername+"\" as an Admin for this Partner", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

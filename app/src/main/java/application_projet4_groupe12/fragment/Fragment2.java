@@ -129,10 +129,11 @@ public class Fragment2 extends Fragment {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 User user = document.toObject(User.class);
                                 int id = Integer.parseInt(document.getString("id"));
+                                String username = document.getString("username");
                                 String today = document.getString("creationDate");
                                 String firstname = document.getString("firstName");
                                 String lastname = document.getString("lastName");
-                                user = new User(id, document.getString("username"), "", today, firstname, lastname, "BirthDate", ""); //TODO à refaire
+                                user = new User(id, username, "", today, firstname, lastname, "BirthDate", "", false); //TODO à refaire
                                 try {
                                     db.createUser(user);
                                 }
@@ -177,7 +178,7 @@ public class Fragment2 extends Fragment {
                         DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                         String today = formatter.format(date);
 
-                        user = new User(id, email, Hash.hash(pass), today, firstName.getText().toString(), lastName.getText().toString(), birthDate.getText().toString(), "");
+                        user = new User(id, email, Hash.hash(pass), today, firstName.getText().toString(), lastName.getText().toString(), birthDate.getText().toString(), "", false);
                         try {
                             System.out.println("Utilisateur inséré : " + db.createUser(user));
                         } catch (WrongEmailFormatException e){

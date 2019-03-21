@@ -87,6 +87,11 @@ public class MainActivity extends AppCompatActivity
          * Navigation view
          */
         NavigationView navigationView = findViewById(R.id.nav_view);
+        if(User.connectedUser.isAdmin()){
+            navigationView.inflateMenu(R.menu.activity_main_navigation_drawer_admin);
+        } else {
+            navigationView.inflateMenu(R.menu.activity_main_navigation_drawer);
+        }
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.bringToFront();
 

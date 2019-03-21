@@ -160,7 +160,7 @@ public class Fragment1 extends Fragment {
                 SharedPreferences shared = getApplicationContext().getSharedPreferences("session", MODE_PRIVATE);
                 SharedPreferences.Editor editor = shared.edit();
                 editor.putString("email", email); // Storing string value
-                editor.commit();
+                editor.apply();
                 /* end */
 
                 startActivity(intent);

@@ -40,6 +40,7 @@
     <string name="browse_clients_title">Browse my clients\' points</string>
     <string name="browse_clients_default_user_fullname">Default User Full Name</string>
     <string name="browse_clients_default_user_username">Default User email</string>
+    <string name="browse_clients_shop_title">Shop located at :</string>
 
     <string name="settings_title">Settings</string>
 

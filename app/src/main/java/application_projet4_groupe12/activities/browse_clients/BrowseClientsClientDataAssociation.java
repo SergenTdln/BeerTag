@@ -9,15 +9,13 @@ import application_projet4_groupe12.entities.Address;
 import application_projet4_groupe12.entities.Shop;
 import application_projet4_groupe12.entities.User;
 
-public class BrowseClientsAssociation {
+public class BrowseClientsClientDataAssociation {
 
     private int points;
     private String userFullname;
     private String userUsername;
-    private Address shopAddress;
-    private String shopDescr;
 
-    public BrowseClientsAssociation(Context c, String username, int shopID, int points){
+    public BrowseClientsClientDataAssociation(Context c, String username, int points){
 
         this.points = points;
 
@@ -28,12 +26,6 @@ public class BrowseClientsAssociation {
 
             this.userFullname = user.getFullName();
             this.userUsername = username;
-
-            Shop shop = db.getShop(shopID);
-
-            this.shopDescr = shop.getDescription();
-            int addressID = shop.getAddressID();
-            this.shopAddress = db.getAddress(addressID);
 
         } catch (IOException e) {
             //TODO what do we do here ?
@@ -54,13 +46,5 @@ public class BrowseClientsAssociation {
 
     String getUsername(){
         return userUsername;
-    }
-
-    Address getShopAddress(){
-        return shopAddress;
-    }
-
-    String getShopDescr(){
-        return shopDescr;
     }
 }

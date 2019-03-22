@@ -1,6 +1,5 @@
 package application_projet4_groupe12.activities.browse_clients;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -26,12 +25,12 @@ public class BrowseClientsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_browse_clients);
         listView = findViewById(R.id.browse_clients_listview);
 
-        List<BrowseClientsAssociation> elements = new ArrayList<>();
+        List<BrowseClientsShopDataAssociation> elements = new ArrayList<>();
         SQLHelper db = null;
         try {
             db = new SQLHelper(this);
 
-            elements = db.getAllCientPoints(db.getAdminFromUser(User.connectedUser.getId()));
+            elements = db.getAllClientPoints(db.getAdminFromUser(User.connectedUser.getId()));
 
         } catch (IOException e) {
             //TODO what do we do here ?
@@ -43,7 +42,7 @@ public class BrowseClientsActivity extends AppCompatActivity {
             }
         }
 
-        BrowseClientsResultsRowAdapter bcrra = new BrowseClientsResultsRowAdapter(this, elements);
+        BrowseClientsShopDataRowAdapter bcrra = new BrowseClientsShopDataRowAdapter(this, elements);
         listView.setAdapter(bcrra);
     }
 }

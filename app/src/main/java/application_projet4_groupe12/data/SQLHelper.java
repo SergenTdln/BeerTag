@@ -6,7 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -16,7 +16,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import application_projet4_groupe12.activities.browse_clients.BrowseClientsAssociation;
+import application_projet4_groupe12.activities.browse_clients.BrowseClientsClientDataAssociation;
+import application_projet4_groupe12.activities.browse_clients.BrowseClientsShopDataAssociation;
 import application_projet4_groupe12.activities.browse_points.BrowsePointsAssociation;
 import application_projet4_groupe12.entities.Address;
 import application_projet4_groupe12.entities.Partner;
@@ -424,67 +425,6 @@ public class SQLHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Returns a list of BrowsePointsAssociation instances representing all the points the User has earned from all the Partners/Shops.
-     * @param username the username (email) to look for
-     * @return a list of BrowsePointsAssociation instances. This list might be empty if the User does not currently have any points.
-     */
-    public List<BrowsePointsAssociation> getAllPoints(String username){
-        ArrayList<BrowsePointsAssociation> res = new ArrayList<>();
-        Cursor c = this.getEntriesFromDB("User_points",
-                                null,
-                            "id_user = \""+getUserID(username)+"\"",
-                                null);
-
-        if(c.moveToFirst()){
-            for(int i=0; i<c.getCount(); i++){
-                int shopID = c.getInt(c.getColumnIndex("id_shop"));
-                int partnerID = getPartnerID(shopID);
-                res.add(new BrowsePointsAssociation(context,
-                                        partnerID,
-                                        shopID,
-                                        c.getInt(c.getColumnIndex("points"))
-                                        ));
-                c.moveToNext();
-            }
-        }
-        c.close();
-        return res;
-    }
-
-    /**
-     * Returns a list of BrowseClientsAssociation instances representing all the points all the Users have earned from this Partner.
-     * @param partnerId the Partner to look for
-     * @return a list of BrowseClientsAssociation instances. This list might be empty if no User has earned points from this Partner so far.
-     */
-    public List<BrowseClientsAssociation> getAllCientPoints(int partnerId){
-        List<BrowseClientsAssociation> res = new ArrayList<>();
-        List<Triplet> userPointsPairs = new ArrayList<>();
-
-        List<Integer> partnerShops = getAllShopsIDs(partnerId);
-        for (int s : partnerShops) {
-            res.addAll(getAllClientsPointsAtShop(s));
-        }
-        //Now transform those
-        return res;
-    }
-
-    /**
-     * Returns a list of BrowseClientsAssociation instances representing all the points all the Users have earned from this Shop.
-     * @param shopID the Shop to look for
-     * @return a list of BrowseClientsAssociation instances. This list might be empty if no User has earned points from this Shop so far.
-     */
-    public List<BrowseClientsAssociation> getAllClientsPointsAtShop(int shopID){
-        List<BrowseClientsAssociation> res = new ArrayList<>();
-
-        List<Integer> users = getAllUserIDs(shopID);
-        for (int userID : users) {
-            //For each user using this shop :
-            res.add(new BrowseClientsAssociation(context, getUsername(userID), shopID, getPoints(userID, shopID)));
-        }
-        return null;
-    }
-
-    /**
      * Returns a list of Shop IDs representing all this Partner's physical shops.
      * @param partnerID the partner to look for
      * @return a list of Integers. This list can be empty if this Partner has no Shop registered in the database.
@@ -737,6 +677,21 @@ public class SQLHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * Retrieves information on an Shop Address from the database and returns it as an Address instance.
+     * @param shopID the internal id of the Shop to look for
+     * @return an Address instance, or null if this Shop id was not present in the database
+     */
+    public Address getShopAddress(int shopID){
+        List<String> res = getElementFromDB("Shop_location", "id_address", "_id = \""+shopID+"\"");
+        if(res.isEmpty()){
+            //This shopID is invalid
+            return null;
+        } else {
+            return getAddress(Integer.parseInt(res.get(0)));
+        }
+    }
+
+    /**
      * Returns the hashed password of the User identified by <code>email</code>.
      * @param email the username/e-mail of the User to look for
      * @return the hashed password of this User as a String
@@ -798,5 +753,66 @@ public class SQLHelper extends SQLiteOpenHelper {
      */
     public List<String> getAllUsernames(){
         return getElementFromDB("User", "username", null);
+    }
+
+    /**
+     * Returns a list of BrowsePointsAssociation instances representing all the points the User has earned from all the Partners/Shops.
+     * @param username the username (email) to look for
+     * @return a list of BrowsePointsAssociation instances. This list might be empty if the User does not currently have any points.
+     */
+    public List<BrowsePointsAssociation> getAllPoints(String username){
+        ArrayList<BrowsePointsAssociation> res = new ArrayList<>();
+        Cursor c = this.getEntriesFromDB("User_points",
+                null,
+                "id_user = \""+getUserID(username)+"\"",
+                null);
+
+        if(c.moveToFirst()){
+            for(int i=0; i<c.getCount(); i++){
+                int shopID = c.getInt(c.getColumnIndex("id_shop"));
+                int partnerID = getPartnerID(shopID);
+                res.add(new BrowsePointsAssociation(context,
+                        partnerID,
+                        shopID,
+                        c.getInt(c.getColumnIndex("points"))
+                ));
+                c.moveToNext();
+            }
+        }
+        c.close();
+        return res;
+    }
+
+    /**
+     * Returns a list of BrowseClientsShopDataAssociation instances representing all the points all the Users have earned from this Partner.
+     * @param partnerId the Partner to look for
+     * @return a list of BrowseClientsShopDataAssociation instances. This list might be empty if no User has earned points from this Partner so far.
+     */
+    public List<BrowseClientsShopDataAssociation> getAllClientPoints(int partnerId){
+        List<BrowseClientsShopDataAssociation> res = new ArrayList<>();
+
+        List<Integer> partnerShops = getAllShopsIDs(partnerId);
+        for (int id : partnerShops) {
+            res.add(new BrowseClientsShopDataAssociation(context,
+                                                            id,
+                                                            getAllClientsPointsAtShop(id)));
+        }
+        return res;
+    }
+
+    /**
+     * Returns a list of BrowseClientsClientDataAssociation instances representing all the points all the Users have earned from this Shop.
+     * @param shopID the Shop to look for
+     * @return a list of BrowseClientsClientDataAssociation instances. This list might be empty if no User has earned points from this Shop so far.
+     */
+    public List<BrowseClientsClientDataAssociation> getAllClientsPointsAtShop(int shopID){
+        List<BrowseClientsClientDataAssociation> res = new ArrayList<>();
+
+        List<Integer> users = getAllUserIDs(shopID);
+        for (int userID : users) {
+            //For each user using this shop :
+            res.add(new BrowseClientsClientDataAssociation(context, getUsername(userID), getPoints(userID, shopID)));
+        }
+        return res;
     }
 }

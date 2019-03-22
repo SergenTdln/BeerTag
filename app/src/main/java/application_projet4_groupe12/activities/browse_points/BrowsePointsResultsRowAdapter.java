@@ -27,7 +27,7 @@ public class BrowsePointsResultsRowAdapter extends ArrayAdapter<BrowsePointsAsso
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
         if(convertView==null){
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.activity_browse_row_adapter, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.activity_browse_points_row_adapter, parent, false);
         }
         ViewHolder viewHolder = (ViewHolder) convertView.getTag();
         if(viewHolder==null)

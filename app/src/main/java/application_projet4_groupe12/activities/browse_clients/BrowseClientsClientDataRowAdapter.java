@@ -13,9 +13,10 @@ import java.util.List;
 
 import application_projet4_groupe12.R;
 
-public class BrowseClientsResultsRowAdapter extends ArrayAdapter<BrowseClientsAssociation> {
 
-    public BrowseClientsResultsRowAdapter(Context context, @NonNull List<BrowseClientsAssociation> elements){
+public class BrowseClientsClientDataRowAdapter extends ArrayAdapter<BrowseClientsClientDataAssociation> {
+
+    public BrowseClientsClientDataRowAdapter(Context context, @NonNull List<BrowseClientsClientDataAssociation> elements){
         super(context, 0, elements);
     }
 
@@ -24,7 +25,7 @@ public class BrowseClientsResultsRowAdapter extends ArrayAdapter<BrowseClientsAs
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
         if(convertView==null){
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.activity_browse_row_adapter, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.activity_browse_clients_row_adapter, parent, false);
         }
         ViewHolder viewHolder = (ViewHolder) convertView.getTag();
         if(viewHolder==null){
@@ -36,7 +37,7 @@ public class BrowseClientsResultsRowAdapter extends ArrayAdapter<BrowseClientsAs
             convertView.setTag(viewHolder);
         }
 
-        BrowseClientsAssociation assoc = getItem(position);
+        BrowseClientsClientDataAssociation assoc = getItem(position);
         if(assoc!=null){
             viewHolder.userFullname.setText(assoc.getFullname());
             viewHolder.userUsername.setText(assoc.getUsername());

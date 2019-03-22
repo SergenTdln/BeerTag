@@ -54,6 +54,8 @@
 
         <activity android:name=".activities.browse_points.BrowsePointsActivity" />
 
+        <activity android:name=".activities.browse_clients.BrowseClientsActivity" />
+
         <activity android:name=".activities.SettingsActivity"
             android:screenOrientation="portrait" />
 

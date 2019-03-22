@@ -51,7 +51,5 @@ public class BrowseClientsClientDataRowAdapter extends ArrayAdapter<BrowseClient
         TextView userFullname;
         TextView userUsername;
         TextView pointsAmount;
-
-        //TODO Add shop data too (see Association class). XML needs to be changed too
     }
 }

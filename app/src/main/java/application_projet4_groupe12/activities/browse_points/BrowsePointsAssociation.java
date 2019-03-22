@@ -38,7 +38,8 @@ public class BrowsePointsAssociation {
             this.shopDescr = shop.getDescription();
 
         } catch (IOException | SQLiteException e) {
-            //TODO what do we do here ?
+            // Just skip this instance
+            e.printStackTrace();
         } finally {
             if(db!=null) {
                 db.close();
@@ -66,6 +67,4 @@ public class BrowsePointsAssociation {
     String getShopDescr(){
         return this.shopDescr;
     }
-
-    //TODO
 }

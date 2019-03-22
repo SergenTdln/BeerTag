@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,18 +38,12 @@ public class BrowsePointsActivity extends AppCompatActivity {
             elements = db.getAllPoints(session_email);
             
             //elements = db.getAllPoints(User.connectedUser.getUsername());
-            //if(elements.isEmpty()){
-            //    Toast.makeText(getApplicationContext(), "Empty list", Toast.LENGTH_SHORT).show();
-            //}
-
-
-//            elements = db.getAllPoints(User.connectedUser.getUsername());
-            //if(elements.isEmpty()){
-            //    Toast.makeText(getApplicationContext(), "Empty list", Toast.LENGTH_SHORT).show();
-            //}
+            if(elements.isEmpty()){
+                Toast.makeText(getApplicationContext(), "Empty list", Toast.LENGTH_SHORT).show();
+            }
 
         } catch (IOException e) {
-            //TODO what do we do here ?
+            Toast.makeText(this, "Error while initializing the database. Cannot display results.", Toast.LENGTH_SHORT).show();
             Log.i(Global.debug_text, "Browse points error "+e);
             // (exception in SQLHelper constructor)
         } finally {

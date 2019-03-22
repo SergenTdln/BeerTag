@@ -3,9 +3,9 @@
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/fragment3_spinner_adapter_texte"
         android:layout_width="wrap_content"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
         android:backgroundTint="@color/colorPrimaryDark"
         android:padding="8dp"
-        android:text="Default Username"
+        android:text="@string/default_username"
         android:gravity="center"
         android:ellipsize="marquee" />

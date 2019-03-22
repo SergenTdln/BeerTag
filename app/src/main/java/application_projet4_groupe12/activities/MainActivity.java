@@ -3,7 +3,6 @@ package application_projet4_groupe12.activities;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.internal.NavigationMenuItemView;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.View;
@@ -201,7 +200,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(new Intent(MainActivity.this, BrowsePointsActivity.class));
                 break;
             case R.id.nav_settings:
-                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                startActivity(new Intent(MainActivity.this, SettingsUserActivity.class));
                 break;
             case R.id.nav_logout:
                 //reset la session globale fb ou standar
@@ -229,10 +228,9 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_admin_browse_clients:
                 startActivity(new Intent(MainActivity.this, BrowseClientsActivity.class));
-                //TODO
                 break;
             case R.id.nav_admin_settings:
-                //TODO
+                startActivity(new Intent(MainActivity.this, SettingsPartnerActivity.class));
                 break;
         }
 

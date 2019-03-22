@@ -27,11 +27,24 @@
     <string name="nav_browse_points">Consulter mes points</string>
     <string name="nav_settings">Paramètres</string>
     <string name="nav_logout">Déconnexion</string>
-    <string name="nav_management">Gestion du compte</string>
+    <string name="nav_title_management">Gestion du compte</string>
     <string name="browse_points_title">Consulter mes points</string>
     <string name="browse_points_default_partner_name">Nom Partenaire par défaut</string>
     <string name="browse_points_default_shop_address">Addresse par défaut</string>
     <string name="settings_title">Paramètres</string>
+    <string name="default_username">Email par défaut</string>
+    <string name="nav_title_priv_account">Votre compte personnel</string>
+    <string name="nav_title_admin_default">Gestion du partenaire &quot;Partenaire par défaut&quot;</string>
+    <string name="nav_add_admin">Ajouter un administrateur</string>
+    <string name="nav_admin_settings">Paramètres</string>
+    <string name="nav_admin_browse_clients">Consulter les points de mes clients</string>
+    <string name="browse_clients_title">Consulter les points de mes clients</string>
+    <string name="browse_clients_default_user_fullname">Nom d\'utilisateur par défaut</string>
+    <string name="browse_clients_default_user_username">Email d\'utilisateur par défaut</string>
+    <string name="browse_clients_shop_title">Établissement situé :</string>
+    <string name="login_fields">Veuillez remplir tous les champs</string>
+    <string name="login_success">Connexion réussie</string>
+    <string name="login_check_credentials">Vérifiez vos identifiants</string>
 
     <!--<string name="login_fields">Veuillez completer tous les champs</string>-->
     <!--<string name="login_success">Connection</string>-->

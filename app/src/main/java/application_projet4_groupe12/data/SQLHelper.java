@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -495,9 +496,9 @@ public class SQLHelper extends SQLiteOpenHelper {
     public User getUser(String username){
         Cursor c = getEntriesFromDB("User", null, "username = \""+username+"\"", null);
         if(c.moveToFirst()){
-            if(c.getCount() != 1){
+            if(c.getCount() > 1){
                 //Duplicate User in the database
-                //TODO how to handle this ?
+                Toast.makeText(context, "A duplicated entry of User with username \""+username+"\" was found in the database", Toast.LENGTH_LONG).show();
             }
 
             for(int i=0; i<c.getColumnCount(); i++){
@@ -530,9 +531,9 @@ public class SQLHelper extends SQLiteOpenHelper {
     public Partner getPartner(int partnerID){
         Cursor c = getEntriesFromDB("Partner", null, "_id = \""+partnerID+"\"", null);
         if(c.moveToFirst()){
-            if(c.getCount() != 1){
+            if(c.getCount() > 1){
                 //Duplicate Partner in the database
-                //TODO how to handle this ?
+                Toast.makeText(context, "A duplicated entry of partner with ID \""+partnerID+"\" was found in the database", Toast.LENGTH_LONG).show();
             }
             Partner out = new Partner(c.getInt(c.getColumnIndex("_id")),
                                     c.getString(c.getColumnIndex("name")),
@@ -560,7 +561,7 @@ public class SQLHelper extends SQLiteOpenHelper {
             i++;
         }
         return i;
-        //TODO re-code all similar methods based on this format
+        //TODO re-code all similar methods based on this format, or another more efficient one (this one has a big complexity)
     }
 
     /**
@@ -631,9 +632,9 @@ public class SQLHelper extends SQLiteOpenHelper {
     public Shop getShop(int shopID){
         Cursor c = getEntriesFromDB("Shop_location", null, "_id = \""+shopID+"\"", null);
         if(c.moveToFirst()){
-            if(c.getCount() != 1){
+            if(c.getCount() > 1){
                 //Duplicate Shop in the database
-                //TODO how to handle this ?
+                Toast.makeText(context, "A duplicated entry of Shop with ID \""+shopID+"\" was found in the database", Toast.LENGTH_LONG).show();
             }
             Shop out = new Shop(c.getInt(c.getColumnIndex("_id")),
                     c.getInt(c.getColumnIndex("id_partner")),
@@ -660,7 +661,7 @@ public class SQLHelper extends SQLiteOpenHelper {
         if(c.moveToFirst()){
             if(c.getCount() != 1){
                 //Duplicate Address in the database
-                //TODO how to handle this ?
+                Toast.makeText(context, "A duplicated entry of Address with ID \""+addressID+"\" was found in the database", Toast.LENGTH_LONG).show();
             }
             Address out = new Address(c.getInt(c.getColumnIndex("_id")),
                     c.getString(c.getColumnIndex("city")),

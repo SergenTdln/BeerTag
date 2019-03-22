@@ -28,7 +28,8 @@ public class BrowseClientsClientDataAssociation {
             this.userUsername = username;
 
         } catch (IOException e) {
-            //TODO what do we do here ?
+            // Just skip this instance
+            e.printStackTrace();
         } finally {
             if(db!=null) {
                 db.close();

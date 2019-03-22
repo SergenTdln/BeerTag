@@ -28,7 +28,8 @@ public class BrowseClientsShopDataAssociation {
             this.shopAddress = db.getShopAddress(shopID);
 
         } catch (IOException e) {
-            //TODO what do we do here ?
+            // Just skip this instance
+            e.printStackTrace();
         } finally {
             if(db!=null) {
                 db.close();

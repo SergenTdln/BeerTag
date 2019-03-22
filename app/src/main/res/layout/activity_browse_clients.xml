@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <ListView
-        android:id="@+id/browse_points_listview"
+        android:id="@+id/browse_clients_listview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -16,11 +16,11 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/browse_points_textview_title">
+        app:layout_constraintTop_toBottomOf="@+id/browse_clients_textview_title">
     </ListView>
 
     <TextView
-        android:id="@+id/browse_points_textview_title"
+        android:id="@+id/browse_clients_textview_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -28,7 +28,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:fontFamily="@font/roboto_bold"
-        android:text="@string/browse_points_title"
+        android:text="@string/browse_clients_title"
         android:textAllCaps="true"
         android:textColor="@android:color/darker_gray"
         android:textSize="24sp"

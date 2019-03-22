@@ -28,9 +28,9 @@
     <string name="nav_settings">Paramètres</string>
     <string name="nav_logout">Déconnexion</string>
     <string name="nav_management">Gestion du compte</string>
-    <string name="browse_title">Consulter mes points</string>
-    <string name="browse_default_partner_name">Nom Partenaire par défaut</string>
-    <string name="browse_default_shop_address">Addresse par défaut</string>
+    <string name="browse_points_title">Consulter mes points</string>
+    <string name="browse_points_default_partner_name">Nom Partenaire par défaut</string>
+    <string name="browse_points_default_shop_address">Addresse par défaut</string>
     <string name="settings_title">Paramètres</string>
 
     <!--<string name="login_fields">Veuillez completer tous les champs</string>-->

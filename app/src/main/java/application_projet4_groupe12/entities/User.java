@@ -91,6 +91,26 @@ public class User {
         }
     }
 
+    /**
+     * If this User is an administrator, returns the Partner instance this User administrates.
+     * @return The administrated Partner instance, or null if this user is not an administrator
+     */
+    public Partner getAdminPartner(Context c){
+        if(this.isAdmin){
+            SQLHelper db = null;
+            try {
+                db = new SQLHelper(c);
+                return db.getPartner(db.getAdminFromUser(this.id));
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(c, "Could not retrieve Partner from database.", Toast.LENGTH_SHORT).show();
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
     //******
     //Getter and setter methods
     //******

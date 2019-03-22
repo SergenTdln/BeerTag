@@ -165,7 +165,7 @@ public class Fragment1 extends Fragment {
 
                 startActivity(intent);
             } else {
-                Toast.makeText(getActivity(),"not in database", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),"Username not in database", Toast.LENGTH_SHORT).show();
             }
 
         } catch (IOException e) {

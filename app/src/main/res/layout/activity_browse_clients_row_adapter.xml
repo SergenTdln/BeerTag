@@ -5,45 +5,35 @@
     android:layout_height="match_parent"
     android:background="@drawable/browse_row_adapter_border" >
 
-    <ImageView
-        android:id="@+id/browser_row_adapter_partner_pic"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_launcher" />
-
     <TextView
-        android:id="@+id/browse_row_adapter_partner_name"
+        android:id="@+id/browse_clients_row_adapter_user_fullname"
         android:layout_width="wrap_content"
         android:layout_height="22dp"
-        android:layout_marginStart="4dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:fontFamily="sans-serif"
         android:gravity="start"
-        android:text="@string/browse_points_default_partner_name"
+        android:text="@string/browse_clients_default_user_fullname"
         android:textAppearance="@style/TextAppearance.AppCompat"
-        app:layout_constraintStart_toEndOf="@+id/browser_row_adapter_partner_pic"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <TextView
-        android:id="@+id/browse_row_adapter_shop_address"
+        android:id="@+id/browse_clients_row_adapter_user_username"
         android:layout_width="wrap_content"
         android:layout_height="22dp"
-        android:layout_marginStart="4dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="4dp"
         android:fontFamily="sans-serif"
         android:gravity="end"
-        android:text="@string/browse_points_default_shop_address"
+        android:text="@string/browse_clients_default_user_username"
         android:textAlignment="textEnd"
         android:textAppearance="@style/TextAppearance.AppCompat"
-        app:layout_constraintStart_toEndOf="@+id/browser_row_adapter_partner_pic"
-        app:layout_constraintTop_toBottomOf="@+id/browse_row_adapter_partner_name" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/browse_clients_row_adapter_user_fullname" />
 
     <TextView
-        android:id="@+id/browse_row_adapter_points_amount"
+        android:id="@+id/browse_clients_row_adapter_user_points_amount"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginTop="8dp"

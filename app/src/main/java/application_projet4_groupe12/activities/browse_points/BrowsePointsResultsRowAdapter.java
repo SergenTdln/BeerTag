@@ -16,9 +16,9 @@ import java.util.List;
 
 import application_projet4_groupe12.R;
 
-public class BrowseResultsRowAdapter extends ArrayAdapter<BrowsePointsAssociation> {
+public class BrowsePointsResultsRowAdapter extends ArrayAdapter<BrowsePointsAssociation> {
 
-    public BrowseResultsRowAdapter(Context context, @NonNull List<BrowsePointsAssociation> elements){
+    public BrowsePointsResultsRowAdapter(Context context, @NonNull List<BrowsePointsAssociation> elements){
         super(context, 0, elements);
     }
 
@@ -57,7 +57,7 @@ public class BrowseResultsRowAdapter extends ArrayAdapter<BrowsePointsAssociatio
         return convertView;
     }
 
-    private class ViewHolder{
+    private class ViewHolder {
         TextView partnerName;
         ImageView partnerPic;
         TextView shopAddress;

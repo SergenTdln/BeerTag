@@ -23,7 +23,7 @@ public class BrowsePointsActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browse_points);
-        listView = findViewById(R.id.browse_listview);
+        listView = findViewById(R.id.browse_points_listview);
 
         //Obtain list of "Associations"
         List<BrowsePointsAssociation> elements = new ArrayList<>();
@@ -57,7 +57,7 @@ public class BrowsePointsActivity extends AppCompatActivity {
             }
         }
 
-        BrowseResultsRowAdapter brra = new BrowseResultsRowAdapter(BrowsePointsActivity.this, elements);
-        listView.setAdapter(brra);
+        BrowsePointsResultsRowAdapter bprra = new BrowsePointsResultsRowAdapter(this, elements);
+        listView.setAdapter(bprra);
     }
 }

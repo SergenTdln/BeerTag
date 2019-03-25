@@ -48,14 +48,9 @@ public class SettingsPartnerActivity extends AppCompatActivity {
         newAddress.setHint(currentPartner.getAddress());
 
         picture = (ImageView) findViewById(R.id.settings_partner_picture);
+        picture.setImageBitmap(BitmapFactory.decodeFile(this.getFilesDir()+"/"+currentPartner.getImagePath()));
+
         selectFileButton = (Button) findViewById(R.id.settings_partner_picture_select_button);
-        try {
-            picture.setImageBitmap(BitmapFactory.decodeStream(this.getAssets().open(currentPartner.getImagePath())));
-        } catch (IOException e) {
-            //Leave a default profile picture
-            e.printStackTrace();
-            Toast.makeText(this, "Error while loading the profile picture from local storage", Toast.LENGTH_SHORT).show();
-        }
         selectFileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

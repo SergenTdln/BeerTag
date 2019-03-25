@@ -2,6 +2,7 @@ package application_projet4_groupe12.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
@@ -23,6 +24,8 @@ import application_projet4_groupe12.utils.ActivityUtils;
 import application_projet4_groupe12.utils.AppUtils;
 import application_projet4_groupe12.utils.FacebookUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 
 import application_projet4_groupe12.utils.Global;
@@ -30,6 +33,7 @@ import application_projet4_groupe12.utils.Global;
 import android.content.Context;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
@@ -149,9 +153,11 @@ public class MainActivity extends AppCompatActivity
             String userFullName = User.connectedUser.getFullName();
             Log.i(Global.debug_text, "userFullName" + userFullName);
             navHeaderText1.setText(userFullName);
+
             String userUsername = User.connectedUser.getUsername();
             Log.i(Global.debug_text, "getUsername" + userUsername);
             navHeaderText2.setText(userUsername);
+            navHeaderImage.setImageBitmap(BitmapFactory.decodeFile(this.getFilesDir()+"/"+User.connectedUser.getImagePath()));
         }
         return true;
     }

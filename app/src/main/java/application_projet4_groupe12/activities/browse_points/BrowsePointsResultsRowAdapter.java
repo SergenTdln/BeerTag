@@ -48,11 +48,7 @@ public class BrowsePointsResultsRowAdapter extends ArrayAdapter<BrowsePointsAsso
             viewHolder.shopAddress.setText(assoc.getShopAddress().stringRepresentation());
             //viewHolder.shopDescr.setText(assoc.getShopDescr());
             viewHolder.pointsAmount.setText(String.valueOf(assoc.getPoints()));
-            try {
-                viewHolder.partnerPic.setImageBitmap(BitmapFactory.decodeStream(getContext().getAssets().open(assoc.getPartnerImagePath())));
-            } catch (IOException e) {
-                //Leave placeholder image
-            }
+            viewHolder.partnerPic.setImageBitmap(BitmapFactory.decodeFile(convertView.getContext().getFilesDir() + "/" + assoc.getPartnerImagePath()));
         }
         return convertView;
     }

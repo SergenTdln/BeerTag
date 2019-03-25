@@ -135,7 +135,6 @@ public class MainActivity extends AppCompatActivity
 
         /* Remplacer le logo par la photo de profil fb*/
         if (ActivityUtils.getInstance().isLoggedInFacebook()) {
-            URL fbUrl = new FacebookUtils().getFacebookProfilePic();
             Log.i(Global.debug_text, "nav" + navHeaderImage);
             String id = new FacebookUtils().getFacebookId();
             SharedPreferences shared = getSharedPreferences(id, MODE_PRIVATE);

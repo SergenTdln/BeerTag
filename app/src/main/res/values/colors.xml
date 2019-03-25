@@ -6,6 +6,8 @@
     <color name="colorPrimaryDark">#033A86</color>
     <color name="colorAccent">#6E1C03</color>
     <color name="white">#F0F0F0</color>
+    <color name="grey">#a6a6a6</color>
+    <color name="light_red">#ff4d4d</color>
     <color name="fab">#FFEB3B</color>
     <color name="viewfinder_mask">#60000000</color>
     <color name="placeholder">#d9aeaeae</color>

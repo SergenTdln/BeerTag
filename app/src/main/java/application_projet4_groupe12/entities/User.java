@@ -7,6 +7,7 @@ import android.widget.Toast;
 import java.io.IOException;
 
 import application_projet4_groupe12.data.SQLHelper;
+import application_projet4_groupe12.exceptions.WrongDateFormatException;
 
 /**
  * Entities of this class represent users of the app.
@@ -180,7 +181,10 @@ public class User {
         this.lastName = lastName;
     }
 
-    public void setBirthday(String birthdate){
+    public void setBirthday(String birthdate) throws WrongDateFormatException {
+        if(! SQLHelper.isValidDate(birthdate)){
+            throw new WrongDateFormatException("Invalid date format");
+        }
         this.birthday = birthdate;
     }
 

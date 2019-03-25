@@ -2,22 +2,9 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <ListView
-        android:id="@+id/settings_user_listview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/settings_user_textview_title">
-    </ListView>
 
     <TextView
         android:id="@+id/settings_user_textview_title"
@@ -31,8 +18,151 @@
         android:text="@string/settings_title"
         android:textAllCaps="true"
         android:textColor="@android:color/darker_gray"
-        android:textSize="24sp"
+        android:textSize="35sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/settings_user_sub_title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="0dp"
+        android:text="@string/default_username"
+        android:gravity="center_horizontal"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/settings_user_textview_title" />
+
+    <TextView
+        android:id="@+id/settings_user_change_name_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="Change your name :"
+        android:textSize="23sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/settings_user_sub_title" />
+
+    <EditText
+        android:id="@+id/settings_user_change_first_name"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:hint="Default First Name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/settings_user_change_name_title" />
+
+    <EditText
+        android:id="@+id/settings_user_change_last_name"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:hint="Default Last Name"
+        app:layout_constraintStart_toEndOf="@+id/settings_user_change_first_name"
+        app:layout_constraintTop_toBottomOf="@+id/settings_user_change_name_title" />
+
+    <TextView
+        android:id="@+id/settings_user_change_password_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="Change your password :"
+        android:textSize="23sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/settings_user_change_first_name" />
+
+    <EditText
+        android:id="@+id/settings_user_change_password_current"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:hint="Your current password"
+        android:inputType="textPassword"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/settings_user_change_password_title" />
+
+    <EditText
+        android:id="@+id/settings_user_change_password_new"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:hint="Your new password"
+        android:inputType="textPassword"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/settings_user_change_password_current" />
+
+    <TextView
+        android:id="@+id/settings_user_change_birthday_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="Change your birthdate (seriously ?) :"
+        android:textSize="23sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/settings_user_change_password_new" />
+
+    <EditText
+        android:id="@+id/settings_user_change_birthday"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:hint="Your new birthdate (DD/MM/YYYY)"
+        android:autofillHints="null"
+        android:inputType="date"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/settings_user_change_birthday_title" />
+
+    <TextView
+        android:id="@+id/settings_user_change_picture_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="Change your profile picture :"
+        android:textSize="23sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/settings_user_change_birthday" />
+
+    <ImageView
+        android:id="@+id/settings_user_picture"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:src="@drawable/com_facebook_profile_picture_blank_square"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/settings_user_change_picture_title" />
+        <!--Changing this image's size would really mess up the UIs. Please avoid it if possible-->
+
+    <Button
+        android:id="@+id/settings_user_picture_select_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Select file"
+        android:textColor="@color/grey"
+        app:layout_constraintStart_toEndOf="@+id/settings_user_picture"
+        app:layout_constraintTop_toBottomOf="@+id/settings_user_change_picture_title" />
+
+    <ImageButton
+        android:id="@+id/settings_user_save_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:src="@android:drawable/ic_menu_save"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </android.support.constraint.ConstraintLayout>

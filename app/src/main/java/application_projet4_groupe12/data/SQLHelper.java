@@ -294,7 +294,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param target the String in which we are searching
      * @return the number of occurrences as a long.
      */
-    private long occurrences(char pattern, String target){
+    private static long occurrences(char pattern, String target){
         return target.codePoints().filter(c -> c==pattern).count();
     }
 
@@ -314,7 +314,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param date the date String to check for validity
      * @return True if <code>date</code> represents a valid date, False otherwise
      */
-    private boolean isValidDate(String date){
+    public static boolean isValidDate(String date){
         if((date.length()!=10) || occurrences('/', date)!=2) {
             return false;
         }

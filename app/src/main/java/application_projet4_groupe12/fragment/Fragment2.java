@@ -128,12 +128,15 @@ public class Fragment2 extends Fragment {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 User user = document.toObject(User.class);
-                                int id = Integer.parseInt(document.getString("id"));
+                                int id = Integer.parseInt(document.getString("_id"));
                                 String username = document.getString("username");
-                                String today = document.getString("creationDate");
-                                String firstname = document.getString("firstName");
-                                String lastname = document.getString("lastName");
-                                user = new User(id, username, "", today, firstname, lastname, "BirthDate", "", false); //TODO à refaire
+                                String hashedPassword = document.getString("password");
+                                String creationDate = document.getString("created_on");
+                                String firstname = document.getString("first_name");
+                                String lastname = document.getString("last_name");
+                                String birthdate = document.getString("birthday");
+                                String imagePath = document.getString("image_path");
+                                user = new User(id, username, hashedPassword, creationDate, firstname, lastname, birthdate, imagePath, false);
                                 try {
                                     db.createUser(user);
                                 }
@@ -178,7 +181,7 @@ public class Fragment2 extends Fragment {
                         DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                         String today = formatter.format(date);
 
-                        user = new User(id, email, Hash.hash(pass), today, firstName.getText().toString(), lastName.getText().toString(), birthDate.getText().toString(), "", false);
+                        user = new User(id, email, Hash.hash(pass), today, firstName.getText().toString(), lastName.getText().toString(), birthDate.getText().toString(), Integer.toString(id)+"_pic.png", false); //TODO file format ?
                         try {
                             System.out.println("Utilisateur inséré : " + db.createUser(user));
                         } catch (WrongEmailFormatException e){

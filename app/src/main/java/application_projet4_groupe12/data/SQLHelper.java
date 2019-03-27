@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -13,17 +15,21 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
-import application_projet4_groupe12.activities.browse_points.Association;
+import application_projet4_groupe12.activities.browse_clients.BrowseClientsClientDataAssociation;
+import application_projet4_groupe12.activities.browse_clients.BrowseClientsShopDataAssociation;
+import application_projet4_groupe12.activities.browse_points.BrowsePointsAssociation;
 import application_projet4_groupe12.entities.Address;
 import application_projet4_groupe12.entities.Partner;
 import application_projet4_groupe12.entities.Shop;
 import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.exceptions.UnknownPartnerException;
+import application_projet4_groupe12.exceptions.UnknownUserException;
 import application_projet4_groupe12.exceptions.WrongDateFormatException;
 import application_projet4_groupe12.exceptions.WrongEmailFormatException;
+import application_projet4_groupe12.utils.Pair;
+import application_projet4_groupe12.utils.Triplet;
 
 
 /**
@@ -65,7 +71,7 @@ public class SQLHelper extends SQLiteOpenHelper {
 
         try{
             this.createDataBase();
-        }catch (IOException e){
+        } catch (IOException e){
             throw new IOException("Error while creating the DB");
         }
         try{
@@ -223,13 +229,27 @@ public class SQLHelper extends SQLiteOpenHelper {
     /**
      * Returns the internal ID of the user identified by the passed <code>email</code> argument.
      * @param email the email of the user we are looking for
-     * @return The ID of this user as a String, or null if this <code>email</code> is not present in the database.
+     * @return The ID of this user as an instance of Integer, or null if this <code>email</code> is not present in the database.
      */
-    private String getUserID(String email){
+    private Integer getUserID(String email){
         ArrayList<String> res = this.getElementFromDB("User", "_id", "username = \""+email+"\"");
-        int l = res.size();
-        if( l == 0 ){
+        if( res.isEmpty() ){
             //No user with such email was found in the database
+            return null;
+        } else {
+            return Integer.parseInt(res.get(0));
+        }
+    }
+
+    /**
+     * Returns the public username of the user identified by the passed <code>userID</code> argument.
+     * @param userID the internal ID of the user we are looking for
+     * @return The username of this User as a String, or null if this <code>userID</code> is not present in the database.
+     */
+    public String getUsername(int userID){
+        ArrayList<String> res = this.getElementFromDB("User", "username", "_id = \""+userID+"\"");
+        if( res.isEmpty() ){
+            //No user with such ID was found in the database
             return null;
         } else {
             return res.get(0);
@@ -257,7 +277,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param partnerID the internal ID of the partner to look for
      * @return True if this partnerID already exists, False otherwise
      */
-    private boolean doesPartnerExist(int partnerID){
+    public boolean doesPartnerExist(int partnerID){
         boolean out;
         Cursor c = getEntriesFromDB("Partner",
                 new String[]{"name"},
@@ -274,7 +294,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param target the String in which we are searching
      * @return the number of occurrences as a long.
      */
-    private long occurrences(char pattern, String target){
+    private static long occurrences(char pattern, String target){
         return target.codePoints().filter(c -> c==pattern).count();
     }
 
@@ -294,7 +314,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param date the date String to check for validity
      * @return True if <code>date</code> represents a valid date, False otherwise
      */
-    private boolean isValidDate(String date){
+    public static boolean isValidDate(String date){
         if((date.length()!=10) || occurrences('/', date)!=2) {
             return false;
         }
@@ -369,20 +389,17 @@ public class SQLHelper extends SQLiteOpenHelper {
      * Adds <code>amount</code> points to the User's account.
      * @param username the user's email address
      * @param amount the amount of points to add. This can be positive or negative.
-     * @param partnerID Please not this is different from the partner's name.
+     * @param shopID Please not this is different from the partner's name.
      * @return True if the insertion was successful, False if it failed (for any reason not covered by a thrown exception).
      * @throws UnknownPartnerException if the passed Partner does not exist in the database
      */
-    public boolean addPoints(String username, int amount, int partnerID) throws UnknownPartnerException {
-        if(! doesPartnerExist(partnerID)){
-            throw new UnknownPartnerException("Partner with ID " + partnerID + " does not exist in the database.");
-        }
+    public boolean addPoints(String username, int amount, int shopID) throws UnknownPartnerException {
 
-        int currentPoints = this.getPoints(Integer.parseInt(getUserID(username)), partnerID);
+        int currentPoints = this.getPoints(getUserID(username), shopID);
 
         ContentValues cv = new ContentValues();
         cv.put("\"id_user\"", getUserID(username));
-        cv.put("\"id_partner\"", partnerID);
+        cv.put("\"id_shop\"", shopID);
         cv.put("\"points\"", (currentPoints + amount));
 
         return (myDB.insert("User_points", null, cv) != -1);
@@ -391,13 +408,13 @@ public class SQLHelper extends SQLiteOpenHelper {
     /**
      * Returns the amount of points the passed User currently has by the passed Partner.
      * @param userID the username (email) to look for
-     * @param partnerID the internal ID of the partner to look for
+     * @param shopID the internal ID of the shop to look for
      * @return the amount of points the user has earned as an int. Returns 0 if the User has never earned points by this Partner before.
      */
-    public int getPoints(int userID, int partnerID){
+    public int getPoints(int userID, int shopID){
         ArrayList<String> res = this.getElementFromDB("User_points",
                                                     "points",
-                                                "id_user = \""+userID+"\" AND id_partner = \""+partnerID+"\"");
+                                                "id_user = \""+userID+"\" AND id_shop = \""+shopID+"\"");
         int l = res.size();
         if( l == 0 ){
             // No pair username - partnerID was found in the User_points table.
@@ -409,30 +426,44 @@ public class SQLHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Returns a list of Association instances representing all the points the User has earned from all the Partners/Shops.
-     * @param username the username (email) to look for
-     * @return a list of Association instances. This list might be empty if the User does not currently have any points.
+     * Returns a list of Shop IDs representing all this Partner's physical shops.
+     * @param partnerID the partner to look for
+     * @return a list of Integers. This list can be empty if this Partner has no Shop registered in the database.
      */
-    public List<Association> getAllPoints(String username){
-        ArrayList<Association> res = new ArrayList<>();
-        Cursor c = this.getEntriesFromDB("User_points",
-                                null,
-                            "id_user = \""+getUserID(username)+"\"",
-                                null);
-
-        if(c.moveToFirst()){
-            for(int i=0; i<c.getCount(); i++){
-                int shopID = c.getInt(c.getColumnIndex("id_shop"));
-                int partnerID = getPartnerID(shopID);
-                res.add(new Association(context,
-                                        partnerID,
-                                        shopID,
-                                        c.getInt(c.getColumnIndex("points"))
-                                        ));
-                c.moveToNext();
-            }
+    public List<Integer> getAllShopsIDs(int partnerID){
+        List<Integer> res = new ArrayList<>();
+        List<String> shopIds = getElementFromDB("Shop_location", "_id", "id_partner = \""+partnerID+"\"");
+        for (String shopID : shopIds) {
+            res.add(Integer.parseInt(shopID));
         }
-        c.close();
+        return res;
+    }
+
+    /**
+     * Returns a list of User IDs representing all this Shop's clients.
+     * @param shopID the Shop to look for
+     * @return a list of Integers. This list can be empty if this Shop has no client registered in the database.
+     */
+    public List<Integer> getAllUserIDs(int shopID){
+        List<Integer> res = new ArrayList<>();
+        List<String> userIds = getElementFromDB("User_points", "id_user", "id_shop = \""+shopID+"\"");
+        for (String userID : userIds){
+            res.add(Integer.parseInt(userID));
+        }
+        return res;
+    }
+
+    /**
+     * Returns a list of Shop instances representing all this Partner's physical shops.
+     * @param partnerID the partner to look for
+     * @return a list of Shop instances. This list can be empty if this Partner has no Shop registered in the database.
+     */
+    public List<Shop> getAllShops(int partnerID){
+        List<Shop> res = new ArrayList<>();
+        List<String> shopIds = getElementFromDB("Shop_location", "_id", "id_partner = \""+partnerID+"\"");
+        for (String shopID : shopIds) {
+            res.add(this.getShop(Integer.parseInt(shopID)));
+        }
         return res;
     }
 
@@ -465,9 +496,9 @@ public class SQLHelper extends SQLiteOpenHelper {
     public User getUser(String username){
         Cursor c = getEntriesFromDB("User", null, "username = \""+username+"\"", null);
         if(c.moveToFirst()){
-            if(c.getCount() != 1){
+            if(c.getCount() > 1){
                 //Duplicate User in the database
-                //TODO how to handle this ?
+                Toast.makeText(context, "A duplicated entry of User with username \""+username+"\" was found in the database", Toast.LENGTH_LONG).show();
             }
 
             for(int i=0; i<c.getColumnCount(); i++){
@@ -480,7 +511,8 @@ public class SQLHelper extends SQLiteOpenHelper {
                                 c.getString(c.getColumnIndex("first_name")),
                                 c.getString(c.getColumnIndex("last_name")),
                                 c.getString(c.getColumnIndex("birthday")),
-                                c.getString(c.getColumnIndex("image_path"))
+                                c.getString(c.getColumnIndex("image_path")),
+                                this.isAdmin(username)
                                 );
             c.close();
             return out;
@@ -499,9 +531,9 @@ public class SQLHelper extends SQLiteOpenHelper {
     public Partner getPartner(int partnerID){
         Cursor c = getEntriesFromDB("Partner", null, "_id = \""+partnerID+"\"", null);
         if(c.moveToFirst()){
-            if(c.getCount() != 1){
+            if(c.getCount() > 1){
                 //Duplicate Partner in the database
-                //TODO how to handle this ?
+                Toast.makeText(context, "A duplicated entry of partner with ID \""+partnerID+"\" was found in the database", Toast.LENGTH_LONG).show();
             }
             Partner out = new Partner(c.getInt(c.getColumnIndex("_id")),
                                     c.getString(c.getColumnIndex("name")),
@@ -523,19 +555,13 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @return an unused ID as an int
      */
     public int getFreeIDUser(){
-        List<String> idsAsString = getElementFromDB("User", "_id", null);
-        idsAsString.sort(null);
         int i = 1;
-        for (String s : idsAsString) {
-            int id = Integer.parseInt(s);
-            if( id==i ){
-                //Advance to next
-                i++;
-            } else {
-                return i;
-            }
+        List<String> list = getElementFromDB("User", "_id", null);
+        while( list.contains( Integer.toString(i) )) {
+            i++;
         }
         return i;
+        //TODO re-code all similar methods based on this format, or another more efficient one (this one has a big complexity)
     }
 
     /**
@@ -606,9 +632,9 @@ public class SQLHelper extends SQLiteOpenHelper {
     public Shop getShop(int shopID){
         Cursor c = getEntriesFromDB("Shop_location", null, "_id = \""+shopID+"\"", null);
         if(c.moveToFirst()){
-            if(c.getCount() != 1){
+            if(c.getCount() > 1){
                 //Duplicate Shop in the database
-                //TODO how to handle this ?
+                Toast.makeText(context, "A duplicated entry of Shop with ID \""+shopID+"\" was found in the database", Toast.LENGTH_LONG).show();
             }
             Shop out = new Shop(c.getInt(c.getColumnIndex("_id")),
                     c.getInt(c.getColumnIndex("id_partner")),
@@ -635,7 +661,7 @@ public class SQLHelper extends SQLiteOpenHelper {
         if(c.moveToFirst()){
             if(c.getCount() != 1){
                 //Duplicate Address in the database
-                //TODO how to handle this ?
+                Toast.makeText(context, "A duplicated entry of Address with ID \""+addressID+"\" was found in the database", Toast.LENGTH_LONG).show();
             }
             Address out = new Address(c.getInt(c.getColumnIndex("_id")),
                     c.getString(c.getColumnIndex("city")),
@@ -652,17 +678,142 @@ public class SQLHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * TODO
-     * @param email
-     * @return
+     * Retrieves information on an Shop Address from the database and returns it as an Address instance.
+     * @param shopID the internal id of the Shop to look for
+     * @return an Address instance, or null if this Shop id was not present in the database
      */
-    public String getHashedPassword(String email){
+    public Address getShopAddress(int shopID){
+        List<String> res = getElementFromDB("Shop_location", "id_address", "_id = \""+shopID+"\"");
+        if(res.isEmpty()){
+            //This shopID is invalid
+            return null;
+        } else {
+            return getAddress(Integer.parseInt(res.get(0)));
+        }
+    }
+
+    /**
+     * Returns the hashed password of the User identified by <code>email</code>.
+     * @param email the username/e-mail of the User to look for
+     * @return the hashed password of this User as a String
+     */
+    public String getHashedPassword(String email) throws UnknownUserException {
         ArrayList<String> res = getElementFromDB("User", "password", "username = \""+email+"\"");
         if(res.isEmpty()){
-            //TODO
+            throw new UnknownUserException("User \""+email+"\" is not present in the database");
         } else {
             return res.get(0);
         }
-        return null;
+    }
+
+    /**
+     * Adds an association between an existing User and a Partner.
+     * @param adminPair a pair instance. a must contain the User's username/e-mail address as a String, and b must be the Partner's ID in the local database as an Integer
+     * @return True if the operation succeeded, false otherwise
+     */
+    public boolean addAdmin(Pair adminPair) throws UnknownUserException {
+        if(! doesUsernameExist((String) adminPair.getA())){
+            throw new UnknownUserException("User with username \""+adminPair.getA()+"\" does not exist.");
+        }
+
+        ContentValues cv = new ContentValues();
+        cv.put("\"id_user\"", getUserID((String) adminPair.getA()));
+        cv.put("\"id_partner\"", (Integer) adminPair.getB());
+
+        return ( myDB.insert("Admin_user", null, cv) != -1);
+    }
+
+    /**
+     * Returns whether this user is an Admin, that is if he appears in the Admin_user table.
+     * @param username the username to look for
+     * @return True if the user identified by <code>username</code> is an Admin for any Partner, or False otherwise
+     */
+    public boolean isAdmin(String username){
+        int id = getUserID(username);
+        return (getElementFromDB("Admin_user", "id_user", "id_user = \""+id+"\"")
+                .size() > 0);
+    }
+
+    /**
+     * Returns the internal ID of the Partner that this user is administrating.
+     * @param userId the internal ID of an admin User.
+     * @return The ID of the Partner that this User is administrating as an int, or -1 if thhis User is not an administrator.
+     */
+    public int getAdminFromUser(int userId){
+        List<String> list = getElementFromDB("Admin_user", "id_partner", "id_user = \""+userId+"\"");
+        if(list.isEmpty()){
+            return -1;
+        } else {
+            return Integer.parseInt(list.get(0));
+        }
+    }
+
+    /**
+     * Returns a <code>List</code> of all the usernames currently present in the local database, as Strings
+     * @return a <code>List<String></code> of all the usernames in the database
+     */
+    public List<String> getAllUsernames(){
+        return getElementFromDB("User", "username", null);
+    }
+
+    /**
+     * Returns a list of BrowsePointsAssociation instances representing all the points the User has earned from all the Partners/Shops.
+     * @param username the username (email) to look for
+     * @return a list of BrowsePointsAssociation instances. This list might be empty if the User does not currently have any points.
+     */
+    public List<BrowsePointsAssociation> getAllPoints(String username){
+        ArrayList<BrowsePointsAssociation> res = new ArrayList<>();
+        Cursor c = this.getEntriesFromDB("User_points",
+                null,
+                "id_user = \""+getUserID(username)+"\"",
+                null);
+
+        if(c.moveToFirst()){
+            for(int i=0; i<c.getCount(); i++){
+                int shopID = c.getInt(c.getColumnIndex("id_shop"));
+                int partnerID = getPartnerID(shopID);
+                res.add(new BrowsePointsAssociation(context,
+                        partnerID,
+                        shopID,
+                        c.getInt(c.getColumnIndex("points"))
+                ));
+                c.moveToNext();
+            }
+        }
+        c.close();
+        return res;
+    }
+
+    /**
+     * Returns a list of BrowseClientsShopDataAssociation instances representing all the points all the Users have earned from this Partner.
+     * @param partnerId the Partner to look for
+     * @return a list of BrowseClientsShopDataAssociation instances. This list might be empty if no User has earned points from this Partner so far.
+     */
+    public List<BrowseClientsShopDataAssociation> getAllClientPoints(int partnerId){
+        List<BrowseClientsShopDataAssociation> res = new ArrayList<>();
+
+        List<Integer> partnerShops = getAllShopsIDs(partnerId);
+        for (int id : partnerShops) {
+            res.add(new BrowseClientsShopDataAssociation(context,
+                                                            id,
+                                                            getAllClientsPointsAtShop(id)));
+        }
+        return res;
+    }
+
+    /**
+     * Returns a list of BrowseClientsClientDataAssociation instances representing all the points all the Users have earned from this Shop.
+     * @param shopID the Shop to look for
+     * @return a list of BrowseClientsClientDataAssociation instances. This list might be empty if no User has earned points from this Shop so far.
+     */
+    public List<BrowseClientsClientDataAssociation> getAllClientsPointsAtShop(int shopID){
+        List<BrowseClientsClientDataAssociation> res = new ArrayList<>();
+
+        List<Integer> users = getAllUserIDs(shopID);
+        for (int userID : users) {
+            //For each user using this shop :
+            res.add(new BrowseClientsClientDataAssociation(context, getUsername(userID), getPoints(userID, shopID)));
+        }
+        return res;
     }
 }

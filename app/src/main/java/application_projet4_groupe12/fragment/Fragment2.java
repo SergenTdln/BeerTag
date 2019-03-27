@@ -73,7 +73,7 @@ public class Fragment2 extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment2_layout, container, false);
-        fragment2_sign_up = view.findViewById(R.id.sign_up_button_out);
+        fragment2_sign_up = view.findViewById(R.id.sign_up_user_button_out);
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
@@ -81,12 +81,12 @@ public class Fragment2 extends Fragment {
         fragment2_sign_up.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                username = getView().findViewById(R.id.sign_up_input_email);
-                password = getView().findViewById(R.id.sign_up_input_password);
-                confirmPassword = getView().findViewById(R.id.sign_up_input_password_confirm);
-                firstName = getView().findViewById(R.id.sign_up_input_first_name);
-                lastName = getView().findViewById(R.id.sign_up_input_last_name);
-                birthDate = getView().findViewById(R.id.sign_up_input_birthday);
+                username = getView().findViewById(R.id.sign_up_user_input_email);
+                password = getView().findViewById(R.id.sign_up_user_input_password);
+                confirmPassword = getView().findViewById(R.id.sign_up_user_input_password_confirm);
+                firstName = getView().findViewById(R.id.sign_up_user_input_first_name);
+                lastName = getView().findViewById(R.id.sign_up_user_input_last_name);
+                birthDate = getView().findViewById(R.id.sign_up_user_input_birthday);
 
                 signUp();
             }
@@ -128,11 +128,15 @@ public class Fragment2 extends Fragment {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 User user = document.toObject(User.class);
-                                int id = Integer.parseInt(document.getString("id"));
-                                String today = document.getString("creationDate");
-                                String firstname = document.getString("firstName");
-                                String lastname = document.getString("lastName");
-                                user = new User(id, document.getString("username"), "", today, firstname, lastname, "BirthDate", ""); //TODO à refaire
+                                int id = Integer.parseInt(document.getString("_id"));
+                                String username = document.getString("username");
+                                String hashedPassword = document.getString("password");
+                                String creationDate = document.getString("created_on");
+                                String firstname = document.getString("first_name");
+                                String lastname = document.getString("last_name");
+                                String birthdate = document.getString("birthday");
+                                String imagePath = document.getString("image_path");
+                                user = new User(id, username, hashedPassword, creationDate, firstname, lastname, birthdate, imagePath, false);
                                 try {
                                     db.createUser(user);
                                 }
@@ -177,7 +181,7 @@ public class Fragment2 extends Fragment {
                         DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                         String today = formatter.format(date);
 
-                        user = new User(id, email, Hash.hash(pass), today, firstName.getText().toString(), lastName.getText().toString(), birthDate.getText().toString(), "");
+                        user = new User(id, email, Hash.hash(pass), today, firstName.getText().toString(), lastName.getText().toString(), birthDate.getText().toString(), Integer.toString(id)+"_pic.png", false); //TODO file format ?
                         try {
                             System.out.println("Utilisateur inséré : " + db.createUser(user));
                         } catch (WrongEmailFormatException e){

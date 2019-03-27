@@ -20,31 +20,41 @@
     <string name="existing_email">This email address is already used</string>
     <string name="account_done">Account successfully created</string>
     <string name="password_no_match">Passwords don\'t match</string>
+    <string name="default_username">Default Username</string>
+
+    <string name="login_fields">Please complete all fields</string>
+    <string name="login_success">Login success</string>
+    <string name="login_check_credentials">Check credentials</string>
 
     <string name="nav_scan_code">Scan a code</string>
     <string name="nav_generate_code">Generate a code</string>
     <string name="nav_browse_points">Look up my points</string>
-    <string name="nav_management">Account management</string>
+    <string name="nav_title_management">Account management</string>
     <string name="nav_settings">Settings</string>
     <string name="nav_logout">Log Out</string>
+    <string name="nav_title_priv_account">Your private account</string>
+    <string name="nav_title_admin_default">Admin of Partner &quot;default partner&quot;</string>
+    <string name="nav_add_admin">Add an Administrator</string>
+    <string name="nav_admin_settings">Settings</string>
+    <string name="nav_admin_browse_clients">Look up my clients\' points</string>
 
-    <string name="browse_title">Browse my points</string>
-    <string name="browse_default_partner_name">Default Partner Name</string>
-    <string name="browse_default_shop_address">Default Shop Address</string>
+    <string name="browse_points_title">Browse my points</string>
+    <string name="browse_points_default_partner_name">Default Partner Name</string>
+    <string name="browse_points_default_shop_address">Default Shop Address</string>
+
+    <string name="browse_clients_title">Browse my clients\' points</string>
+    <string name="browse_clients_default_user_fullname">Default User Full Name</string>
+    <string name="browse_clients_default_user_username">Default User email</string>
+    <string name="browse_clients_shop_title">Shop located at :</string>
 
     <string name="settings_title">Settings</string>
 
     <string name="type_here_bar">Generate barcode</string>
     <string name="type_here_qr">Generate QR code</string>
 
-    <string name="facebook_app_id" translatable="false">586274028466486</string>
-    <string name="fb_login_protocol_scheme" translatable="false">fb586274028466486</string>
-
     <string name="space" translatable="false"> </string>
     <string name="hashtag" translatable="false">#</string>
 
-    <string name="login_fields">Please complete all fields</string>
-    <string name="login_success">Login success</string>
-    <string name="login_check_credentials">Check credentials</string>
-
+    <string name="facebook_app_id" translatable="false">586274028466486</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb586274028466486</string>
 </resources>

@@ -2,6 +2,7 @@ package application_projet4_groupe12.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
@@ -16,7 +17,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import application_projet4_groupe12.R;
+import application_projet4_groupe12.activities.browse_clients.BrowseClientsActivity;
 import application_projet4_groupe12.activities.browse_points.BrowsePointsActivity;
+import application_projet4_groupe12.activities.settings.SettingsPartnerActivity;
+import application_projet4_groupe12.activities.settings.SettingsUserActivity;
 import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.utils.ActivityUtils;
 import application_projet4_groupe12.utils.AppUtils;
@@ -87,6 +91,13 @@ public class MainActivity extends AppCompatActivity
          * Navigation view
          */
         NavigationView navigationView = findViewById(R.id.nav_view);
+        if(User.connectedUser.isAdmin()){
+            navigationView.inflateMenu(R.menu.activity_main_navigation_drawer_admin);
+            MenuItem adminTitle = navigationView.getMenu().findItem(R.id.nav_admin_title);
+            adminTitle.setTitle("Admin of " + User.connectedUser.getAdminPartner(this).getName());
+        } else {
+            navigationView.inflateMenu(R.menu.activity_main_navigation_drawer);
+        }
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.bringToFront();
 
@@ -127,7 +138,6 @@ public class MainActivity extends AppCompatActivity
 
         /* Remplacer le logo par la photo de profil fb*/
         if (ActivityUtils.getInstance().isLoggedInFacebook()) {
-            URL fbUrl = new FacebookUtils().getFacebookProfilePic();
             Log.i(Global.debug_text, "nav" + navHeaderImage);
             String id = new FacebookUtils().getFacebookId();
             SharedPreferences shared = getSharedPreferences(id, MODE_PRIVATE);
@@ -142,9 +152,11 @@ public class MainActivity extends AppCompatActivity
             String userFullName = User.connectedUser.getFullName();
             Log.i(Global.debug_text, "userFullName" + userFullName);
             navHeaderText1.setText(userFullName);
+
             String userUsername = User.connectedUser.getUsername();
             Log.i(Global.debug_text, "getUsername" + userUsername);
             navHeaderText2.setText(userUsername);
+            navHeaderImage.setImageBitmap(BitmapFactory.decodeFile(this.getFilesDir()+"/"+User.connectedUser.getImagePath()));
         }
         return true;
     }
@@ -192,7 +204,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(new Intent(MainActivity.this, BrowsePointsActivity.class));
                 break;
             case R.id.nav_settings:
-                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                startActivity(new Intent(MainActivity.this, SettingsUserActivity.class));
                 break;
             case R.id.nav_logout:
                 //reset la session globale fb ou standar
@@ -214,6 +226,16 @@ public class MainActivity extends AppCompatActivity
 
 
                 startActivity(new Intent(MainActivity.this, SignUp.class));
+                break;
+            case R.id.nav_admin_add_admin:
+                //TODO
+                break;
+            case R.id.nav_admin_browse_clients:
+                startActivity(new Intent(MainActivity.this, BrowseClientsActivity.class));
+                break;
+            case R.id.nav_admin_settings:
+                startActivity(new Intent(MainActivity.this, SettingsPartnerActivity.class));
+                break;
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

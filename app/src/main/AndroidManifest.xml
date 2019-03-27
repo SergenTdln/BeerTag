@@ -52,9 +52,16 @@
         <activity android:name="application_projet4_groupe12.activities.QRScanActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".activities.browse_points.BrowsePointsActivity" />
+        <activity android:name=".activities.browse_points.BrowsePointsActivity"
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".activities.SettingsActivity"
+        <activity android:name=".activities.browse_clients.BrowseClientsActivity"
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".activities.settings.SettingsUserActivity"
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".activities.settings.SettingsPartnerActivity"
             android:screenOrientation="portrait" />
 
         <meta-data

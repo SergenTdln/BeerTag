@@ -136,7 +136,7 @@
     <ListView
         android:id="@+id/settings_partner_manage_shops_listview"
         android:layout_width="fill_parent"
-        android:layout_height="379dp"
+        android:layout_height="370dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"

@@ -1,4 +1,4 @@
-package application_projet4_groupe12.activities;
+package application_projet4_groupe12.activities.settings;
 
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -14,9 +14,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.List;
 
 import application_projet4_groupe12.R;
+import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.entities.Partner;
+import application_projet4_groupe12.entities.Shop;
 import application_projet4_groupe12.entities.User;
 
 public class SettingsPartnerActivity extends AppCompatActivity {
@@ -61,10 +64,23 @@ public class SettingsPartnerActivity extends AppCompatActivity {
             }
         });
 
-        // Handle the ListView - Adapter etc.
-        // TODO
         listShops = (ListView) findViewById(R.id.settings_partner_manage_shops_listview);
-        listShops.setAdapter(null);
+        List<Shop> shops = null;
+        SQLHelper db = null;
+        try {
+            db = new SQLHelper(this);
+            shops = db.getAllShops(currentPartner.getId());
+        } catch (IOException e) {
+            //TODO
+        } finally {
+            if(db!=null){
+                db.close();
+            }
+        }
+        if(shops!=null) {
+            SettingsPartnerShopDataRowAdapter adapter = new SettingsPartnerShopDataRowAdapter(this, shops);
+            listShops.setAdapter(adapter);
+        }
 
         buttonOut = (ImageButton) findViewById(R.id.settings_partner_save_button);
         buttonOut.setOnClickListener(new View.OnClickListener() {

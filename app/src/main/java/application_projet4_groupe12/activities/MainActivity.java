@@ -19,13 +19,13 @@ import android.view.MenuItem;
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.activities.browse_clients.BrowseClientsActivity;
 import application_projet4_groupe12.activities.browse_points.BrowsePointsActivity;
+import application_projet4_groupe12.activities.settings.SettingsPartnerActivity;
+import application_projet4_groupe12.activities.settings.SettingsUserActivity;
 import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.utils.ActivityUtils;
 import application_projet4_groupe12.utils.AppUtils;
 import application_projet4_groupe12.utils.FacebookUtils;
 
-import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 
 import application_projet4_groupe12.utils.Global;
@@ -33,7 +33,6 @@ import application_projet4_groupe12.utils.Global;
 import android.content.Context;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;

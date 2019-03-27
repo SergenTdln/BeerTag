@@ -1,4 +1,4 @@
-package application_projet4_groupe12.activities;
+package application_projet4_groupe12.activities.settings;
 
 import android.graphics.BitmapFactory;
 import android.media.Image;

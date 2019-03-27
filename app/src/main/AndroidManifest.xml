@@ -58,10 +58,10 @@
         <activity android:name=".activities.browse_clients.BrowseClientsActivity"
             android:screenOrientation="portrait" />
 
-        <activity android:name=".activities.SettingsUserActivity"
+        <activity android:name=".activities.settings.SettingsUserActivity"
             android:screenOrientation="portrait" />
 
-        <activity android:name=".activities.SettingsPartnerActivity"
+        <activity android:name=".activities.settings.SettingsPartnerActivity"
             android:screenOrientation="portrait" />
 
         <meta-data

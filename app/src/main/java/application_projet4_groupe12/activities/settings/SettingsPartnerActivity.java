@@ -48,7 +48,7 @@ public class SettingsPartnerActivity extends AppCompatActivity {
         newName = (EditText) findViewById(R.id.settings_partner_change_name);
         newName.setHint(currentPartner.getName());
         newAddress = (EditText) findViewById(R.id.settings_partner_change_address);
-        newAddress.setHint(currentPartner.getAddress());
+        newAddress.setHint(currentPartner.getAddressID());
 
         picture = (ImageView) findViewById(R.id.settings_partner_picture);
         picture.setImageBitmap(BitmapFactory.decodeFile(this.getFilesDir()+"/"+currentPartner.getImagePath()));

@@ -378,7 +378,7 @@ public class SQLHelper extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put("\"_id\"", partner.getId());
         cv.put("\"name\"", partner.getName());
-        cv.put("\"address\"", partner.getAddress());
+        cv.put("\"address\"", partner.getAddressID());
         cv.put("\"created_on\"", partner.getCreationDate());
         cv.put("\"image_path\"", partner.getImagePath());
 
@@ -391,9 +391,8 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param amount the amount of points to add. This can be positive or negative.
      * @param shopID Please not this is different from the partner's name.
      * @return True if the insertion was successful, False if it failed (for any reason not covered by a thrown exception).
-     * @throws UnknownPartnerException if the passed Partner does not exist in the database
      */
-    public boolean addPoints(String username, int amount, int shopID) throws UnknownPartnerException {
+    public boolean addPoints(String username, int amount, int shopID){
 
         int currentPoints = this.getPoints(getUserID(username), shopID);
 
@@ -406,10 +405,10 @@ public class SQLHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Returns the amount of points the passed User currently has by the passed Partner.
+     * Returns the amount of points the passed User currently has at the passed Shop.
      * @param userID the username (email) to look for
      * @param shopID the internal ID of the shop to look for
-     * @return the amount of points the user has earned as an int. Returns 0 if the User has never earned points by this Partner before.
+     * @return the amount of points the user has earned as an int. Returns 0 if the User has never earned points at this Shop before.
      */
     public int getPoints(int userID, int shopID){
         ArrayList<String> res = this.getElementFromDB("User_points",
@@ -417,7 +416,7 @@ public class SQLHelper extends SQLiteOpenHelper {
                                                 "id_user = \""+userID+"\" AND id_shop = \""+shopID+"\"");
         int l = res.size();
         if( l == 0 ){
-            // No pair username - partnerID was found in the User_points table.
+            // No pair userID - shopID was found in the User_points table.
             // This user has never earned points here before.
             return 0;
         } else {
@@ -537,7 +536,7 @@ public class SQLHelper extends SQLiteOpenHelper {
             }
             Partner out = new Partner(c.getInt(c.getColumnIndex("_id")),
                                     c.getString(c.getColumnIndex("name")),
-                                    c.getString(c.getColumnIndex("address")),
+                                    c.getInt(c.getColumnIndex("id_address")),
                                     c.getString(c.getColumnIndex("created_on")),
                                     c.getString(c.getColumnIndex("image_path"))
                                     );

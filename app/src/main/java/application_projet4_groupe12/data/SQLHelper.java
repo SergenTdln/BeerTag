@@ -109,10 +109,11 @@ public class SQLHelper extends SQLiteOpenHelper {
         try{
             String path = DATABASE_PATH + DATABASE_NAME;
 
-            checkDB = SQLiteDatabase.openDatabase(path, null , SQLiteDatabase.OPEN_READWRITE);
+           checkDB = SQLiteDatabase.openDatabase(path, null , SQLiteDatabase.OPEN_READWRITE);
         } catch (SQLiteException e){
             //The DB couldn't be opened -> it doesn't exist yet
             //This could be considered abusive use of exceptions (?)
+            System.out.println("Database has to be created");
         }
         boolean dbExists = (checkDB != null);
         if(dbExists){
@@ -378,7 +379,7 @@ public class SQLHelper extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put("\"_id\"", partner.getId());
         cv.put("\"name\"", partner.getName());
-        cv.put("\"address\"", partner.getAddressID());
+        cv.put("\"id_address\"", partner.getAddressID());
         cv.put("\"created_on\"", partner.getCreationDate());
         cv.put("\"image_path\"", partner.getImagePath());
 

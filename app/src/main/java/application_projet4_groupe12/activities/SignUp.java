@@ -292,8 +292,10 @@ public class SignUp extends AppCompatActivity {
 //                                Log.d(Global.debug_text, "fb login db error"+e);
 //                            }
 
-
-                            startActivity(new Intent(SignUp.this, MainActivity.class));
+                            Intent intent = new Intent(SignUp.this, MainActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                            finish();
                         }else{
                             Toast.makeText(SignUp.this, "Authentication error",
                                     Toast.LENGTH_SHORT).show();

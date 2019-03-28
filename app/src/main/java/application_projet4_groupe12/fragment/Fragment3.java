@@ -172,7 +172,7 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
 
     private void signUp() {
         String mName = name.getText().toString();
-        String mAddressID = address.getText().toString(); //TODO only accepts Address IDs ! I have to put a drop-down selection menu here so the user selects an existing address or creates one. @Martin
+        String mAddressID = address.getText().toString(); //TODO only accepts Address IDs ! I have to put a drop-down selection menu here so the user selects an existing address or creates one. Place numbers in this field for now, I will fix this soon @Martin
         if( mName.equals("") || mAddressID.equals("") )
         {
             Toast.makeText(getActivity(), "Please fill in all the fields", Toast.LENGTH_SHORT).show();

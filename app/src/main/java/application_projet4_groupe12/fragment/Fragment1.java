@@ -56,7 +56,7 @@ public class Fragment1 extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment1_layout, container, false);
         fragment1_sign_in = view.findViewById(R.id.fragment1_sign_in);
 
@@ -88,6 +88,13 @@ public class Fragment1 extends Fragment {
                                             Toast.makeText(getActivity(), R.string.login_success, Toast.LENGTH_SHORT).show();
 
                                             signIn(email);
+
+                                            Intent intent = new Intent(getActivity(), MainActivity.class);
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                            startActivity(intent);
+                                            if(getActivity()!=null){
+                                                getActivity().finish();
+                                            }
                                         } else {
                                             Toast.makeText(getActivity(), R.string.login_check_credentials, Toast.LENGTH_SHORT).show();
                                         }
@@ -143,7 +150,7 @@ public class Fragment1 extends Fragment {
         }
     }
 
-    private void  signIn(String email) {
+    private void signIn(String email) {
         try {
             db = new SQLHelper(getContext());
 
@@ -154,16 +161,12 @@ public class Fragment1 extends Fragment {
                 User user = db.getUser(email);
                 User.connectUser(getContext(), user);
 
-                Intent intent = new Intent(getActivity(), MainActivity.class);
-
                 /* creation d'une sessions globale lors du login */
                 SharedPreferences shared = getApplicationContext().getSharedPreferences("session", MODE_PRIVATE);
                 SharedPreferences.Editor editor = shared.edit();
                 editor.putString("email", email); // Storing string value
                 editor.apply();
                 /* end */
-
-                startActivity(intent);
             } else {
                 Toast.makeText(getActivity(),"Username not in database", Toast.LENGTH_SHORT).show();
             }

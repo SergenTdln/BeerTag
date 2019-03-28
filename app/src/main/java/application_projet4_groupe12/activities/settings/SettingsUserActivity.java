@@ -139,7 +139,7 @@ public class SettingsUserActivity extends AppCompatActivity {
                         User.connectedUser.setBirthday(newBirthdayS);
                     } catch (WrongDateFormatException e) {
                         Toast.makeText(v.getContext(), "Invalid Birthdate format", Toast.LENGTH_SHORT).show();
-                        newBirthday.setBackgroundColor(getResources().getColor(R.color.light_red, null));
+                        newBirthday.setBackgroundResource(R.drawable.border_error);
                     }
                 }
             }

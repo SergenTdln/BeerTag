@@ -17,11 +17,6 @@ import android.graphics.Bitmap;
 
 import com.squareup.picasso.Picasso;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.net.URL;
 
 import application_projet4_groupe12.R;

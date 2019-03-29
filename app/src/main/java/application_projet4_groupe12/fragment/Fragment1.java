@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -81,7 +82,7 @@ public class Fragment1 extends Fragment {
                         if(db.doesUsernameExist(email)) {
                             if (db.getHashedPassword(email).equals(Hash.hash(pass))) { //If password is correct
 
-                                mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() { //TODO use Hash.hash(pass) instead
                                     @Override
                                     public void onComplete(@NonNull Task<AuthResult> task) {
                                         if (task.isSuccessful()) {
@@ -95,8 +96,12 @@ public class Fragment1 extends Fragment {
                                             if(getActivity()!=null){
                                                 getActivity().finish();
                                             }
-                                        } else {
-                                            Toast.makeText(getActivity(), R.string.login_check_credentials, Toast.LENGTH_SHORT).show();
+                                        } else {Exception e = task.getException();
+                                            if (e instanceof FirebaseNetworkException){
+                                                Toast.makeText(getActivity(), "Could not create your account. Are you offline ?", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Toast.makeText(getActivity(), "Firebase Failed" + e, Toast.LENGTH_LONG).show();
+                                            }
                                         }
                                     }
                                 });

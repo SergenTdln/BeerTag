@@ -60,4 +60,6 @@ public class BrowsePointsResultsRowAdapter extends ArrayAdapter<BrowsePointsAsso
         //TextView shopDescr;
         TextView pointsAmount;
     }
+
+    //TODO allow to delete an admin by long-pressing the view ? be careful about not allowing to delete the last one, though ! @Martin
 }

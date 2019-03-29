@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity
         if(User.connectedUser.isAdmin()){
             navigationView.inflateMenu(R.menu.activity_main_navigation_drawer_admin);
             MenuItem adminTitle = navigationView.getMenu().findItem(R.id.nav_admin_title);
-            adminTitle.setTitle("Admin of " + User.connectedUser.getAdminPartner(this).getName());
+            adminTitle.setTitle("Admin of " + User.connectedUser.getAdministratedPartner(this).getName());
         } else {
             navigationView.inflateMenu(R.menu.activity_main_navigation_drawer);
         }

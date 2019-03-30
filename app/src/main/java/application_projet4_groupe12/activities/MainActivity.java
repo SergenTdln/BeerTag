@@ -233,9 +233,6 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
                 finish();
                 break;
-            case R.id.nav_admin_add_admin:
-                //TODO
-                break;
             case R.id.nav_admin_browse_clients:
                 startActivity(new Intent(MainActivity.this, BrowseClientsActivity.class));
                 break;

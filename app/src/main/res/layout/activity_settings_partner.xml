@@ -4,25 +4,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/settings_partner_full_scrollview"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent" >
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
 
         <TextView
             android:id="@+id/settings_partner_textview_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:fontFamily="@font/roboto_bold"
             android:text="@string/settings_title"
             android:textAllCaps="true"
             android:textColor="@android:color/darker_gray"
-            android:textSize="35sp"
+            android:textSize="30sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -39,50 +42,52 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/settings_partner_textview_title" />
 
-        <RelativeLayout
-            android:id="@+id/settings_partner_relative_layout"
-            android:layout_width="match_parent"
+        <ImageButton
+            android:id="@+id/settings_partner_save_button"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/settings_partner_sub_title" >
-
+            android:src="@android:drawable/ic_menu_save"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/settings_partner_change_name_title"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_height="30dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="8dp"
             android:text="Change name :"
             android:textSize="23sp"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_alignParentTop="true" />
+            app:layout_constraintTop_toBottomOf="@id/settings_partner_sub_title"/>
+
         <EditText
             android:id="@+id/settings_partner_change_name"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_toStartOf="@+id/settings_partner_picture"
             android:ellipsize="middle"
             android:hint="Default Name"
+            android:paddingEnd="150dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/settings_partner_change_name_title" />
 
         <TextView
             android:id="@+id/settings_partner_change_address_title"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_height="30dp"
             android:layout_marginTop="16dp"
             android:text="Change address :"
             android:textSize="23sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/settings_partner_change_name" />
+
         <EditText
             android:id="@+id/settings_partner_change_address"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_marginStart="8dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:ellipsize="middle"
             android:hint="Your new address"
@@ -93,94 +98,80 @@
             android:id="@+id/settings_partner_change_picture_title"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
+            android:layout_alignParentTop="true"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="8dp"
-            android:text="Change your picture :"
+            android:text="Change your logo :"
             android:textSize="23sp"
-            app:layout_constraintEnd_toEndOf="parent"android:layout_alignParentTop="true" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/settings_partner_change_address"/>
 
-            <ImageView
-                android:id="@+id/settings_partner_picture"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true"
-                android:src="@drawable/com_facebook_profile_picture_blank_square"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/settings_partner_change_picture_title" />
+        <ImageView
+            android:id="@+id/settings_partner_picture"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/com_facebook_profile_picture_blank_square"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/settings_partner_change_picture_title"/>
         <!--Changing this image's size would really mess up the UIs. Please avoid it if possible-->
-
-        </RelativeLayout>
 
         <Button
             android:id="@+id/settings_partner_picture_select_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/settings_partner_picture"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
             android:text="Select file"
             android:textColor="@color/colorPrimaryDark"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/settings_partner_relative_layout" />
-
-        <ImageButton
-            android:id="@+id/settings_partner_save_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:src="@android:drawable/ic_menu_save"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toEndOf="@+id/settings_partner_picture"
+            app:layout_constraintTop_toBottomOf="@+id/settings_partner_change_picture_title" />
 
         <TextView
             android:id="@+id/settings_partner_manage_admins"
-            android:layout_width="280dp"
+            android:layout_width="wrap_content"
             android:layout_height="30dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="16dp"
             android:ellipsize="middle"
             android:text="Manage your administrators :"
             android:textSize="23sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/settings_partner_relative_layout" />
+            app:layout_constraintTop_toBottomOf="@+id/settings_partner_picture" />
 
         <ListView
             android:id="@+id/settings_partner_manage_admins_listview"
             android:layout_width="fill_parent"
             android:layout_height="325dp"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/settings_partner_manage_admins" />
 
-        <Spinner
-            android:id="@+id/settings_partner_manage_admins_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="45dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:fontFamily="@font/roboto"
-            android:textColor="@color/login_text"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/settings_partner_manage_admins_listview" />
-
-        <Button
-            android:id="@+id/settings_partner_manage_admins_add_button"
+        <LinearLayout
+            android:id="@+id/settings_partner_spinner_container"
+            android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginBottom="8dp"
             android:layout_marginTop="8dp"
-            android:text="Add an administrator"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/settings_partner_manage_admins_spinner"
-            app:layout_constraintTop_toBottomOf="@+id/settings_partner_manage_admins_listview" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/settings_partner_manage_admins_listview">
+
+            <Spinner
+                android:id="@+id/settings_partner_manage_admins_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/roboto"
+                android:textColor="@color/login_text" />
+            <Button
+                android:id="@+id/settings_partner_manage_admins_add_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="0"
+                android:text="Add an administrator" />
+        </LinearLayout>
 
     </android.support.constraint.ConstraintLayout>
 

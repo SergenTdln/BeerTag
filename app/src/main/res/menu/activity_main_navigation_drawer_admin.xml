@@ -45,10 +45,6 @@
         android:title="@string/nav_title_admin_default" >
         <menu>
             <item
-                android:id="@+id/nav_admin_add_admin"
-                android:icon="@drawable/ic_menu_camera"
-                android:title="@string/nav_add_admin" />
-            <item
                 android:id="@+id/nav_admin_browse_clients"
                 android:icon="@drawable/ic_menu_gallery"
                 android:title="@string/nav_admin_browse_clients" />

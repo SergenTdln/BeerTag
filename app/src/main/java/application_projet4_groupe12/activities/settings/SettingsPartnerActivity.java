@@ -56,8 +56,9 @@ public class SettingsPartnerActivity extends AppCompatActivity {
 
         newName = (EditText) findViewById(R.id.settings_partner_change_name);
         newName.setHint(currentPartner.getName());
+
         newAddress = (EditText) findViewById(R.id.settings_partner_change_address);
-        newAddress.setHint(Integer.toString(currentPartner.getAddressID()));
+        newAddress.setHint(Integer.toString(currentPartner.getAddressID())); //TODO should handle an Address object instead of a String -> multiple fields/spinner/etc. @Martin
 
         picture = (ImageView) findViewById(R.id.settings_partner_picture);
         picture.setImageBitmap(BitmapFactory.decodeFile(this.getFilesDir()+"/"+currentPartner.getImagePath()));
@@ -83,26 +84,22 @@ public class SettingsPartnerActivity extends AppCompatActivity {
         addAdmin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SQLHelper db = null;
-                try {
-                    db = new SQLHelper(v.getContext());
+                String selected = (String) dropDownUsers.getSelectedItem();
+                if(selected.equals(getString(R.string.settings_partner_spinner_default))){
+                    //Do nothing
+                    dropDownUsers.setBackgroundResource(R.drawable.border_error);
+                } else {
+                    if(addAdmin(currentPartner, User.connectedUser, v.getContext())){
+                        //Update the displayed list
+                        fillListView(listAdmins, v.getContext());
 
-                    String selected = (String) dropDownUsers.getSelectedItem();
-                    //TODO set admin pair in DB
-
-                    //Update the displayed list
-                    fillListView(listAdmins, v.getContext());
-
-                    //Update the Spinner
-                    fillSpinner(dropDownUsers, v.getContext());
-
-                } catch (IOException e){
-
-                } finally {
-                    if(db!=null) {
-                        db.close();
+                        //Update the Spinner
+                        fillSpinner(dropDownUsers, v.getContext());
+                    } else {
+                        Toast.makeText(getApplicationContext(), "An error occurred; we could not add this Admin", Toast.LENGTH_SHORT).show();
                     }
                 }
+
             }
         });
 

@@ -180,7 +180,7 @@ public class AppUtils {
 
 
     /**
-     * TODO
+     * TODO completely rewrite this method using BitmapFactory from File object directly
      * Does NOT support transparency channels when it comes to bit-depth computation : when using such images, behavior is unpredicted.
      * @param c the <code>Context</code> used to access the app's internal private storage
      * @param user the <code>User</code> on whose profile pic we want to edit. Typically, the connected User.

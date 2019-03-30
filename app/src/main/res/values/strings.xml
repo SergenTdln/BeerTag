@@ -48,6 +48,9 @@
     <string name="browse_clients_shop_title">Shop located at :</string>
 
     <string name="settings_title">Settings</string>
+    <string name="settings_partner_spinner_default">Please select an User</string>
+
+
 
     <string name="type_here_bar">Generate barcode</string>
     <string name="type_here_qr">Generate QR code</string>

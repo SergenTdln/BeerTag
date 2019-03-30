@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.View;
@@ -94,7 +95,7 @@ public class MainActivity extends AppCompatActivity
         if(User.connectedUser.isAdmin()){
             navigationView.inflateMenu(R.menu.activity_main_navigation_drawer_admin);
             MenuItem adminTitle = navigationView.getMenu().findItem(R.id.nav_admin_title);
-            adminTitle.setTitle("Admin of " + User.connectedUser.getAdminPartner(this).getName());
+            adminTitle.setTitle("Admin of " + User.connectedUser.getAdministratedPartner(this).getName());
         } else {
             navigationView.inflateMenu(R.menu.activity_main_navigation_drawer);
         }
@@ -114,7 +115,10 @@ public class MainActivity extends AppCompatActivity
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer == null) {
-            startActivity(new Intent(MainActivity.this, MainActivity.class));
+            Intent intent = new Intent(MainActivity.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
         } else {
             if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);
@@ -186,7 +190,7 @@ public class MainActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -224,11 +228,10 @@ public class MainActivity extends AppCompatActivity
                 //couper la session facebook
                 LoginManager.getInstance().logOut();
 
-
-                startActivity(new Intent(MainActivity.this, SignUp.class));
-                break;
-            case R.id.nav_admin_add_admin:
-                //TODO
+                Intent intent = new Intent(MainActivity.this, SignUp.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //Clears the Activity stack
+                startActivity(intent);
+                finish();
                 break;
             case R.id.nav_admin_browse_clients:
                 startActivity(new Intent(MainActivity.this, BrowseClientsActivity.class));

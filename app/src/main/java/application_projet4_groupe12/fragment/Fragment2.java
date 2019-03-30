@@ -120,7 +120,7 @@ public class Fragment2 extends Fragment {
                 });
     }
     public void Transfer2(){
-        dab.collection("Users")
+        dab.collection("User")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -193,7 +193,7 @@ public class Fragment2 extends Fragment {
                             Toast.makeText(getActivity(), "Invalid date format : please use DD/MM/YYYY", Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        dab.collection("Users").add(user);
+                        dab.collection("User").add(user);
                         Toast.makeText(getActivity(), "Account created", Toast.LENGTH_SHORT).show();
 
                         Log.d(Global.debug_text, "Firebase instance: " + mAuth);
@@ -204,12 +204,19 @@ public class Fragment2 extends Fragment {
                                     Toast.makeText(getActivity(), R.string.login_success, Toast.LENGTH_SHORT).show();
 
                                     signIn(email);
+
+                                    Intent intent = new Intent(getActivity(), MainActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    startActivity(intent);
+                                    if(getActivity()!=null){
+                                        getActivity().finish();
+                                    }
                                 } else {
                                     Exception e = task.getException();
                                     if (e instanceof FirebaseNetworkException){
                                         Toast.makeText(getActivity(), "Could not create your account. Are you offline ?", Toast.LENGTH_SHORT).show();
                                     } else {
-                                        Toast.makeText(getActivity(), "Firebase Failed" + e, Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getActivity(), "Firebase Failed" + e, Toast.LENGTH_LONG).show();
                                     }
                                 }
                             }
@@ -239,9 +246,6 @@ public class Fragment2 extends Fragment {
 
                 User user = db.getUser(email);
                 User.connectUser(getContext(), user);
-
-                Intent intent = new Intent(getActivity(), MainActivity.class);
-                startActivity(intent);
             } else {
                 Toast.makeText(getActivity(),"not in database", Toast.LENGTH_SHORT).show();
             }

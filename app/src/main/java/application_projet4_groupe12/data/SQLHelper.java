@@ -6,7 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.widget.ListView;
+import android.support.annotation.NonNull;
 import android.widget.Toast;
 
 import java.io.FileOutputStream;
@@ -24,12 +24,10 @@ import application_projet4_groupe12.entities.Address;
 import application_projet4_groupe12.entities.Partner;
 import application_projet4_groupe12.entities.Shop;
 import application_projet4_groupe12.entities.User;
-import application_projet4_groupe12.exceptions.UnknownPartnerException;
 import application_projet4_groupe12.exceptions.UnknownUserException;
 import application_projet4_groupe12.exceptions.WrongDateFormatException;
 import application_projet4_groupe12.exceptions.WrongEmailFormatException;
 import application_projet4_groupe12.utils.Pair;
-import application_projet4_groupe12.utils.Triplet;
 
 
 /**
@@ -109,10 +107,11 @@ public class SQLHelper extends SQLiteOpenHelper {
         try{
             String path = DATABASE_PATH + DATABASE_NAME;
 
-            checkDB = SQLiteDatabase.openDatabase(path, null , SQLiteDatabase.OPEN_READWRITE);
+           checkDB = SQLiteDatabase.openDatabase(path, null , SQLiteDatabase.OPEN_READWRITE);
         } catch (SQLiteException e){
             //The DB couldn't be opened -> it doesn't exist yet
             //This could be considered abusive use of exceptions (?)
+            System.out.println("Database has to be created");
         }
         boolean dbExists = (checkDB != null);
         if(dbExists){
@@ -378,7 +377,7 @@ public class SQLHelper extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put("\"_id\"", partner.getId());
         cv.put("\"name\"", partner.getName());
-        cv.put("\"address\"", partner.getAddress());
+        cv.put("\"id_address\"", partner.getAddressID());
         cv.put("\"created_on\"", partner.getCreationDate());
         cv.put("\"image_path\"", partner.getImagePath());
 
@@ -391,9 +390,8 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param amount the amount of points to add. This can be positive or negative.
      * @param shopID Please not this is different from the partner's name.
      * @return True if the insertion was successful, False if it failed (for any reason not covered by a thrown exception).
-     * @throws UnknownPartnerException if the passed Partner does not exist in the database
      */
-    public boolean addPoints(String username, int amount, int shopID) throws UnknownPartnerException {
+    public boolean addPoints(String username, int amount, int shopID){
 
         int currentPoints = this.getPoints(getUserID(username), shopID);
 
@@ -406,10 +404,10 @@ public class SQLHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Returns the amount of points the passed User currently has by the passed Partner.
+     * Returns the amount of points the passed User currently has at the passed Shop.
      * @param userID the username (email) to look for
      * @param shopID the internal ID of the shop to look for
-     * @return the amount of points the user has earned as an int. Returns 0 if the User has never earned points by this Partner before.
+     * @return the amount of points the user has earned as an int. Returns 0 if the User has never earned points at this Shop before.
      */
     public int getPoints(int userID, int shopID){
         ArrayList<String> res = this.getElementFromDB("User_points",
@@ -417,7 +415,7 @@ public class SQLHelper extends SQLiteOpenHelper {
                                                 "id_user = \""+userID+"\" AND id_shop = \""+shopID+"\"");
         int l = res.size();
         if( l == 0 ){
-            // No pair username - partnerID was found in the User_points table.
+            // No pair userID - shopID was found in the User_points table.
             // This user has never earned points here before.
             return 0;
         } else {
@@ -444,7 +442,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param shopID the Shop to look for
      * @return a list of Integers. This list can be empty if this Shop has no client registered in the database.
      */
-    public List<Integer> getAllUserIDs(int shopID){
+    public List<Integer> getAllClientsUserIDs(int shopID){
         List<Integer> res = new ArrayList<>();
         List<String> userIds = getElementFromDB("User_points", "id_user", "id_shop = \""+shopID+"\"");
         for (String userID : userIds){
@@ -468,6 +466,21 @@ public class SQLHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * Returns a List of <code>User</code> instances representing all the administrators of the <code>Partner</code> passed in argument.
+     * @param partnerID the ID of the <code>Partner</code> to look for
+     * @return a List of <code>User</code> instances. This list might be empty if this <code>Partner</code> has no administrator. (Which should seriously be avoided)
+     */
+    public List<User> getAllAdmins(int partnerID){
+        List<User> ret = new ArrayList<User>();
+        List<String> adminsIDs = getElementFromDB("Admin_user", "id_user", "id_partner = \""+partnerID+"\"");
+
+        for (String userId : adminsIDs) {
+            ret.add(this.getUser(Integer.parseInt(userId)));
+        }
+        return ret;
+    }
+
+    /**
      * Returns the internal ID of the Partner owning/running the Shop passed as argument
      * @param shopID the Shop_location to look for
      * @return an internal Partner ID as an int, or -1 if <code>shopID</code> was not present in the database
@@ -488,6 +501,7 @@ public class SQLHelper extends SQLiteOpenHelper {
             return -1;
         }
     }
+
     /**
      * Retrieves information on a User from the database and returns it as an User instance.
      * @param username the email of the User to retrieve
@@ -500,10 +514,9 @@ public class SQLHelper extends SQLiteOpenHelper {
                 //Duplicate User in the database
                 Toast.makeText(context, "A duplicated entry of User with username \""+username+"\" was found in the database", Toast.LENGTH_LONG).show();
             }
-
-            for(int i=0; i<c.getColumnCount(); i++){
-                System.out.println("Column "+i+" is "+c.getColumnName(i));
-            }
+            //for(int i=0; i<c.getColumnCount(); i++){
+            //    System.out.println("Column "+i+" is "+c.getColumnName(i));
+            //}
             User out = new User(c.getInt(c.getColumnIndex("_id")),
                                 c.getString(c.getColumnIndex("username")),
                                 c.getString(c.getColumnIndex("password")),
@@ -514,6 +527,37 @@ public class SQLHelper extends SQLiteOpenHelper {
                                 c.getString(c.getColumnIndex("image_path")),
                                 this.isAdmin(username)
                                 );
+            c.close();
+            return out;
+        } else {
+            //No such user in the database
+            c.close();
+            return null;
+        }
+    }
+
+    /**
+     * Retrieves information on a User from the database and returns it as an User instance.
+     * @param userId the ID of the User to retrieve
+     * @return a User instance, or null if this id was not present in the database
+     */
+    public User getUser(int userId){
+        Cursor c = getEntriesFromDB("User", null, "_id = \""+userId+"\"", null);
+        if(c.moveToFirst()){
+            if(c.getCount() > 1){
+                //Duplicate User in the database
+                Toast.makeText(context, "A duplicated entry of User with id \""+userId+"\" was found in the database", Toast.LENGTH_LONG).show();
+            }
+            User out = new User(c.getInt(c.getColumnIndex("_id")),
+                    c.getString(c.getColumnIndex("username")),
+                    c.getString(c.getColumnIndex("password")),
+                    c.getString(c.getColumnIndex("created_on")),
+                    c.getString(c.getColumnIndex("first_name")),
+                    c.getString(c.getColumnIndex("last_name")),
+                    c.getString(c.getColumnIndex("birthday")),
+                    c.getString(c.getColumnIndex("image_path")),
+                    this.isAdmin(c.getString(c.getColumnIndex("username")))
+            );
             c.close();
             return out;
         } else {
@@ -537,7 +581,7 @@ public class SQLHelper extends SQLiteOpenHelper {
             }
             Partner out = new Partner(c.getInt(c.getColumnIndex("_id")),
                                     c.getString(c.getColumnIndex("name")),
-                                    c.getString(c.getColumnIndex("address")),
+                                    c.getInt(c.getColumnIndex("id_address")),
                                     c.getString(c.getColumnIndex("created_on")),
                                     c.getString(c.getColumnIndex("image_path"))
                                     );
@@ -809,7 +853,7 @@ public class SQLHelper extends SQLiteOpenHelper {
     public List<BrowseClientsClientDataAssociation> getAllClientsPointsAtShop(int shopID){
         List<BrowseClientsClientDataAssociation> res = new ArrayList<>();
 
-        List<Integer> users = getAllUserIDs(shopID);
+        List<Integer> users = getAllClientsUserIDs(shopID);
         for (int userID : users) {
             //For each user using this shop :
             res.add(new BrowseClientsClientDataAssociation(context, getUsername(userID), getPoints(userID, shopID)));

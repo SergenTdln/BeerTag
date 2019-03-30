@@ -5,6 +5,8 @@ import android.database.sqlite.SQLiteException;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.exceptions.WrongDateFormatException;
@@ -96,7 +98,7 @@ public class User {
      * If this User is an administrator, returns the Partner instance this User administrates.
      * @return The administrated Partner instance, or null if this user is not an administrator
      */
-    public Partner getAdminPartner(Context c){
+    public Partner getAdministratedPartner(Context c){
         if(this.isAdmin){
             SQLHelper db = null;
             try {
@@ -110,6 +112,19 @@ public class User {
         } else {
             return null;
         }
+    }
+
+    /**
+     * TODO
+     * @param users
+     * @return
+     */
+    public static List<String> getUsernames(List<User> users){
+        List<String> ret = new LinkedList<>();
+        for (User user : users) {
+            ret.add(user.getUsername());
+        }
+        return ret;
     }
 
     //******

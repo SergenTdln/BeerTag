@@ -17,11 +17,6 @@ import android.graphics.Bitmap;
 
 import com.squareup.picasso.Picasso;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.net.URL;
 
 import application_projet4_groupe12.R;
@@ -112,16 +107,26 @@ public class SettingsUserActivity extends AppCompatActivity {
                     User.connectedUser.setLastName(newLastNameS);
                 }
                 if( (currPasswordS.equals("")) != (newPasswordS.equals(""))){ //XOR
-                    currentPassword.setBackgroundColor(getResources().getColor(R.color.light_red, null));
-                    newPassword.setBackgroundColor(getResources().getColor(R.color.light_red, null));
+                    currentPassword.setBackgroundResource(R.drawable.border_error);
+                    newPassword.setBackgroundResource(R.drawable.border_error);
                     return;
                 }
                 if( (!currPasswordS.equals("")) && (!newPasswordS.equals(""))){
-                    if(Hash.hash(currPasswordS).equals(User.connectedUser.getPasswordHashed())) {
-                        User.connectedUser.setPasswordHashed(Hash.hash(newPasswordS));
-                    } else {
-                        currentPassword.setBackgroundColor(getResources().getColor(R.color.light_red, null));
+                    if(newPasswordS.length()<6){
+                        currentPassword.setBackgroundResource(0);
+                        newPassword.setBackgroundResource(R.drawable.border_error);
+                        Toast.makeText(v.getContext(), "Your password must be at least 6 characters long", Toast.LENGTH_LONG).show();
                         return;
+                    }
+                    if(Hash.hash(currPasswordS).equals(User.connectedUser.getPasswordHashed())) {
+                        currentPassword.setBackgroundResource(0);
+                        newPassword.setBackgroundResource(0);
+                        User.connectedUser.setPasswordHashed(Hash.hash(newPasswordS));
+                        Toast.makeText(v.getContext(), "Password changed successfully", Toast.LENGTH_SHORT).show();
+                    } else {
+                        currentPassword.setBackgroundResource(R.drawable.border_error);
+                        newPassword.setBackgroundResource(0);
+                        Toast.makeText(v.getContext(), "This is not your current password", Toast.LENGTH_SHORT).show();
                     }
                 }
                 if(! newBirthdayS.equals("")){
@@ -129,7 +134,7 @@ public class SettingsUserActivity extends AppCompatActivity {
                         User.connectedUser.setBirthday(newBirthdayS);
                     } catch (WrongDateFormatException e) {
                         Toast.makeText(v.getContext(), "Invalid Birthdate format", Toast.LENGTH_SHORT).show();
-                        newBirthday.setBackgroundColor(getResources().getColor(R.color.light_red, null));
+                        newBirthday.setBackgroundResource(R.drawable.border_error);
                     }
                 }
             }

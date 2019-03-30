@@ -816,4 +816,21 @@ public class SQLHelper extends SQLiteOpenHelper {
         }
         return res;
     }
+
+    /**
+     *
+     * Checks if a record is already in the Address database.
+     * @param fieldValue
+     * @return true if the record already exists in the DB, otherwise it returns false.
+     */
+    public boolean checkDatabaseAddress(String TableName, Integer identifier, Integer id) {
+            String Query = "Select * from " + TableName + " where " + identifier + " = " + id;
+        Cursor cursor = myDB.rawQuery(Query, null);
+        if(cursor.getCount() <= 0){
+            cursor.close();
+            return false;
+        }
+        cursor.close();
+        return true;
+    }
 }

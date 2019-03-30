@@ -1,6 +1,8 @@
 package application_projet4_groupe12.fragment;
 
 import android.content.Intent;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -16,6 +18,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -34,6 +37,10 @@ import java.io.IOException;
 import application_projet4_groupe12.activities.MainActivity;
 import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.entities.User;
+import application_projet4_groupe12.utils.Hash;
+
+import static android.content.Context.MODE_PRIVATE;
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class Fragment1 extends Fragment {
 
@@ -50,7 +57,7 @@ public class Fragment1 extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment1_layout, container, false);
         fragment1_sign_in = view.findViewById(R.id.fragment1_sign_in);
 
@@ -60,8 +67,8 @@ public class Fragment1 extends Fragment {
         fragment1_sign_in.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                username = getView().findViewById(R.id.editText1);
-                password = getView().findViewById(R.id.editText2);
+                username = getView().findViewById(R.id.sign_in_input_email);
+                password = getView().findViewById(R.id.sign_in_input_password);
 
                 String email = username.getText().toString();
                 String pass = password.getText().toString();
@@ -70,20 +77,47 @@ public class Fragment1 extends Fragment {
                     Toast.makeText(getActivity(),R.string.login_fields, Toast.LENGTH_SHORT).show();
                 }
                 else {
+                    try {
+                        db = new SQLHelper(getContext());
+                        if(db.doesUsernameExist(email)) {
+                            if (db.getHashedPassword(email).equals(Hash.hash(pass))) { //If password is correct
 
-                    mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                Toast.makeText(getActivity(),R.string.login_success, Toast.LENGTH_SHORT).show();
+                                mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() { //TODO use Hash.hash(pass) instead
+                                    @Override
+                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                        if (task.isSuccessful()) {
+                                            Toast.makeText(getActivity(), R.string.login_success, Toast.LENGTH_SHORT).show();
 
-                                signIn(email);
+                                            signIn(email);
+
+                                            Intent intent = new Intent(getActivity(), MainActivity.class);
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                            startActivity(intent);
+                                            if(getActivity()!=null){
+                                                getActivity().finish();
+                                            }
+                                        } else {Exception e = task.getException();
+                                            if (e instanceof FirebaseNetworkException){
+                                                Toast.makeText(getActivity(), "Could not create your account. Are you offline ?", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Toast.makeText(getActivity(), "Firebase Failed" + e, Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+                                    }
+                                });
+
+                            } else {
+                                Toast.makeText(getActivity(), "Wrong password", Toast.LENGTH_SHORT).show();
                             }
-                            else {
-                                Toast.makeText(getActivity(),  R.string.login_check_credentials, Toast.LENGTH_SHORT).show();
-                            }
+                        } else {
+                            Toast.makeText(getActivity(), "This username does not exist", Toast.LENGTH_SHORT).show();
                         }
-                    });
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } finally {
+                        db.close();
+                    }
+
                 }
             }
         });
@@ -121,7 +155,7 @@ public class Fragment1 extends Fragment {
         }
     }
 
-    private void  signIn(String email) {
+    private void signIn(String email) {
         try {
             db = new SQLHelper(getContext());
 
@@ -132,10 +166,14 @@ public class Fragment1 extends Fragment {
                 User user = db.getUser(email);
                 User.connectUser(getContext(), user);
 
-                Intent intent = new Intent(getActivity(), MainActivity.class);
-                startActivity(intent);
+                /* creation d'une sessions globale lors du login */
+                SharedPreferences shared = getApplicationContext().getSharedPreferences("session", MODE_PRIVATE);
+                SharedPreferences.Editor editor = shared.edit();
+                editor.putString("email", email); // Storing string value
+                editor.apply();
+                /* end */
             } else {
-                Toast.makeText(getActivity(),"not in database", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),"Username not in database", Toast.LENGTH_SHORT).show();
             }
 
         } catch (IOException e) {

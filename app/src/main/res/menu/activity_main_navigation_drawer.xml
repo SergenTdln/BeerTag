@@ -23,7 +23,7 @@
     </group>
 
     <item
-        android:title="@string/nav_management" >
+        android:title="@string/nav_title_management" >
         <menu>
             <item
                 android:id="@+id/nav_settings"

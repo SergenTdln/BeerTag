@@ -22,7 +22,7 @@ public class QRGenerateActivity extends AppCompatActivity {
 
         mSectionsStatePagerAdapter = new SectionsStatePagerAdapter(getSupportFragmentManager());
 
-        mViewPager = (ViewPager) findViewById(R.id.container_gen);
+        mViewPager = findViewById(R.id.container_gen);
 
         setupViewPager(mViewPager);
     }
@@ -39,9 +39,10 @@ public class QRGenerateActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer == null) {
             startActivity(new Intent(QRGenerateActivity.this, MainActivity.class));
+            finish();
         } else {
             if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);
@@ -50,4 +51,6 @@ public class QRGenerateActivity extends AppCompatActivity {
             }
         }
     }
+
+
 }

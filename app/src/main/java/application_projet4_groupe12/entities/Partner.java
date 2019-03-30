@@ -7,15 +7,15 @@ public class Partner {
 
     private int id; // Internal ID of the partner, should not be displayed to the user. Unique
     private String name; // Name displayed to the user. Might not be unique
-    private String address;
+    private int addressID;
     private String creationDate; //This HAS to follow this format : DD/MM/YYYY. (Example: "31/01/2000")
     private String imagePath; //Image path inside of the assets folder
 
     // Call SQLHelper.getFreeIDPartner() to obtain an available ID to use
-    public Partner(int id, String name, String address, String creationDate, String imagePath) {
+    public Partner(int id, String name, int addressID, String creationDate, String imagePath) {
         this.id = id;
         this.name = name;
-        this.address = address;
+        this.addressID = addressID;
         this.creationDate = creationDate;
         this.imagePath = imagePath;
     }
@@ -31,8 +31,8 @@ public class Partner {
         return name;
     }
 
-    public String getAddress() {
-        return address;
+    public int getAddressID() {
+        return addressID;
     }
 
     public String getCreationDate() {
@@ -53,8 +53,8 @@ public class Partner {
         this.name = name;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setAddressID(int addressID) {
+        this.addressID = addressID;
     }
 
     public void setCreationDate(String creationDate) {

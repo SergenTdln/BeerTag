@@ -30,3 +30,6 @@ build/
 .navigation
 captures/
 output.json 
+
+# Documentation
+Documentation/

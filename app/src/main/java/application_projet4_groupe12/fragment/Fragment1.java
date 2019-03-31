@@ -80,9 +80,11 @@ public class Fragment1 extends Fragment {
                     try {
                         db = new SQLHelper(getContext());
                         if(db.doesUsernameExist(email)) {
-                            if (db.getHashedPassword(email).equals(Hash.hash(pass))) { //If password is correct
+                            String hashedPassword = Hash.hash(pass);
+                            System.out.println("hashedPassword = "+hashedPassword);
+                            if (db.getHashedPassword(email).equals(hashedPassword)) { //If password is correct
 
-                                mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() { //TODO use Hash.hash(pass) instead
+                                mAuth.signInWithEmailAndPassword(email, hashedPassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                     @Override
                                     public void onComplete(@NonNull Task<AuthResult> task) {
                                         if (task.isSuccessful()) {

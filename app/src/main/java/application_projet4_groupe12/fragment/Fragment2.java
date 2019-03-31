@@ -197,7 +197,7 @@ public class Fragment2 extends Fragment {
                         Toast.makeText(getActivity(), "Account created", Toast.LENGTH_SHORT).show();
 
                         Log.d(Global.debug_text, "Firebase instance: " + mAuth);
-                        mAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        mAuth.createUserWithEmailAndPassword(email, Hash.hash(pass)).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {

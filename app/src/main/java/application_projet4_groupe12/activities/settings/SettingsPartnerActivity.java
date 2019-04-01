@@ -89,7 +89,7 @@ public class SettingsPartnerActivity extends AppCompatActivity {
                     //Do nothing
                     dropDownUsers.setBackgroundResource(R.drawable.border_error);
                 } else {
-                    if(addAdmin(currentPartner, User.connectedUser, v.getContext())){
+                    if(addAdmin(currentPartner, getUser(v.getContext(), selected), v.getContext())){
                         //Update the displayed list
                         fillListView(listAdmins, v.getContext());
 
@@ -118,6 +118,23 @@ public class SettingsPartnerActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private User getUser(Context c, String email){
+        SQLHelper db = null;
+        try{
+            db = new SQLHelper(c);
+            return db.getUser(email);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "An error occurred; we could retrieve the user from the drop-down menu", Toast.LENGTH_SHORT).show();
+            return null;
+        } finally {
+            if(db!=null){
+                db.close();
+            }
+        }
     }
 
     private void fillSpinner(Spinner spinner, Context c){
@@ -167,6 +184,9 @@ public class SettingsPartnerActivity extends AppCompatActivity {
     }
 
     private boolean addAdmin(Partner partner, User user, Context c){
+        if(user==null){
+            return false;
+        }
         SQLHelper db = null;
         try{
             db = new SQLHelper(c);

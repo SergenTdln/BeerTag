@@ -33,7 +33,7 @@
     <string name="browse_points_default_shop_address">Addresse par défaut</string>
     <string name="settings_title">Paramètres</string>
     <string name="default_username">Email par défaut</string>
-    <string name="nav_title_priv_account">Votre compte personnel</string>
+    <string name="nav_title_priv_account">Votre compte utilisateur</string>
     <string name="nav_title_admin_default">Gestion du partenaire &quot;Partenaire par défaut&quot;</string>
     <string name="nav_add_admin">Ajouter un administrateur</string>
     <string name="nav_admin_settings">Paramètres</string>

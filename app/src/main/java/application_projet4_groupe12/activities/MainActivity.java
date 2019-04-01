@@ -92,16 +92,49 @@ public class MainActivity extends AppCompatActivity
          * Navigation view
          */
         NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.inflateHeaderView(R.layout.activity_main_navigation_header);
         if(User.connectedUser.isAdmin()){
             navigationView.inflateMenu(R.menu.activity_main_navigation_drawer_admin);
             MenuItem adminTitle = navigationView.getMenu().findItem(R.id.nav_admin_title);
-            adminTitle.setTitle("Admin of " + User.connectedUser.getAdministratedPartner(this).getName());
+            adminTitle.setTitle("Account of " + User.connectedUser.getAdministratedPartner(this).getName());
         } else {
             navigationView.inflateMenu(R.menu.activity_main_navigation_drawer);
         }
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.bringToFront();
 
+        /*
+         * Navigation view header data
+         */
+        ImageView navHeaderImage = findViewById(R.id.activity_main_navigation_header_image);
+        System.out.println("NavHeaderImage is NULL : "+navHeaderImage.equals(null));
+        TextView navHeaderText1 = (TextView) findViewById(R.id.activity_main_navigation_header_text1);
+        System.out.println("NavHeaderText1 is NULL : "+navHeaderText1.equals(null));
+        TextView navHeaderText2 = findViewById(R.id.activity_main_navigation_header_text2);
+        System.out.println("NavHeaderText2 is NULL : "+navHeaderText2.equals(null));
+
+        /* Remplacer le logo par la photo de profil fb*/
+        if (ActivityUtils.getInstance().isLoggedInFacebook()) {
+            Log.i(Global.debug_text, "nav" + navHeaderImage);
+            String id = new FacebookUtils().getFacebookId();
+            SharedPreferences shared = getSharedPreferences(id, MODE_PRIVATE);
+            String session_name = shared.getString("name", "");
+            String session_email = shared.getString("email", "");
+            URL image_url = new FacebookUtils().getFacebookProfilePic();
+            Log.i(Global.debug_text, "session img url / name / email " + image_url + session_name + session_email);
+            Picasso.with(this).load(String.valueOf(image_url)).into(navHeaderImage);
+            navHeaderText1.setText(session_name);
+            navHeaderText2.setText(session_email);
+        } else {
+            String userFullName = User.connectedUser.getFullName();
+            Log.i(Global.debug_text, "userFullName" + userFullName);
+            navHeaderText1.setText(userFullName);
+
+            String userUsername = User.connectedUser.getUsername();
+            Log.i(Global.debug_text, "getUsername" + userUsername);
+            navHeaderText2.setText(userUsername);
+            navHeaderImage.setImageBitmap(BitmapFactory.decodeFile(this.getFilesDir()+"/"+User.connectedUser.getImagePath()));
+        }
     }
 
     /*
@@ -133,35 +166,6 @@ public class MainActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
 
-        /*
-         * Navigation view header data
-         */
-        ImageView navHeaderImage = findViewById(R.id.activity_main_navigation_header_image);
-        TextView navHeaderText1 = findViewById(R.id.activity_main_navigation_header_text1);
-        TextView navHeaderText2 = findViewById(R.id.activity_main_navigation_header_text2);
-
-        /* Remplacer le logo par la photo de profil fb*/
-        if (ActivityUtils.getInstance().isLoggedInFacebook()) {
-            Log.i(Global.debug_text, "nav" + navHeaderImage);
-            String id = new FacebookUtils().getFacebookId();
-            SharedPreferences shared = getSharedPreferences(id, MODE_PRIVATE);
-            String session_name = shared.getString("name", "");
-            String session_email = shared.getString("email", "");
-            URL image_url = new FacebookUtils().getFacebookProfilePic();
-            Log.i(Global.debug_text, "session img url / name / email " + image_url + session_name + session_email);
-            Picasso.with(this).load(String.valueOf(image_url)).into(navHeaderImage);
-            navHeaderText1.setText(session_name);
-            navHeaderText2.setText(session_email);
-        } else {
-            String userFullName = User.connectedUser.getFullName();
-            Log.i(Global.debug_text, "userFullName" + userFullName);
-            navHeaderText1.setText(userFullName);
-
-            String userUsername = User.connectedUser.getUsername();
-            Log.i(Global.debug_text, "getUsername" + userUsername);
-            navHeaderText2.setText(userUsername);
-            navHeaderImage.setImageBitmap(BitmapFactory.decodeFile(this.getFilesDir()+"/"+User.connectedUser.getImagePath()));
-        }
         return true;
     }
 

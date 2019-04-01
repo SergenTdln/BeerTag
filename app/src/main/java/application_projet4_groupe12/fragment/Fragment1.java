@@ -100,7 +100,7 @@ public class Fragment1 extends Fragment {
                                             }
                                         } else {Exception e = task.getException();
                                             if (e instanceof FirebaseNetworkException){
-                                                Toast.makeText(getActivity(), "Could not create your account. Are you offline ?", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(getActivity(), "Could not connect to your account. Are you offline ?", Toast.LENGTH_SHORT).show();
                                             } else {
                                                 Toast.makeText(getActivity(), "Firebase Failed" + e, Toast.LENGTH_LONG).show();
                                             }

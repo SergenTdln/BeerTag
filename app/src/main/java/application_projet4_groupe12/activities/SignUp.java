@@ -253,6 +253,7 @@ public class SignUp extends AppCompatActivity {
 
                             /*
                             TODO : faire l'ajout en DB
+                            // TODO Et appeler User.connectUser() @Sergen
                              */
 
 //                            Context ct = getApplicationContext();

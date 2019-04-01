@@ -864,11 +864,24 @@ public class SQLHelper extends SQLiteOpenHelper {
     /**
      *
      * Checks if a record is already in the Address database.
-     * @param fieldValue
      * @return true if the record already exists in the DB, otherwise it returns false.
      */
-    public boolean checkDatabaseAddress(String TableName, Integer identifier, Integer id) {
-            String Query = "Select * from " + TableName + " where " + identifier + " = " + id;
+    public boolean addAddress(String TableName, Integer identifier, String city, String street, String numbers){
+        public static SQLHelper sqLHelper;
+        sqLHelper = new SQLHelper(this, "database.sqlite", null, 1);
+            String Query = "Select * From TableName where id = '"+identifier+"'";
+            if (sqLHelper.getData(query).getCount()>0){
+                Toast.makeText(getapplicationContext(),"Already Exists!", Toast.LENGTH_SHORT).show();
+            }
+            else{
+                sqLHelper.insertData{
+                    identifier,
+                    city,
+                    street,
+                    numbers
+                );
+                    Toast.makeText(getApplicationContext(), "Added successfully!", Toast.LENGTH_SHORT).show();
+            }
         Cursor cursor = myDB.rawQuery(Query, null);
         if(cursor.getCount() <= 0){
             cursor.close();
@@ -876,5 +889,9 @@ public class SQLHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         return true;
+    }
+
+    public boolean checkDatabaseAdmin_user(String TableName, Integer iduser, Integer idpartner){
+        String Query = "Select * from " + TableName + " where " + id_user + " = " + iduser + " And " + id_partner + " = " + idpartner;
     }
 }

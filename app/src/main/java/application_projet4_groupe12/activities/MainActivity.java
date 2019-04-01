@@ -102,6 +102,36 @@ public class MainActivity extends AppCompatActivity
         }
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.bringToFront();
+    }
+
+    /*
+        Quand on appuie sur le boutton de retour en arrière
+     */
+
+    @Override
+    public void onBackPressed() {
+        if(active){
+            AppUtils.tapToExit(this);
+        }
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        if (drawer == null) {
+            Intent intent = new Intent(MainActivity.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
+        } else {
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
+            } else {
+                super.onBackPressed();
+            }
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
 
         /*
          * Navigation view header data
@@ -135,37 +165,6 @@ public class MainActivity extends AppCompatActivity
             navHeaderText2.setText(userUsername);
             navHeaderImage.setImageBitmap(BitmapFactory.decodeFile(this.getFilesDir()+"/"+User.connectedUser.getImagePath()));
         }
-    }
-
-    /*
-        Quand on appuie sur le boutton de retour en arrière
-     */
-
-    @Override
-    public void onBackPressed() {
-        if(active){
-            AppUtils.tapToExit(this);
-        }
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer == null) {
-            Intent intent = new Intent(MainActivity.this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            finish();
-        } else {
-            if (drawer.isDrawerOpen(GravityCompat.START)) {
-                drawer.closeDrawer(GravityCompat.START);
-            } else {
-                super.onBackPressed();
-            }
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-
         return true;
     }
 

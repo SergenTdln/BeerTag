@@ -2,7 +2,9 @@ package application_projet4_groupe12.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.View;
@@ -16,7 +18,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import application_projet4_groupe12.R;
+import application_projet4_groupe12.activities.browse_clients.BrowseClientsActivity;
 import application_projet4_groupe12.activities.browse_points.BrowsePointsActivity;
+import application_projet4_groupe12.activities.settings.SettingsPartnerActivity;
+import application_projet4_groupe12.activities.settings.SettingsUserActivity;
 import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.utils.ActivityUtils;
 import application_projet4_groupe12.utils.AppUtils;
@@ -87,9 +92,16 @@ public class MainActivity extends AppCompatActivity
          * Navigation view
          */
         NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.inflateHeaderView(R.layout.activity_main_navigation_header);
+        if(User.connectedUser.isAdmin()){
+            navigationView.inflateMenu(R.menu.activity_main_navigation_drawer_admin);
+            MenuItem adminTitle = navigationView.getMenu().findItem(R.id.nav_admin_title);
+            adminTitle.setTitle("Account of " + User.connectedUser.getAdministratedPartner(this).getName());
+        } else {
+            navigationView.inflateMenu(R.menu.activity_main_navigation_drawer);
+        }
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.bringToFront();
-
     }
 
     /*
@@ -103,7 +115,10 @@ public class MainActivity extends AppCompatActivity
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer == null) {
-            startActivity(new Intent(MainActivity.this, MainActivity.class));
+            Intent intent = new Intent(MainActivity.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
         } else {
             if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);
@@ -122,12 +137,14 @@ public class MainActivity extends AppCompatActivity
          * Navigation view header data
          */
         ImageView navHeaderImage = findViewById(R.id.activity_main_navigation_header_image);
-        TextView navHeaderText1 = findViewById(R.id.activity_main_navigation_header_text1);
+        System.out.println("NavHeaderImage is NULL : "+navHeaderImage.equals(null));
+        TextView navHeaderText1 = (TextView) findViewById(R.id.activity_main_navigation_header_text1);
+        System.out.println("NavHeaderText1 is NULL : "+navHeaderText1.equals(null));
         TextView navHeaderText2 = findViewById(R.id.activity_main_navigation_header_text2);
+        System.out.println("NavHeaderText2 is NULL : "+navHeaderText2.equals(null));
 
         /* Remplacer le logo par la photo de profil fb*/
         if (ActivityUtils.getInstance().isLoggedInFacebook()) {
-            URL fbUrl = new FacebookUtils().getFacebookProfilePic();
             Log.i(Global.debug_text, "nav" + navHeaderImage);
             String id = new FacebookUtils().getFacebookId();
             SharedPreferences shared = getSharedPreferences(id, MODE_PRIVATE);
@@ -142,9 +159,11 @@ public class MainActivity extends AppCompatActivity
             String userFullName = User.connectedUser.getFullName();
             Log.i(Global.debug_text, "userFullName" + userFullName);
             navHeaderText1.setText(userFullName);
+
             String userUsername = User.connectedUser.getUsername();
             Log.i(Global.debug_text, "getUsername" + userUsername);
             navHeaderText2.setText(userUsername);
+            navHeaderImage.setImageBitmap(BitmapFactory.decodeFile(this.getFilesDir()+"/"+User.connectedUser.getImagePath()));
         }
         return true;
     }
@@ -174,7 +193,7 @@ public class MainActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -189,11 +208,11 @@ public class MainActivity extends AppCompatActivity
             //TODO désactivé pour le sprint 02
             //case R.id.nav_browse_points:
                 //Toast.makeText(getApplicationContext(), "Clicked on Browse points", Toast.LENGTH_SHORT).show();
-                //startActivity(new Intent(MainActivity.this, BrowsePointsActivity.class));
-                //break;
-            //case R.id.nav_settings:
-                //startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-                //break;
+                startActivity(new Intent(MainActivity.this, BrowsePointsActivity.class));
+                break;
+            case R.id.nav_settings:
+                startActivity(new Intent(MainActivity.this, SettingsUserActivity.class));
+                break;
             case R.id.nav_logout:
                 //reset la session globale fb ou standar
                 if (ActivityUtils.getInstance().isLoggedInFacebook()) {
@@ -212,8 +231,17 @@ public class MainActivity extends AppCompatActivity
                 //couper la session facebook
                 LoginManager.getInstance().logOut();
 
-
-                startActivity(new Intent(MainActivity.this, SignUp.class));
+                Intent intent = new Intent(MainActivity.this, SignUp.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //Clears the Activity stack
+                startActivity(intent);
+                finish();
+                break;
+            case R.id.nav_admin_browse_clients:
+                startActivity(new Intent(MainActivity.this, BrowseClientsActivity.class));
+                break;
+            case R.id.nav_admin_settings:
+                startActivity(new Intent(MainActivity.this, SettingsPartnerActivity.class));
+                break;
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

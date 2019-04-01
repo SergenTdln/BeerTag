@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -56,7 +57,7 @@ public class Fragment1 extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment1_layout, container, false);
         fragment1_sign_in = view.findViewById(R.id.fragment1_sign_in);
 
@@ -79,17 +80,30 @@ public class Fragment1 extends Fragment {
                     try {
                         db = new SQLHelper(getContext());
                         if(db.doesUsernameExist(email)) {
-                            if (db.getHashedPassword(email).equals(Hash.hash(pass))) { //If password is correct
+                            String hashedPassword = Hash.hash(pass);
+                            System.out.println("hashedPassword = "+hashedPassword);
+                            if (db.getHashedPassword(email).equals(hashedPassword)) { //If password is correct
 
-                                mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                mAuth.signInWithEmailAndPassword(email, hashedPassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                     @Override
                                     public void onComplete(@NonNull Task<AuthResult> task) {
                                         if (task.isSuccessful()) {
                                             Toast.makeText(getActivity(), R.string.login_success, Toast.LENGTH_SHORT).show();
 
                                             signIn(email);
-                                        } else {
-                                            Toast.makeText(getActivity(), R.string.login_check_credentials, Toast.LENGTH_SHORT).show();
+
+                                            Intent intent = new Intent(getActivity(), MainActivity.class);
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                            startActivity(intent);
+                                            if(getActivity()!=null){
+                                                getActivity().finish();
+                                            }
+                                        } else {Exception e = task.getException();
+                                            if (e instanceof FirebaseNetworkException){
+                                                Toast.makeText(getActivity(), "Could not connect to your account. Are you offline ?", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Toast.makeText(getActivity(), "Firebase Failed" + e, Toast.LENGTH_LONG).show();
+                                            }
                                         }
                                     }
                                 });
@@ -143,7 +157,7 @@ public class Fragment1 extends Fragment {
         }
     }
 
-    private void  signIn(String email) {
+    private void signIn(String email) {
         try {
             db = new SQLHelper(getContext());
 
@@ -154,18 +168,14 @@ public class Fragment1 extends Fragment {
                 User user = db.getUser(email);
                 User.connectUser(getContext(), user);
 
-                Intent intent = new Intent(getActivity(), MainActivity.class);
-
                 /* creation d'une sessions globale lors du login */
                 SharedPreferences shared = getApplicationContext().getSharedPreferences("session", MODE_PRIVATE);
                 SharedPreferences.Editor editor = shared.edit();
                 editor.putString("email", email); // Storing string value
-                editor.commit();
+                editor.apply();
                 /* end */
-
-                startActivity(intent);
             } else {
-                Toast.makeText(getActivity(),"not in database", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),"Username not in database", Toast.LENGTH_SHORT).show();
             }
 
         } catch (IOException e) {

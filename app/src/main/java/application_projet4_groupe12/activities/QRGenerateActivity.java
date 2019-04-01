@@ -41,8 +41,8 @@ public class QRGenerateActivity extends AppCompatActivity {
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer == null) {
-            finish();
             startActivity(new Intent(QRGenerateActivity.this, MainActivity.class));
+            finish();
         } else {
             if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);

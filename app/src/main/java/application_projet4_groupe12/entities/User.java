@@ -2,10 +2,14 @@ package application_projet4_groupe12.entities;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteException;
+import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 import application_projet4_groupe12.data.SQLHelper;
+import application_projet4_groupe12.exceptions.WrongDateFormatException;
 
 /**
  * Entities of this class represent users of the app.
@@ -23,8 +27,10 @@ public class User {
     private String birthday; //Birth date. This HAS to follow this format : DD/MM/YYYY. (Example: "31/01/2000")
     private String imagePath; //Image path inside of the assets folder
 
+    private boolean isAdmin;
+
     // Call SQLHelper.getFreeIDUser to obtain an available ID to use
-    public User(int id, String username, String hashedPassword, String creationDate, String firstName, String lastName, String birthday, String imagePath) {
+    public User(int id, String username, String hashedPassword, String creationDate, String firstName, String lastName, String birthday, String imagePath, boolean isAdmin) {
         this.id = id;
         this.username = username;
         this.hashedPassword = hashedPassword;
@@ -33,6 +39,7 @@ public class User {
         this.lastName = lastName;
         this.birthday = birthday;
         this.imagePath = imagePath;
+        this.isAdmin = isAdmin;
     }
 
     /**
@@ -71,6 +78,54 @@ public class User {
         return true;
     }
 
+    public static boolean isAdmin(Context c, String username){
+        SQLHelper db = null;
+        try {
+            db = new SQLHelper(c);
+            return db.isAdmin(username);
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(c, e.getMessage(), Toast.LENGTH_SHORT).show();
+            return false;
+        } finally {
+            if(db != null) {
+                db.close();
+            }
+        }
+    }
+
+    /**
+     * If this User is an administrator, returns the Partner instance this User administrates.
+     * @return The administrated Partner instance, or null if this user is not an administrator
+     */
+    public Partner getAdministratedPartner(Context c){
+        if(this.isAdmin){
+            SQLHelper db = null;
+            try {
+                db = new SQLHelper(c);
+                return db.getPartner(db.getAdminFromUser(this.id));
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(c, "Could not retrieve Partner from database.", Toast.LENGTH_SHORT).show();
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * TODO
+     * @param users
+     * @return
+     */
+    public static List<String> getUsernames(List<User> users){
+        List<String> ret = new LinkedList<>();
+        for (User user : users) {
+            ret.add(user.getUsername());
+        }
+        return ret;
+    }
 
     //******
     //Getter and setter methods
@@ -111,6 +166,10 @@ public class User {
         return this.firstName+" "+this.lastName;
     }
 
+    public boolean isAdmin(){
+        return this.isAdmin;
+    }
+
     //TODO : Setter methods should update the DB ?
 
     public void setId(int id) {
@@ -137,7 +196,10 @@ public class User {
         this.lastName = lastName;
     }
 
-    public void setBirthday(String birthdate){
+    public void setBirthday(String birthdate) throws WrongDateFormatException {
+        if(! SQLHelper.isValidDate(birthdate)){
+            throw new WrongDateFormatException("Invalid date format");
+        }
         this.birthday = birthdate;
     }
 

@@ -10,7 +10,7 @@ import application_projet4_groupe12.entities.Address;
 import application_projet4_groupe12.entities.Partner;
 import application_projet4_groupe12.entities.Shop;
 
-public class Association {
+public class BrowsePointsAssociation {
 
     private int points;
     private String partnerName;
@@ -18,7 +18,7 @@ public class Association {
     private Address shopAddress;
     private String shopDescr;
 
-    public Association(Context c, int partnerID, int shopID, int points){
+    public BrowsePointsAssociation(Context c, int partnerID, int shopID, int points){
 
         //this.partnerID = partnerID;
         //this.shopID = shopID;
@@ -38,7 +38,8 @@ public class Association {
             this.shopDescr = shop.getDescription();
 
         } catch (IOException | SQLiteException e) {
-            //TODO what do we do here ?
+            // Just skip this instance
+            e.printStackTrace();
         } finally {
             if(db!=null) {
                 db.close();
@@ -66,6 +67,4 @@ public class Association {
     String getShopDescr(){
         return this.shopDescr;
     }
-
-    //TODO
 }

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary">
+
+    <TextView
+        android:id="@+id/sign_up_partner_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:fontFamily="@font/roboto_black"
+        android:text="Create a new Partner account"
+        android:textColor="@color/login_text"
+        android:textSize="30sp"
+        android:gravity="center_horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/sign_up_partner_input_name_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="150dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="This is the name to be displayed to users in the app"
+        android:textColor="@color/login_text"
+        android:gravity="center_horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+    <EditText
+        android:id="@+id/sign_up_partner_input_name"
+        android:layout_width="160dp"
+        android:layout_height="45dp"
+        android:fontFamily="@font/roboto"
+        android:gravity="center_horizontal"
+        android:hint="Public Name"
+        android:textColorHint="@color/login_text_hint"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sign_up_partner_input_name_title" />
+
+
+    <TextView
+        android:id="@+id/sign_up_partner_input_address_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="This is the address of your headquarters.\nIt will not be displayed to users"
+        android:textColor="@color/login_text"
+        android:gravity="center_horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sign_up_partner_input_name"/>
+    <EditText
+        android:id="@+id/sign_up_partner_input_address"
+        android:layout_width="160dp"
+        android:layout_height="45dp"
+        android:fontFamily="@font/roboto"
+        android:gravity="center_horizontal"
+        android:hint="Address"
+        android:textColorHint="@color/login_text_hint"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sign_up_partner_input_address_title" />
+
+
+    <TextView
+        android:id="@+id/sign_up_partner_input_admin_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="Select in the drop-down list an User that will be administrator for this Partner. You can add more after account creation"
+        android:textColor="@color/login_text"
+        android:gravity="center_horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sign_up_partner_input_address"/>
+    <Spinner
+        android:id="@+id/sign_up_partner_input_spinner_admin"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:fontFamily="@font/roboto"
+        android:textColor="@color/login_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sign_up_partner_input_admin_title"/>
+
+
+    <TextView
+        android:id="@+id/sign_up_partner_text_details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="More personalisation, such as adding your logo and your physical shops will be available after account creation"
+        android:textColor="@color/login_text"
+        android:gravity="center_horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/sign_up_partner_button_out"/>
+    <Button
+        android:id="@+id/sign_up_partner_button_out"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="48dp"
+        android:fontFamily="@font/roboto_black"
+        android:gravity="center_horizontal"
+        android:text="Sign up"
+        android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
+        android:textColor="@color/login_text"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        style="@android:style/Widget.DeviceDefault.Button.Borderless" />
+
+
+</android.support.constraint.ConstraintLayout>

@@ -78,11 +78,8 @@ public class QRResultActivity extends AppCompatActivity {
         result.setMovementMethod(LinkMovementMethod.getInstance());
         try {
             db = new SQLHelper(this);
-            db.addPoints(User.connectedUser.getUsername(), Integer.parseInt(encryptedQrCode), 1); //TODO à terminer : il me faut accès à l'ID du partner qui a généré le qr code
+            db.addPoints(User.connectedUser.getUsername(), Integer.parseInt(encryptedQrCode), 1); //TODO à terminer : il me faut accès à l'ID du shop qui a généré le qr code
         } catch (IOException e){
-            e.printStackTrace();
-        } catch (UnknownPartnerException e){
-            //this should not ever happen, but if it does, let's just ignore for now.
             e.printStackTrace();
         } finally {
             db.close();

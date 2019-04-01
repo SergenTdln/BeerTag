@@ -56,6 +56,7 @@ import application_projet4_groupe12.exceptions.WrongEmailFormatException;
 import application_projet4_groupe12.fragment.Fragment1;
 import application_projet4_groupe12.fragment.Fragment2;
 import application_projet4_groupe12.activities.SignUp;
+import application_projet4_groupe12.fragment.Fragment3;
 import application_projet4_groupe12.utils.FacebookUtils;
 import application_projet4_groupe12.utils.Global;
 import application_projet4_groupe12.utils.ActivityUtils;
@@ -252,6 +253,7 @@ public class SignUp extends AppCompatActivity {
 
                             /*
                             TODO : faire l'ajout en DB
+                            // TODO Et appeler User.connectUser() @Sergen
                              */
 
 //                            Context ct = getApplicationContext();
@@ -291,8 +293,10 @@ public class SignUp extends AppCompatActivity {
 //                                Log.d(Global.debug_text, "fb login db error"+e);
 //                            }
 
-
-                            startActivity(new Intent(SignUp.this, MainActivity.class));
+                            Intent intent = new Intent(SignUp.this, MainActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                            finish();
                         }else{
                             Toast.makeText(SignUp.this, "Authentication error",
                                     Toast.LENGTH_SHORT).show();
@@ -308,6 +312,7 @@ public class SignUp extends AppCompatActivity {
             SectionsStatePagerAdapter adapter = new SectionsStatePagerAdapter(getSupportFragmentManager());
             adapter.addFragment(new Fragment1(), "Fragment1");
             adapter.addFragment(new Fragment2(), "Fragment2");
+            adapter.addFragment(new Fragment3(), "Fragment3");
             viewPager.setAdapter(adapter);
         }
 

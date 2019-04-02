@@ -2,6 +2,7 @@ package application_projet4_groupe12.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainActivity.this, QRScanActivity.class));
+                finish();
             }
         });
 
@@ -74,8 +76,8 @@ public class MainActivity extends AppCompatActivity
         fab_gen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
                 startActivity(new Intent(MainActivity.this, QRGenerateActivity.class));
+                finish();
             }
         });
 
@@ -92,7 +94,6 @@ public class MainActivity extends AppCompatActivity
          * Navigation view
          */
         NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.inflateHeaderView(R.layout.activity_main_navigation_header);
         if(User.connectedUser.isAdmin()){
             navigationView.inflateMenu(R.menu.activity_main_navigation_drawer_admin);
             MenuItem adminTitle = navigationView.getMenu().findItem(R.id.nav_admin_title);
@@ -136,15 +137,14 @@ public class MainActivity extends AppCompatActivity
         /*
          * Navigation view header data
          */
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        //navigationView.inflateHeaderView(R.layout.activity_main_navigation_header);
         ImageView navHeaderImage = findViewById(R.id.activity_main_navigation_header_image);
-        System.out.println("NavHeaderImage is NULL : "+navHeaderImage.equals(null));
         TextView navHeaderText1 = (TextView) findViewById(R.id.activity_main_navigation_header_text1);
-        System.out.println("NavHeaderText1 is NULL : "+navHeaderText1.equals(null));
         TextView navHeaderText2 = findViewById(R.id.activity_main_navigation_header_text2);
-        System.out.println("NavHeaderText2 is NULL : "+navHeaderText2.equals(null));
 
-        /* Remplacer le logo par la photo de profil fb*/
         if (ActivityUtils.getInstance().isLoggedInFacebook()) {
+            /* Remplacer les données par celles du profil fb*/
             Log.i(Global.debug_text, "nav" + navHeaderImage);
             String id = new FacebookUtils().getFacebookId();
             SharedPreferences shared = getSharedPreferences(id, MODE_PRIVATE);
@@ -156,6 +156,7 @@ public class MainActivity extends AppCompatActivity
             navHeaderText1.setText(session_name);
             navHeaderText2.setText(session_email);
         } else {
+            /* Remplacer les données par celles de la db locale*/
             String userFullName = User.connectedUser.getFullName();
             Log.i(Global.debug_text, "userFullName" + userFullName);
             navHeaderText1.setText(userFullName);
@@ -163,7 +164,11 @@ public class MainActivity extends AppCompatActivity
             String userUsername = User.connectedUser.getUsername();
             Log.i(Global.debug_text, "getUsername" + userUsername);
             navHeaderText2.setText(userUsername);
-            navHeaderImage.setImageBitmap(BitmapFactory.decodeFile(this.getFilesDir()+"/"+User.connectedUser.getImagePath()));
+
+            Bitmap bitmap = BitmapFactory.decodeFile(this.getFilesDir()+"/"+User.connectedUser.getImagePath());
+            if(bitmap!=null) {
+                navHeaderImage.setImageBitmap(bitmap);
+            }
         }
         return true;
     }

@@ -172,38 +172,65 @@ public class User {
 
     //TODO : Setter methods should update the DB ?
 
-    public void setId(int id) {
+    public void setId(Context c, int id) {
         this.id = id;
+        this.refreshDB(c);
     }
 
-    public void setUsername(String username) {
+    public void setUsername(Context c, String username) {
         this.username = username;
+        this.refreshDB(c);
     }
 
-    public void setPasswordHashed(String hashedPassword){
+    public void setPasswordHashed(Context c, String hashedPassword){
         this.hashedPassword = hashedPassword;
+        this.refreshDB(c);
     }
 
-    public void setCreationDate(String creationDate) {
+    public void setCreationDate(Context c, String creationDate) {
         this.creationDate = creationDate;
+        this.refreshDB(c);
     }
 
-    public void setFirstName(String firstName) {
+    public void setFirstName(Context c, String firstName) {
         this.firstName = firstName;
+        this.refreshDB(c);
     }
 
-    public void setLastName(String lastName) {
+    public void setLastName(Context c, String lastName) {
         this.lastName = lastName;
+        this.refreshDB(c);
     }
 
-    public void setBirthday(String birthdate) throws WrongDateFormatException {
+    public void setBirthday(Context c, String birthdate) throws WrongDateFormatException {
         if(! SQLHelper.isValidDate(birthdate)){
             throw new WrongDateFormatException("Invalid date format");
         }
         this.birthday = birthdate;
+        this.refreshDB(c);
     }
 
-    public void setImagePath(String imagePath){
+    public void setImagePath(Context c, String imagePath){
         this.imagePath = imagePath;
+        this.refreshDB(c);
+    }
+
+    /**
+     * Updates the DB with the newly inserted values
+     * @param c the Context used to instantiate the database helper.
+     */
+    private void refreshDB(Context c){
+        SQLHelper db = null;
+        try {
+            db = new SQLHelper(c);
+            db.updateUserData(this);
+        } catch (IOException e){
+            e.printStackTrace();
+            Toast.makeText(c, "Could not update the database. Please try again", Toast.LENGTH_SHORT).show();
+        } finally {
+            if(db!=null) {
+                db.close();
+            }
+        }
     }
 }

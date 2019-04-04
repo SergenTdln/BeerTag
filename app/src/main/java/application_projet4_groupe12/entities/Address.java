@@ -2,12 +2,12 @@ package application_projet4_groupe12.entities;
 
 public class Address {
 
-    private int id;
+    private long id;
     private String city;
     private String street;
     private String numbers; //This is a string in case of a weird mailbox structure is being used
 
-    public Address(int id, String city, String street, String numbers){
+    public Address(long id, String city, String street, String numbers){
         this.id = id;
         this.city = city;
         this.street = street;
@@ -21,7 +21,7 @@ public class Address {
     //******
     //Getter and setter methods
     //******
-    public int getId(){
+    public long getId(){
         return id;
     }
 
@@ -39,7 +39,7 @@ public class Address {
 
     //TODO : Setter methods should update the DB ?
 
-    public void setId(int id){
+    public void setId(long id){
         this.id = id;
     }
 

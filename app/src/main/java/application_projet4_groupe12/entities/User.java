@@ -18,7 +18,7 @@ public class User {
 
     public static User connectedUser;
 
-    private int id; // Internal ID, should not be displayed to the user. Unique
+    private long id; // Internal ID, should not be displayed to the user. Unique
     private String username; // Username/email of the user. Unique
     private String hashedPassword; //Output of hashing function
     private String creationDate; // This HAS to follow this format : DD/MM/YYYY. (Example: "31/01/2000")
@@ -30,7 +30,7 @@ public class User {
     private boolean isAdmin;
 
     // Call SQLHelper.getFreeIDUser to obtain an available ID to use
-    public User(int id, String username, String hashedPassword, String creationDate, String firstName, String lastName, String birthday, String imagePath, boolean isAdmin) {
+    public User(long id, String username, String hashedPassword, String creationDate, String firstName, String lastName, String birthday, String imagePath, boolean isAdmin) {
         this.id = id;
         this.username = username;
         this.hashedPassword = hashedPassword;
@@ -103,7 +103,7 @@ public class User {
             SQLHelper db = null;
             try {
                 db = new SQLHelper(c);
-                return db.getPartner(db.getAdminFromUser(this.id));
+                return db.getPartner(db.getPartnerIDFromUser(this.id));
             } catch (IOException e) {
                 e.printStackTrace();
                 Toast.makeText(c, "Could not retrieve Partner from database.", Toast.LENGTH_SHORT).show();
@@ -130,7 +130,7 @@ public class User {
     //******
     //Getter and setter methods
     //******
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -172,7 +172,7 @@ public class User {
 
     //TODO : Setter methods should update the DB ?
 
-    public void setId(Context c, int id) {
+    public void setId(Context c, long id) {
         this.id = id;
         this.refreshDB(c);
     }

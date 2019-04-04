@@ -58,7 +58,7 @@ public class SettingsPartnerActivity extends AppCompatActivity {
         newName.setHint(currentPartner.getName());
 
         newAddress = (EditText) findViewById(R.id.settings_partner_change_address);
-        newAddress.setHint(Integer.toString(currentPartner.getAddressID())); //TODO should handle an Address object instead of a String -> multiple fields/spinner/etc. @Martin
+        newAddress.setHint(Long.toString(currentPartner.getAddressID())); //TODO should handle an Address object instead of a String -> multiple fields/spinner/etc. @Martin
 
         picture = (ImageView) findViewById(R.id.settings_partner_picture);
         picture.setImageBitmap(BitmapFactory.decodeFile(this.getFilesDir()+"/"+currentPartner.getImagePath()));
@@ -190,7 +190,7 @@ public class SettingsPartnerActivity extends AppCompatActivity {
         SQLHelper db = null;
         try{
             db = new SQLHelper(c);
-            return (db.addAdmin(new Pair(user.getUsername(), partner.getId())));
+            return (db.addAdmin(user.getUsername(), partner.getId()));
         } catch (IOException e){
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), "An error occurred; we could not add this User as an admin in the database. Please try again", Toast.LENGTH_SHORT).show();

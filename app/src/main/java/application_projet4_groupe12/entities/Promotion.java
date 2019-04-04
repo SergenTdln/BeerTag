@@ -2,9 +2,9 @@ package application_projet4_groupe12.entities;
 
 public class Promotion {
 
-    private int id; //Unique ID of the promotion
-    private int idPartner;
-    private int idShop;
+    private long id; //Unique ID of the promotion
+    private long idPartner;
+    private long idShop;
     private int pointsRequired;
     private boolean isReusable;
     private String description;
@@ -12,7 +12,7 @@ public class Promotion {
     private boolean active; //Is the promotion currently active
     private String endDate; //This HAS to follow this format : DD/MM/YYYY. (Example: "31/01/2000")
 
-    public Promotion(int id, int idPartner, int idShop, int pointsRequired, boolean isReusable, String description, String imagePath, boolean active, String endDate){
+    public Promotion(long id, long idPartner, long idShop, int pointsRequired, boolean isReusable, String description, String imagePath, boolean active, String endDate){
         this.id = id;
         this.idPartner = idPartner;
         this.idShop = idShop;
@@ -24,15 +24,15 @@ public class Promotion {
         this.endDate = endDate;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public int getIdPartner() {
+    public long getIdPartner() {
         return idPartner;
     }
 
-    public int getIdShop() {
+    public long getIdShop() {
         return idShop;
     }
 
@@ -62,15 +62,15 @@ public class Promotion {
 
     //TODO : Setter methods should update the DB ?
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public void setIdPartner(int idPartner) {
+    public void setIdPartner(long idPartner) {
         this.idPartner = idPartner;
     }
 
-    public void setIdShop(int idShop) {
+    public void setIdShop(long idShop) {
         this.idShop = idShop;
     }
 

@@ -13,11 +13,11 @@ import application_projet4_groupe12.entities.User;
 
 public class BrowseClientsShopDataAssociation {
 
-    private int shopID;
+    private long shopID;
     private Address shopAddress;
     private List<BrowseClientsClientDataAssociation> list;
 
-    public BrowseClientsShopDataAssociation(Context c, int shopID, List<BrowseClientsClientDataAssociation> list){
+    public BrowseClientsShopDataAssociation(Context c, long shopID, List<BrowseClientsClientDataAssociation> list){
 
         this.shopID = shopID;
         this.list = list;
@@ -37,7 +37,7 @@ public class BrowseClientsShopDataAssociation {
         }
     }
 
-    public int getShopID(){
+    public long getShopID(){
         return shopID;
     }
 

@@ -1,7 +1,6 @@
 package application_projet4_groupe12.fragment;
 
 import android.content.Intent;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -24,10 +23,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
 
 
 import application_projet4_groupe12.R;
@@ -79,7 +74,7 @@ public class Fragment1 extends Fragment {
                 else {
                     try {
                         db = new SQLHelper(getContext());
-                        if(db.doesUsernameExist(email)) {
+                        if(db.doesUserExist(email)) {
                             String hashedPassword = Hash.hash(pass);
                             System.out.println("hashedPassword = "+hashedPassword);
                             if (db.getHashedPassword(email).equals(hashedPassword)) { //If password is correct
@@ -161,7 +156,7 @@ public class Fragment1 extends Fragment {
         try {
             db = new SQLHelper(getContext());
 
-            boolean userExists = db.doesUsernameExist(email);
+            boolean userExists = db.doesUserExist(email);
             System.out.println("Utilisateur existe :" + userExists);
             if (userExists) {
 

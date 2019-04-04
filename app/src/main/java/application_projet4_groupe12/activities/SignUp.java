@@ -261,7 +261,7 @@ public class SignUp extends AppCompatActivity {
 //                                db = new SQLHelper(ct);
 ////                                db = new SQLHelper(getContext());
 //
-//                                if(db.doesUsernameExist(session_email)){
+//                                if(db.doesUserExist(session_email)){
 //                                    Log.d(Global.debug_text, "fb user already exists in db");
 //                                } else {
 ////                                    int id = Integer.valueOf(session_id);

@@ -5,14 +5,14 @@ package application_projet4_groupe12.entities;
  */
 public class Partner {
 
-    private int id; // Internal ID of the partner, should not be displayed to the user. Unique
+    private long id; // Internal ID of the partner, should not be displayed to the user. Unique
     private String name; // Name displayed to the user. Might not be unique
-    private int addressID;
+    private long addressID;
     private String creationDate; //This HAS to follow this format : DD/MM/YYYY. (Example: "31/01/2000")
     private String imagePath; //Image path inside of the assets folder
 
     // Call SQLHelper.getFreeIDPartner() to obtain an available ID to use
-    public Partner(int id, String name, int addressID, String creationDate, String imagePath) {
+    public Partner(long id, String name, long addressID, String creationDate, String imagePath) {
         this.id = id;
         this.name = name;
         this.addressID = addressID;
@@ -23,7 +23,7 @@ public class Partner {
     //******
     //Getter and setter methods
     //******
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -31,7 +31,7 @@ public class Partner {
         return name;
     }
 
-    public int getAddressID() {
+    public long getAddressID() {
         return addressID;
     }
 
@@ -45,7 +45,7 @@ public class Partner {
 
     //TODO : Setter methods should update the DB ?
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -53,7 +53,7 @@ public class Partner {
         this.name = name;
     }
 
-    public void setAddressID(int addressID) {
+    public void setAddressID(long addressID) {
         this.addressID = addressID;
     }
 

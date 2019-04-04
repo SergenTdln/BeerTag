@@ -18,7 +18,7 @@ public class BrowsePointsAssociation {
     private Address shopAddress;
     private String shopDescr;
 
-    public BrowsePointsAssociation(Context c, int partnerID, int shopID, int points){
+    public BrowsePointsAssociation(Context c, long partnerID, long shopID, int points){
 
         //this.partnerID = partnerID;
         //this.shopID = shopID;
@@ -29,7 +29,7 @@ public class BrowsePointsAssociation {
             db = new SQLHelper(c);
             Partner partner = db.getPartner(partnerID);
             Shop shop = db.getShop(shopID);
-            int addressID = shop.getAddressID();
+            long addressID = shop.getAddressID();
 
             this.partnerName = partner.getName();
             this.partnerImagePath = partner.getImagePath();

@@ -5,13 +5,13 @@ package application_projet4_groupe12.entities;
  */
 public class Shop {
 
-    private int id;
-    private int partnerID;
-    private int addressID;
+    private long id;
+    private long partnerID;
+    private long addressID;
     private String description;
     private String creationDate;
 
-    public Shop(int id, int partnerID, int addressID, String description, String creationDate){
+    public Shop(long id, long partnerID, long addressID, String description, String creationDate){
         this.id = id;
         this.partnerID = partnerID;
         this.addressID = addressID;
@@ -19,15 +19,15 @@ public class Shop {
         this.creationDate = creationDate;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public int getPartnerID() {
+    public long getPartnerID() {
         return partnerID;
     }
 
-    public int getAddressID() {
+    public long getAddressID() {
         return addressID;
     }
 
@@ -41,15 +41,15 @@ public class Shop {
 
     //TODO : Setter methods should update the DB ?
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public void setPartnerID(int partnerID) {
+    public void setPartnerID(long partnerID) {
         this.partnerID = partnerID;
     }
 
-    public void setAddressID(int addressID) {
+    public void setAddressID(long addressID) {
         this.addressID = addressID;
     }
 

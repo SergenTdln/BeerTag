@@ -14,22 +14,12 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.protobuf.Any;
-import java.util.Map;
-import java.util.HashMap;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -50,7 +40,6 @@ import application_projet4_groupe12.utils.Hash;
 import application_projet4_groupe12.utils.Global;
 
 import static android.content.ContentValues.TAG;
-import static java.lang.System.err;
 
 public class Fragment2 extends Fragment {
 
@@ -104,7 +93,7 @@ public class Fragment2 extends Fragment {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 user = document.toObject(User.class);
                                 try {
-                                    db.createUser(user);
+                                    db.addUser(user);
                                 }
                                 catch (WrongEmailFormatException e) {
                                     e.printStackTrace();
@@ -138,7 +127,7 @@ public class Fragment2 extends Fragment {
                                 String imagePath = document.getString("image_path");
                                 user = new User(id, username, hashedPassword, creationDate, firstname, lastname, birthdate, imagePath, false);
                                 try {
-                                    db.createUser(user);
+                                    db.addUser(user);
                                 }
                                 catch (WrongEmailFormatException e) {
                                     e.printStackTrace();
@@ -169,21 +158,21 @@ public class Fragment2 extends Fragment {
         try {
             db = new SQLHelper(getContext());
 
-            if (db.doesUsernameExist(email))  {
+            if (db.doesUserExist(email))  {
                 Toast.makeText(getActivity(),  "This email already exists", Toast.LENGTH_SHORT).show();
             }
             else {
                 if(pass.length() >= MIN_PASSWD_LENGTH) {
                     if (pass.equals(confirmPass)) {
-                        int id = db.getFreeIDUser();
+                        long id = db.getFreeIDUser();
 
                         Date date = Calendar.getInstance().getTime();
                         DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                         String today = formatter.format(date);
 
-                        user = new User(id, email, Hash.hash(pass), today, firstName.getText().toString(), lastName.getText().toString(), birthDate.getText().toString(), Integer.toString(id)+"_pic.png", false); //TODO file format ?
+                        user = new User(id, email, Hash.hash(pass), today, firstName.getText().toString(), lastName.getText().toString(), birthDate.getText().toString(), Long.toString(id)+"_pic.png", false); //TODO file format ?
                         try {
-                            System.out.println("Utilisateur inséré : " + db.createUser(user));
+                            System.out.println("Utilisateur inséré : " + db.addUser(user));
                         } catch (WrongEmailFormatException e){
                             e.printStackTrace();
                             Toast.makeText(getActivity(), "Invalid email format", Toast.LENGTH_SHORT).show();
@@ -240,7 +229,7 @@ public class Fragment2 extends Fragment {
         try {
             db = new SQLHelper(getContext());
 
-            boolean userExists = db.doesUsernameExist(email);
+            boolean userExists = db.doesUserExist(email);
             System.out.println("Utilisateur existe :" + userExists);
             if (userExists) {
 

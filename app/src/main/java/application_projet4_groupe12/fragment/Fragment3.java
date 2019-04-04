@@ -147,7 +147,7 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Partner partner = document.toObject(Partner.class);
-                                int id = Integer.parseInt(document.getString("id")); //TODO this field does not exist in Firebase -> use Firebase document's ID directly ?
+                                int id = Integer.parseInt(document.getString("id"));
                                 String creationDate = document.getString("created_on");
                                 int addressID = Integer.parseInt(document.getString("id_address"));
                                 String name = document.getString("name");

@@ -248,6 +248,7 @@ public class SQLHelper extends SQLiteOpenHelper {
                 Toast.makeText(context, "A duplicated entry of Address with ID \""+addressID+"\" was found in the database", Toast.LENGTH_LONG).show();
             }
             Address out = new Address(c.getLong(c.getColumnIndex("_id")),
+                    c.getString(c.getColumnIndex("country")),
                     c.getString(c.getColumnIndex("city")),
                     c.getString(c.getColumnIndex("street")),
                     c.getString(c.getColumnIndex("numbers"))
@@ -289,23 +290,59 @@ public class SQLHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * TODO
-     * @param promotionID
-     * @return
+     * Retrieves information on a Promotion from the database and returns it as a Promotion instance.
+     * @param promotionID the internal id of the Promotion to retrieve
+     * @return a Promotion instance, or null if this id was not present in the database
      */
     public Promotion getPromotion(long promotionID){
-        //TODO
-        return null;
+        Cursor c = getEntriesFromDB("Promotion", null, "_id = \""+promotionID+"\"", null);
+        if(c.moveToFirst()){
+            if(c.getCount() > 1){
+                //Duplicate Promotion in the database
+                Toast.makeText(context, "A duplicated entry of promotion with ID \""+promotionID+"\" was found in the database", Toast.LENGTH_LONG).show();
+            }
+            boolean isReusable = (c.getInt(c.getColumnIndex("is_reusable")) == 1);
+            boolean isActive = (c.getInt(c.getColumnIndex("active")) == 1);
+            Promotion out = new Promotion(c.getLong(c.getColumnIndex("_id")),
+                                        c.getLong(c.getColumnIndex("id_partner")),
+                                        c.getLong(c.getColumnIndex("id_shop")),
+                                        c.getInt(c.getColumnIndex("points_required")),
+                                        isReusable,
+                                        c.getString(c.getColumnIndex("description")),
+                                        c.getString(c.getColumnIndex("image_path")),
+                                        isActive,
+                                        c.getString(c.getColumnIndex("end_date")));
+            c.close();
+            return out;
+        } else {
+            //No such promotion in the database
+            c.close();
+            return null;
+        }
     }
 
     /**
-     * TODO
-     * @param frameID
-     * @return
+     * Retrieves information on a picture Frame from the database and returns it as a ShopFrame instance.
+     * @param frameID the internal id of the Promotion to retrieve
+     * @return a ShopFrame instance, or null if this id was not present in the database
      */
     public ShopFrame getFrame(long frameID){
-        //TODO
-        return null;
+        Cursor c = getEntriesFromDB("Shop_frame", null, "_id = \""+frameID+"\"", null);
+        if(c.moveToFirst()){
+            if(c.getCount() > 1){
+                //Duplicate Frame in the database
+                Toast.makeText(context, "A duplicated entry of picture frame with ID \""+frameID+"\" was found in the database", Toast.LENGTH_LONG).show();
+            }
+            ShopFrame out = new ShopFrame(c.getLong(c.getColumnIndex("_id")),
+                                        c.getLong(c.getColumnIndex("id_shop")),
+                                        c.getString(c.getColumnIndex("image_path")));
+            c.close();
+            return out;
+        } else {
+            //No such frame in the database
+            c.close();
+            return null;
+        }
     }
 
     /**
@@ -680,8 +717,14 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @return True if this address already exists, False otherwise
      */
     public boolean doesAddressExist(long addressID){
-        //TODO
-        return false;
+        boolean out;
+        Cursor c = getEntriesFromDB("Address",
+                new String[]{"_id"},
+                "_id = \""+addressID+"\"",
+                null);
+        out = (c.moveToFirst());
+        c.close();
+        return out;
     }
 
     /**
@@ -706,8 +749,14 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @return True if this promotion already exists, False otherwise
      */
     public boolean doesPromotionExist(long promotionID){
-        //TODO
-        return false;
+        boolean out;
+        Cursor c = getEntriesFromDB("Promotion",
+                new String[]{"_id"},
+                "_id = \""+promotionID+"\"",
+                null);
+        out = (c.moveToFirst());
+        c.close();
+        return out;
     }
 
     /**
@@ -716,8 +765,14 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @return True if this frame already exists, False otherwise
      */
     public boolean doesFrameExist(long frameID){
-        //TODO
-        return false;
+        boolean out;
+        Cursor c = getEntriesFromDB("Shop_frame",
+                new String[]{"_id"},
+                "_id = \""+frameID+"\"",
+                null);
+        out = (c.moveToFirst());
+        c.close();
+        return out;
     }
 
     /**
@@ -726,8 +781,14 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @return True if this shop already exists, False otherwise
      */
     public boolean doesShopExist(long shopID){
-        //TODO
-        return false;
+        boolean out;
+        Cursor c = getEntriesFromDB("Shop_location",
+                new String[]{"_id"},
+                "_id = \""+shopID+"\"",
+                null);
+        out = (c.moveToFirst());
+        c.close();
+        return out;
     }
 
     /**
@@ -870,14 +931,33 @@ public class SQLHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * TODO
-     * @param promotion
-     * @return
+     * Inserts a new Promotion in the database.
+     * @param promotion a valid instance of Promotion to insert in the database
+     * @return True if the insertion was successful, False if it failed;
+     * For example, this could be caused by an SQLite error OR because this promotion was already present : this means that you should always
+     * call <code>doesPromotionExist()</code> BEFORE trying to insert the promotion.
      */
     public boolean addPromotion(Promotion promotion){
-        //TODO
-        //TODO Si l'user a souscrit aux notifs pour ce bar, cette méthode envoie une notif
-        return false;
+        if(doesPromotionExist(promotion.getId())){
+            return false;
+        }
+
+        ContentValues cv = new ContentValues();
+        cv.put("\"_id\"", promotion.getId());
+        cv.put("\"id_partner\"", promotion.getIdPartner());
+        cv.put("\"id_shop\"", promotion.getIdShop());
+        cv.put("\"points_required\"", promotion.getPointsRequired());
+        int isReusable; if(promotion.isReusable()){isReusable=1;}else{isReusable=0;}
+        cv.put("\"is_reusable\"", isReusable);
+        cv.put("\"description\"", promotion.getDescription());
+        cv.put("\"image_path\"", promotion.getImagePath());
+        int isActive; if(promotion.isActive()){isActive=1;}else{isActive=0;}
+        cv.put("\"active\"", isActive);
+        cv.put("\"end_date\"", promotion.getEndDate());
+
+        return (myDB.insert("Promotion", null, cv) != -1);
+
+        //TODO Si des utilisateurs ont souscrit aux notifs pour ce bar, cette méthode leur envoie tous une notif
     }
 
     /**
@@ -918,7 +998,58 @@ public class SQLHelper extends SQLiteOpenHelper {
     }
 
     /**
-     *Updates the values of an existing user in the database. Its _id is the only field that can not be updated
+     *Updates the values of an existing Address in the database. Its _id is the only field that can not be updated
+     * @param address an instance of Address containing the new values
+     * @return True if the row was successfully affected, False otherwise
+     */
+    public boolean updateAddressData(Address address){
+        ContentValues cv = new ContentValues();
+        cv.put("\"country\"", address.getCountry());
+        cv.put("\"city\"", address.getCity());
+        cv.put("\"street\"", address.getStreet());
+        cv.put("\"numbers\"", address.getNumbers());
+
+        return (myDB.update("Address", cv, "_id = \""+address.getId()+"\"", null) >= 1);
+    }
+
+    /**
+     *Updates the values of an existing Partner in the database. Its _id is the only field that can not be updated
+     * @param partner an instance of Partner containing the new values
+     * @return True if the row was successfully affected, False otherwise
+     */
+    public boolean updatePartnerData(Partner partner){
+        ContentValues cv = new ContentValues();
+        cv.put("\"name\"", partner.getName());
+        cv.put("\"id_address\"", partner.getAddressID());
+        cv.put("\"created_on\"", partner.getCreationDate());
+        cv.put("\"image_path\"", partner.getImagePath());
+
+        return (myDB.update("Partner", cv, "_id = \""+partner.getId()+"\"", null) >= 1);
+    }
+
+    /**
+     *Updates the values of an existing Promotion in the database. Its _id is the only field that can not be updated
+     * @param promotion an instance of Promotion containing the new values
+     * @return True if the row was successfully affected, False otherwise
+     */
+    public boolean updatePromotionData(Promotion promotion){
+        ContentValues cv = new ContentValues();
+        cv.put("\"id_partner\"", promotion.getIdPartner());
+        cv.put("\"id_shop\"", promotion.getIdShop());
+        cv.put("\"points_required\"", promotion.getPointsRequired());
+        int isReusable; if(promotion.isReusable()){isReusable=1;}else{isReusable=0;}
+        cv.put("\"is_reusable\"", isReusable);
+        cv.put("\"description\"", promotion.getDescription());
+        cv.put("\"image_path\"", promotion.getImagePath());
+        int isActive; if(promotion.isActive()){isActive=1;}else{isActive=0;}
+        cv.put("\"active\"", isActive);
+        cv.put("\"end_date\"", promotion.getEndDate());
+
+        return (myDB.update("Promotion", cv, "_id = \""+promotion.getId()+"\"", null) >= 1);
+    }
+
+    /**
+     *Updates the values of an existing User in the database. Its _id is the only field that can not be updated
      * @param user an instance of User containing the new values
      * @return True if the row was successfully affected, False otherwise
      */
@@ -935,6 +1066,33 @@ public class SQLHelper extends SQLiteOpenHelper {
         return (myDB.update("User", cv, "_id = \""+user.getId()+"\"", null) >= 1);
     }
 
+    /**
+     *Updates the values of an existing picture Frame in the database. Its _id is the only field that can not be updated
+     * @param frame an instance of ShopFrame containing the new values
+     * @return True if the row was successfully affected, False otherwise
+     */
+    public boolean updateFrameData(ShopFrame frame){
+        ContentValues cv = new ContentValues();
+        cv.put("\"id_shop\"", frame.getIdShop());
+        cv.put("\"image_path\"", frame.getFilePath());
+
+        return (myDB.update("Shop_frame", cv, "_id = \""+frame.getId()+"\"", null) >= 1);
+    }
+
+    /**
+     *Updates the values of an existing picture Shop in the database. Its _id is the only field that can not be updated
+     * @param shop an instance of Shop containing the new values
+     * @return True if the row was successfully affected, False otherwise
+     */
+    public boolean updateShopData(Shop shop){
+        ContentValues cv = new ContentValues();
+        cv.put("\"id_partner\"", shop.getPartnerID());
+        cv.put("\"id_address\"", shop.getAddressID());
+        cv.put("\"description\"", shop.getDescription());
+        cv.put("\"created_on\"", shop.getCreationDate());
+
+        return (myDB.update("Shop_location", cv, "_id = \""+shop.getId()+"\"", null) >= 1);
+    }
 
     //*****
     //ID GENERATION METHODS

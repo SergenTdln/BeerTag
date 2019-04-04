@@ -1,5 +1,12 @@
 package application_projet4_groupe12.entities;
 
+import android.content.Context;
+import android.widget.Toast;
+
+import java.io.IOException;
+
+import application_projet4_groupe12.data.SQLHelper;
+
 public class Promotion {
 
     private long id; //Unique ID of the promotion
@@ -60,41 +67,69 @@ public class Promotion {
         return endDate;
     }
 
-    //TODO : Setter methods should update the DB ?
-
-    public void setId(long id) {
+    public void setId(Context c, long id) {
         this.id = id;
+        this.refreshDB(c);
     }
 
-    public void setIdPartner(long idPartner) {
+    public void setIdPartner(Context c, long idPartner) {
         this.idPartner = idPartner;
+        this.refreshDB(c);
     }
 
-    public void setIdShop(long idShop) {
+    public void setIdShop(Context c, long idShop) {
         this.idShop = idShop;
+        this.refreshDB(c);
     }
 
-    public void setPointsRequired(int pointsRequired) {
+    public void setPointsRequired(Context c, int pointsRequired) {
         this.pointsRequired = pointsRequired;
+        this.refreshDB(c);
     }
 
-    public void setReusable(boolean reusable) {
+    public void setReusable(Context c, boolean reusable) {
         isReusable = reusable;
+        this.refreshDB(c);
     }
 
-    public void setDescription(String description) {
+    public void setDescription(Context c, String description) {
         this.description = description;
+        this.refreshDB(c);
     }
 
-    public void setImagePath(String imagePath) {
+    public void setImagePath(Context c, String imagePath) {
         this.imagePath = imagePath;
+        this.refreshDB(c);
     }
 
-    public void setActive(boolean active) {
+    public void setActive(Context c, boolean active) {
         this.active = active;
+        this.refreshDB(c);
     }
 
-    public void setEndDate(String endDate) {
+    public void setEndDate(Context c, String endDate) {
         this.endDate = endDate;
+        this.refreshDB(c);
+    }
+
+    /**
+     * Updates the DB with the newly inserted values
+     * @param c the Context used to instantiate the database helper.
+     */
+    private void refreshDB(Context c){
+        SQLHelper db = null;
+        try {
+            db = new SQLHelper(c);
+            if(! db.updatePromotionData(this)){
+                Toast.makeText(c, "Database update did not work. Please try again", Toast.LENGTH_SHORT).show();
+            }
+        } catch (IOException e){
+            e.printStackTrace();
+            Toast.makeText(c, "Could not update the database. Please try again", Toast.LENGTH_SHORT).show();
+        } finally {
+            if(db!=null) {
+                db.close();
+            }
+        }
     }
 }

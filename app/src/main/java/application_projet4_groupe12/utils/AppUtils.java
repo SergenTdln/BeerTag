@@ -211,7 +211,7 @@ public class AppUtils {
         newFileII.setInput(newFileInputStream);
         newFileII.setDetermineImageNumber(true);
         newFileII.setCollectComments(true);
-        boolean newFileOK = newFileII.check(); //TODO show some sort of progress bar ?
+        boolean newFileOK = newFileII.check(); //TODO show some sort of progress bar ? / or place it in another thread
         if(!newFileOK){
             //TODO
             //TODO close streams

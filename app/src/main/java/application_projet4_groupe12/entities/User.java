@@ -2,6 +2,7 @@ package application_projet4_groupe12.entities;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteException;
+import android.support.annotation.NonNull;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -115,11 +116,11 @@ public class User {
     }
 
     /**
-     * TODO
-     * @param users
-     * @return
+     * Returns the usernames/e-mail addresses of all the User instances in the passed <code>List</code>.
+     * @param users a <code>List</code> of User instances. This list may be empty.
+     * @return a <code>List</code> of Strings containing the usernames of the passed User instances, in the same order as the original <code>List</code>
      */
-    public static List<String> getUsernames(List<User> users){
+    public static List<String> getUsernames(@NonNull List<User> users){
         List<String> ret = new LinkedList<>();
         for (User user : users) {
             ret.add(user.getUsername());
@@ -169,8 +170,6 @@ public class User {
     public boolean isAdmin(){
         return this.isAdmin;
     }
-
-    //TODO : Setter methods should update the DB ?
 
     public void setId(Context c, long id) {
         this.id = id;
@@ -223,7 +222,9 @@ public class User {
         SQLHelper db = null;
         try {
             db = new SQLHelper(c);
-            db.updateUserData(this);
+            if(! db.updateUserData(this)){
+                Toast.makeText(c, "Database update did not work. Please try again", Toast.LENGTH_SHORT).show();
+            }
         } catch (IOException e){
             e.printStackTrace();
             Toast.makeText(c, "Could not update the database. Please try again", Toast.LENGTH_SHORT).show();

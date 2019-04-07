@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.CursorAdapter;
 import android.widget.Toast;
 
 import java.io.FileOutputStream;
@@ -32,6 +33,7 @@ import application_projet4_groupe12.exceptions.WrongDateFormatException;
 import application_projet4_groupe12.exceptions.WrongEmailFormatException;
 
 import static application_projet4_groupe12.utils.AppUtils.occurrences;
+import static application_projet4_groupe12.utils.AppUtils.showToast;
 
 
 /**
@@ -643,6 +645,77 @@ public class SQLHelper extends SQLiteOpenHelper {
      */
     public List<String> getAllUsernames(){
         return getElementFromDB("User", "username", null);
+    }
+
+    /**
+     * Returns a list of all the currently active promotions present in the database as instances of promotion.
+     * @return a list of Promotion instances. This list may be empty if there is no currently active promotions in the database.
+     */
+    public List<Promotion> getAllActivePromotions(){
+        List<Promotion> ret = new LinkedList<>();
+        Cursor c = getEntriesFromDB("Promotion", null, "active = \"1\"", null);
+        if(c.moveToFirst()){
+            for (int i=0; i<c.getCount(); i++){
+                boolean isReusable = false;
+                if(c.getInt(c.getColumnIndex("is_reusable"))==1){isReusable=true;}
+                ret.add(new Promotion(c.getLong(c.getColumnIndex("_id")),
+                                    c.getLong(c.getColumnIndex("id_partner")),
+                                    c.getLong(c.getColumnIndex("id_shop")),
+                                    c.getInt(c.getColumnIndex("points_required")),
+                                    isReusable,
+                                    c.getString(c.getColumnIndex("description")),
+                                    c.getString(c.getColumnIndex("image_path")),
+                                    true,
+                                    c.getString(c.getColumnIndex("end_date"))));
+            }
+        }
+        c.close();
+        return ret;
+    }
+
+    /**
+     * Returns a list of all the currently active promotions at the given shop.
+     * @return a list of Promotion instances. This list may be empty if there is no currently active promotions in the database.
+     */
+    public List<Promotion> getAllActivePromotions(long shopID){
+        List<Promotion> ret = new LinkedList<>();
+        Cursor c = getEntriesFromDB("Promotion", null, "active = \"1\" AND id_shop = \""+shopID+"\"", null);
+        if(c.moveToFirst()){
+            for (int i=0; i<c.getCount(); i++){
+                boolean isReusable = false;
+                if(c.getInt(c.getColumnIndex("is_reusable"))==1){isReusable=true;}
+                ret.add(new Promotion(c.getLong(c.getColumnIndex("_id")),
+                        c.getLong(c.getColumnIndex("id_partner")),
+                        c.getLong(c.getColumnIndex("id_shop")),
+                        c.getInt(c.getColumnIndex("points_required")),
+                        isReusable,
+                        c.getString(c.getColumnIndex("description")),
+                        c.getString(c.getColumnIndex("image_path")),
+                        true,
+                        c.getString(c.getColumnIndex("end_date"))));
+            }
+        }
+        c.close();
+        return ret;
+    }
+
+    /**
+     * Returns a list of all the promotions that the passed User can get, given the information contained in the passed Association.
+     * @param user the User to look for
+     * @param assoc an instance of <code>BrowsePointsAssociation</code>. This contains info about the points the User has at a given shop.
+     * @return a list of <code>Promotion</code> instances. This list might be empty if the User has no available Promotion.
+     */
+    public ArrayList<Promotion> getAllAvailablePromotions(User user, BrowsePointsAssociation assoc){
+        // With this much points at this shop (see data in assoc), what promotions could user get ?
+        ArrayList<Promotion> ret = new ArrayList<>();
+        List<Promotion> shopPromos = getAllActivePromotions(assoc.getShopID());
+        for (Promotion promo : shopPromos) {
+            if(promo.getPointsRequired() <= assoc.getPoints()){
+                //If the user has enough points for this promo
+                ret.add(promo);
+            }
+        }
+        return ret;
     }
 
     /**

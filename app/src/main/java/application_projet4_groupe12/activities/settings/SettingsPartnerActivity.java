@@ -70,7 +70,7 @@ public class SettingsPartnerActivity extends AppCompatActivity {
                 //TODO
                 //select a file from local path
                 String imagePath = null;
-                currentPartner.setImagePath(imagePath);
+                currentPartner.setImagePath(v.getContext(), imagePath);
             }
         });
 
@@ -111,13 +111,15 @@ public class SettingsPartnerActivity extends AppCompatActivity {
                 String newAddressS = newAddress.getText().toString();
 
                 if(! newNameS.equals("")){
-                    currentPartner.setName(newNameS);
+                    currentPartner.setName(v.getContext(), newNameS);
                 }
                 if(! newAddressS.equals("")){
-                    currentPartner.setName(newAddressS);
+                    currentPartner.setName(v.getContext(), newAddressS);
                 }
             }
         });
+
+        //TODO allow to delete an admin by long-pressing the view ? be careful about not allowing to delete the last one, though ! @Martin
     }
 
     private User getUser(Context c, String email){

@@ -1,13 +1,15 @@
 package application_projet4_groupe12.entities;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.widget.Toast;
 
 import java.io.IOException;
 
 import application_projet4_groupe12.data.SQLHelper;
 
-public class Promotion {
+public class Promotion implements Parcelable {
 
     private long id; //Unique ID of the promotion
     private long idPartner;
@@ -131,5 +133,46 @@ public class Promotion {
                 db.close();
             }
         }
+    }
+
+    //**********
+    // Implementing Parcelable Interface
+    //**********
+
+    public int describeContents() {
+        return 0;
+    }
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeLong(id);
+        out.writeLong(idPartner);
+        out.writeLong(idShop);
+        out.writeInt(pointsRequired);
+        out.writeInt(isReusable ? 1 : 0);
+        out.writeString(description);
+        out.writeString(imagePath);
+        out.writeInt(active ? 1 : 0);
+        out.writeString(endDate);
+    }
+    public static final Parcelable.Creator<Promotion> CREATOR
+            = new Parcelable.Creator<Promotion>() {
+        public Promotion createFromParcel(Parcel in) {
+            return new Promotion(in);
+        }
+
+        public Promotion[] newArray(int size) {
+            return new Promotion[size];
+        }
+    };
+
+    private Promotion(Parcel in) {
+        id = in.readLong();
+        idPartner = in.readLong();
+        idShop = in.readLong();
+        pointsRequired = in.readInt();
+        isReusable = (in.readInt() == 1);
+        description = in.readString();
+        imagePath = in.readString();
+        active = (in.readInt() == 1);
+        endDate = in.readString();
     }
 }

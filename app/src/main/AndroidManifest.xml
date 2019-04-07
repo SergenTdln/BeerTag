@@ -64,6 +64,10 @@
         <activity android:name=".activities.settings.SettingsPartnerActivity"
             android:screenOrientation="portrait" />
 
+        <activity android:name=".activities.browse_points.UsePromotionsActivity"
+            android:screenOrientation="portrait" />
+
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="41392d700fd9c84308e00fbc73c99a03e11941f7" />

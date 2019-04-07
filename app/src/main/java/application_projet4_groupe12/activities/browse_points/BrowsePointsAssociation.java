@@ -13,6 +13,7 @@ import application_projet4_groupe12.entities.Shop;
 public class BrowsePointsAssociation {
 
     private int points;
+    private long shopID;
     private String partnerName;
     private String partnerImagePath;
     private Address shopAddress;
@@ -21,7 +22,7 @@ public class BrowsePointsAssociation {
     public BrowsePointsAssociation(Context c, long partnerID, long shopID, int points){
 
         //this.partnerID = partnerID;
-        //this.shopID = shopID;
+        this.shopID = shopID;
         this.points = points;
 
         SQLHelper db = null;
@@ -47,24 +48,27 @@ public class BrowsePointsAssociation {
         }
     }
 
+    public long getShopID() {
+        return shopID;
+    }
 
-    String getPartnerName(){
+    public String getPartnerName(){
         return this.partnerName;
     }
 
-    String getPartnerImagePath(){
+    public String getPartnerImagePath(){
         return this.partnerImagePath;
     }
 
-    Address getShopAddress(){
+    public Address getShopAddress(){
         return this.shopAddress;
     }
 
-    int getPoints(){
+    public int getPoints(){
         return this.points;
     }
 
-    String getShopDescr(){
+    public String getShopDescr(){
         return this.shopDescr;
     }
 }

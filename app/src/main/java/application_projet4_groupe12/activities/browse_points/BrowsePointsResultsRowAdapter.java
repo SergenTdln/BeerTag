@@ -1,20 +1,31 @@
 package application_projet4_groupe12.activities.browse_points;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import application_projet4_groupe12.R;
+import application_projet4_groupe12.data.SQLHelper;
+import application_projet4_groupe12.entities.Promotion;
+import application_projet4_groupe12.entities.User;
 
 public class BrowsePointsResultsRowAdapter extends ArrayAdapter<BrowsePointsAssociation> {
 
@@ -38,6 +49,7 @@ public class BrowsePointsResultsRowAdapter extends ArrayAdapter<BrowsePointsAsso
             viewHolder.partnerPic = convertView.findViewById(R.id.browser_row_adapter_partner_pic);
             //viewHolder.shopDescr = (TextView) convertView.findViewById(R.id.);
             viewHolder.pointsAmount = convertView.findViewById(R.id.browse_row_adapter_points_amount);
+            viewHolder.arrowButton = convertView.findViewById(R.id.browse_row_adapter_arrow_button);
 
             convertView.setTag(viewHolder);
         }
@@ -49,6 +61,22 @@ public class BrowsePointsResultsRowAdapter extends ArrayAdapter<BrowsePointsAsso
             //viewHolder.shopDescr.setText(assoc.getShopDescr());
             viewHolder.pointsAmount.setText(String.valueOf(assoc.getPoints()));
             viewHolder.partnerPic.setImageBitmap(BitmapFactory.decodeFile(convertView.getContext().getFilesDir() + "/" + assoc.getPartnerImagePath()));
+
+
+            ArrayList<Promotion> availablePromos = getPromotions(getContext(), assoc);
+            if(availablePromos.isEmpty()){
+                viewHolder.arrowButton.setBackgroundResource(R.drawable.border_error);
+            } else {
+                viewHolder.arrowButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // New Activity with available Promos and a way to "consume" them
+                        Intent intent = new Intent(getContext(), UsePromotionsActivity.class);
+                        intent.putParcelableArrayListExtra("Promotions", availablePromos);
+                        getContext().startActivity(intent);
+                    }
+                });
+            }
         }
         return convertView;
     }
@@ -59,7 +87,30 @@ public class BrowsePointsResultsRowAdapter extends ArrayAdapter<BrowsePointsAsso
         TextView shopAddress;
         //TextView shopDescr;
         TextView pointsAmount;
+        ImageButton arrowButton;
     }
 
-    //TODO allow to delete an admin by long-pressing the view ? be careful about not allowing to delete the last one, though ! @Martin
+    /**
+     * Returns a list of the promotions currently available to the connected User,
+     * given the information about his points contained in the BrowsePointsAssociation instance.
+     * @param c the Context used to instantiate the database helper.
+     * @param assoc a BrowsePointsAssociaton instance containing data about the current User.
+     * @return a list of Promotion instances. This list might be empty if the User isn't currently eligible for any promotion.
+     */
+    private ArrayList<Promotion> getPromotions(Context c, BrowsePointsAssociation assoc){
+        SQLHelper db = null;
+        ArrayList<Promotion> ret = new ArrayList<>();
+        try {
+            db = new SQLHelper(c);
+            ret = db.getAllAvailablePromotions(User.connectedUser, assoc);
+        } catch (IOException e){
+            e.printStackTrace();
+            Toast.makeText(c, "An error occurred; we could not retrieve the existing promotions from the database", Toast.LENGTH_SHORT).show();
+        } finally {
+            if(db!=null) {
+                db.close();
+            }
+        }
+        return ret;
+    }
 }

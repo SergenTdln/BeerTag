@@ -26,8 +26,8 @@ public class User {
     private String lastName;
     private String birthday; //Birth date. This HAS to follow this format : DD/MM/YYYY. (Example: "31/01/2000")
     private String imagePath; //Image path inside of the assets folder
-
     private boolean isAdmin;
+    private String fullName;
 
     // Call SQLHelper.getFreeIDUser to obtain an available ID to use
     public User(int id, String username, String hashedPassword, String creationDate, String firstName, String lastName, String birthday, String imagePath, boolean isAdmin) {
@@ -40,6 +40,7 @@ public class User {
         this.birthday = birthday;
         this.imagePath = imagePath;
         this.isAdmin = isAdmin;
+        this.fullName = firstName +" "+ lastName;
     }
 
     /**
@@ -163,7 +164,7 @@ public class User {
     }
 
     public String getFullName(){
-        return this.firstName+" "+this.lastName;
+        return this.fullName;
     }
 
     public boolean isAdmin(){

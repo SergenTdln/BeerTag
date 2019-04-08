@@ -26,6 +26,7 @@ import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.utils.ActivityUtils;
 import application_projet4_groupe12.utils.AppUtils;
 import application_projet4_groupe12.utils.FacebookUtils;
+import application_projet4_groupe12.activities.GetDataFromFirebase;
 
 import java.net.URL;
 
@@ -39,6 +40,8 @@ import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
 
+import static android.content.ContentValues.TAG;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -47,8 +50,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
+        Log.e("TAG", "Hello");
 
         /*
          * Toolbar
@@ -101,6 +104,7 @@ public class MainActivity extends AppCompatActivity
         }
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.bringToFront();
+        GetDataFromFirebase.Transfer2();
 
     }
 

@@ -5,8 +5,11 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -44,6 +47,8 @@ public class SettingsPartnerActivity extends AppCompatActivity {
 
     private Partner currentPartner;
 
+    private int nbAdmins;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,7 +63,7 @@ public class SettingsPartnerActivity extends AppCompatActivity {
         newName.setHint(currentPartner.getName());
 
         newAddress = (EditText) findViewById(R.id.settings_partner_change_address);
-        newAddress.setHint(Long.toString(currentPartner.getAddressID())); //TODO should handle an Address object instead of a String -> multiple fields/spinner/etc. @Martin
+        newAddress.setHint(currentPartner.getAddress());
 
         picture = (ImageView) findViewById(R.id.settings_partner_picture);
         picture.setImageBitmap(BitmapFactory.decodeFile(this.getFilesDir()+"/"+currentPartner.getImagePath()));
@@ -76,6 +81,7 @@ public class SettingsPartnerActivity extends AppCompatActivity {
 
         listAdmins = (ListView) findViewById(R.id.settings_partner_manage_admins_listview);
         fillListView(listAdmins, this);
+        registerForContextMenu(listAdmins); //Allows for long-clicking an item in this list
 
         dropDownUsers = (Spinner) findViewById(R.id.settings_partner_manage_admins_spinner);
         fillSpinner(dropDownUsers, this);
@@ -118,8 +124,32 @@ public class SettingsPartnerActivity extends AppCompatActivity {
                 }
             }
         });
+    }
 
-        //TODO allow to delete an admin by long-pressing the view ? be careful about not allowing to delete the last one, though ! @Martin
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getMenuInflater().inflate(R.menu.delete_admin_context, menu);
+        menu.setHeaderIcon(R.drawable.ic_launcher_foreground); //TODO change this icon : a trash can, for example
+        if(nbAdmins==0){
+            menu.setHeaderTitle("You can't delete your last admin !");
+        } else {
+            menu.setHeaderTitle("Delete this Admin ?");
+            menu.
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        if(item.getItemId()==R.id.delete_admin_context_item){
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+            SettingsPartnerAdminDataRowAdapter.ViewHolder vh = (SettingsPartnerAdminDataRowAdapter.ViewHolder) info.targetView.getTag();
+            String username = vh.username.getText().toString(); //TODO access DB and remove this admin
+            info.
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private User getUser(Context c, String email){
@@ -173,6 +203,7 @@ public class SettingsPartnerActivity extends AppCompatActivity {
             if(admins.isEmpty()) {
                 Toast.makeText(getApplicationContext(), "Empty list", Toast.LENGTH_SHORT).show();
             }
+            nbAdmins = admins.size();
             SettingsPartnerAdminDataRowAdapter adapter = new SettingsPartnerAdminDataRowAdapter(this, admins);
             lv.setAdapter(adapter);
         } catch (IOException e) {

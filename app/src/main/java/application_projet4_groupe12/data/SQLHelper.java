@@ -278,7 +278,7 @@ public class SQLHelper extends SQLiteOpenHelper {
             }
             Partner out = new Partner(c.getLong(c.getColumnIndex("_id")),
                     c.getString(c.getColumnIndex("name")),
-                    c.getLong(c.getColumnIndex("id_address")),
+                    c.getString(c.getColumnIndex("address")),
                     c.getString(c.getColumnIndex("created_on")),
                     c.getString(c.getColumnIndex("image_path"))
             );
@@ -361,7 +361,7 @@ public class SQLHelper extends SQLiteOpenHelper {
             }
             Shop out = new Shop(c.getLong(c.getColumnIndex("_id")),
                     c.getLong(c.getColumnIndex("id_partner")),
-                    c.getLong(c.getColumnIndex("id_address")),
+                    c.getLong(c.getColumnIndex("address")),
                     c.getString(c.getColumnIndex("description")),
                     c.getString(c.getColumnIndex("created_on"))
             );
@@ -996,7 +996,7 @@ public class SQLHelper extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put("\"_id\"", partner.getId());
         cv.put("\"name\"", partner.getName());
-        cv.put("\"id_address\"", partner.getAddressID());
+        cv.put("\"address\"", partner.getAddress());
         cv.put("\"created_on\"", partner.getCreationDate());
         cv.put("\"image_path\"", partner.getImagePath());
 
@@ -1093,7 +1093,7 @@ public class SQLHelper extends SQLiteOpenHelper {
     public boolean updatePartnerData(Partner partner){
         ContentValues cv = new ContentValues();
         cv.put("\"name\"", partner.getName());
-        cv.put("\"id_address\"", partner.getAddressID());
+        cv.put("\"address\"", partner.getAddress());
         cv.put("\"created_on\"", partner.getCreationDate());
         cv.put("\"image_path\"", partner.getImagePath());
 

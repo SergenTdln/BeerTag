@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/settings_partner_full_scrollview"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="8dp"
-        android:paddingEnd="8dp"
         android:paddingTop="8dp"
+        android:paddingEnd="8dp"
         android:paddingBottom="8dp">
 
         <TextView
@@ -59,18 +59,18 @@
             android:text="Change name :"
             android:textSize="23sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/settings_partner_sub_title"/>
+            app:layout_constraintTop_toBottomOf="@id/settings_partner_sub_title" />
 
         <EditText
             android:id="@+id/settings_partner_change_name"
             android:layout_width="wrap_content"
+            android:minWidth="160dp"
             android:layout_height="40dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_toStartOf="@+id/settings_partner_picture"
             android:ellipsize="middle"
             android:hint="Default Name"
-            android:paddingEnd="150dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/settings_partner_change_name_title" />
 
@@ -87,6 +87,7 @@
         <EditText
             android:id="@+id/settings_partner_change_address"
             android:layout_width="wrap_content"
+            android:minWidth="160dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:ellipsize="middle"
@@ -103,7 +104,7 @@
             android:text="Change your logo :"
             android:textSize="23sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/settings_partner_change_address"/>
+            app:layout_constraintTop_toBottomOf="@id/settings_partner_change_address" />
 
         <ImageView
             android:id="@+id/settings_partner_picture"
@@ -112,7 +113,7 @@
             android:layout_marginTop="8dp"
             android:src="@drawable/com_facebook_profile_picture_blank_square"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/settings_partner_change_picture_title"/>
+            app:layout_constraintTop_toBottomOf="@id/settings_partner_change_picture_title" />
         <!--Changing this image's size would really mess up the UIs. Please avoid it if possible-->
 
         <Button
@@ -141,7 +142,7 @@
         <ListView
             android:id="@+id/settings_partner_manage_admins_listview"
             android:layout_width="fill_parent"
-            android:layout_height="325dp"
+            android:layout_height="300dp"
             android:layout_marginTop="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
@@ -150,10 +151,10 @@
 
         <LinearLayout
             android:id="@+id/settings_partner_spinner_container"
-            android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/settings_partner_manage_admins_listview">
 
@@ -164,6 +165,7 @@
                 android:layout_weight="1"
                 android:fontFamily="@font/roboto"
                 android:textColor="@color/login_text" />
+
             <Button
                 android:id="@+id/settings_partner_manage_admins_add_button"
                 android:layout_width="wrap_content"

@@ -9,7 +9,8 @@
 
     <EditText
         android:id="@+id/sign_in_input_email"
-        android:layout_width="160dp"
+        android:layout_width="wrap_content"
+        android:minWidth="160dp"
         android:layout_height="45dp"
         android:layout_marginBottom="16dp"
         android:fontFamily="@font/roboto"
@@ -22,7 +23,8 @@
 
     <EditText
         android:id="@+id/sign_in_input_password"
-        android:layout_width="160dp"
+        android:layout_width="wrap_content"
+        android:minWidth="160dp"
         android:layout_height="45dp"
         android:layout_marginTop="300dp"
         android:fontFamily="@font/roboto"

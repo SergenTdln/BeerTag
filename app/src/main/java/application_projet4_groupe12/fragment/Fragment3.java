@@ -149,10 +149,10 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
                                 Partner partner = document.toObject(Partner.class);
                                 int id = Integer.parseInt(document.getString("id"));
                                 String creationDate = document.getString("created_on");
-                                int addressID = Integer.parseInt(document.getString("id_address"));
+                                String address = document.getString("id_address");
                                 String name = document.getString("name");
                                 String imagePath = document.getString("image_path");
-                                partner = new Partner(id, name, addressID, creationDate, imagePath);
+                                partner = new Partner(id, name, address, creationDate, imagePath);
                                 try {
                                     db.addPartner(partner);
                                 }
@@ -169,8 +169,8 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
 
     private void signUp() {
         String mName = name.getText().toString();
-        String mAddressID = address.getText().toString(); //TODO only accepts Address IDs ! I have to put a drop-down selection menu here so the user selects an existing address or creates one. Place numbers in this field for now, I will fix this soon @Martin
-        if( mName.equals("") || mAddressID.equals("") )
+        String mAddress = address.getText().toString();
+        if( mName.equals("") || mAddress.equals("") )
         {
             Toast.makeText(getActivity(), "Please fill in all the fields", Toast.LENGTH_SHORT).show();
             return;
@@ -192,7 +192,7 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
             DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             String today = formatter.format(date);
 
-            partner = new Partner(id, mName, Integer.parseInt(mAddressID), today, ""); //ImagePath will be edited later by partner in Settings Activity
+            partner = new Partner(id, mName, mAddress, today, ""); //ImagePath will be edited later by partner in Settings Activity
             try {
                 System.out.println("Partner inséré : " + db.addPartner(partner));
             } catch (WrongDateFormatException e){

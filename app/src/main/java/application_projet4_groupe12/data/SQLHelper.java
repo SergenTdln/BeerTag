@@ -3,6 +3,7 @@ package application_projet4_groupe12.data;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteCantOpenDatabaseException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -110,14 +111,18 @@ public class SQLHelper extends SQLiteOpenHelper {
      */
     private boolean doesDBExist(){
         SQLiteDatabase checkDB = null;
-        try{
+        try {
             String path = DATABASE_PATH + DATABASE_NAME;
 
-           checkDB = SQLiteDatabase.openDatabase(path, null , SQLiteDatabase.OPEN_READWRITE);
-        } catch (SQLiteException e){
+            checkDB = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READWRITE);
+        } catch (SQLiteCantOpenDatabaseException f){
             //The DB couldn't be opened -> it doesn't exist yet
             //This could be considered abusive use of exceptions (?)
             System.out.println("Database has to be created");
+        } catch (SQLiteException e){
+            //The DB couldn't be opened -> it doesn't exist yet
+            //This could be considered abusive use of exceptions (?)
+            System.out.println("Database has to be created.");
         }
         boolean dbExists = (checkDB != null);
         if(dbExists){
@@ -1036,7 +1041,7 @@ public class SQLHelper extends SQLiteOpenHelper {
     /**
      * Adds an association between an existing User and a Partner.
      * @param username the User's username/e-mail address as a String
-     * @param partnerID the Partner's ID in the local database as an long
+     * @param partnerID the Partner's ID in the local database as a long
      * @return True if the operation succeeded, false otherwise
      */
     public boolean addAdmin(String username, long partnerID) throws UnknownUserException {
@@ -1166,6 +1171,24 @@ public class SQLHelper extends SQLiteOpenHelper {
 
         return (myDB.update("Shop_location", cv, "_id = \""+shop.getId()+"\"", null) >= 1);
     }
+
+
+    //*****
+    //DELETION METHODS
+    //*****
+    /**
+     * Removes an association between an existing User and a Partner.
+     * @param username the User's username/e-mail address as a String
+     * @param partnerID the Partner's ID in the local database as a long
+     * @return True if the operation succeeded, false otherwise
+     */
+    public boolean removeAdmin(String username, long partnerID) throws UnknownUserException {
+        if(! doesUserExist(username)){
+            throw new UnknownUserException("User with username \""+username+"\" does not exist.");
+        }
+        return (myDB.delete("Admin_user", "id_user = \""+this.getUserID(username)+"\" AND id_partner = \""+partnerID+"\"", null) > 0);
+    }
+
 
     //*****
     //ID GENERATION METHODS

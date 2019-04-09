@@ -101,6 +101,9 @@ public class SettingsPartnerActivity extends AppCompatActivity {
 
                         //Update the Spinner
                         fillSpinner(dropDownUsers, v.getContext());
+
+                        //Increase the counter
+                        nbAdmins++;
                     } else {
                         Toast.makeText(getApplicationContext(), "An error occurred; we could not add this Admin", Toast.LENGTH_SHORT).show();
                     }
@@ -129,26 +132,46 @@ public class SettingsPartnerActivity extends AppCompatActivity {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        getMenuInflater().inflate(R.menu.delete_admin_context, menu);
-        menu.setHeaderIcon(R.drawable.ic_launcher_foreground); //TODO change this icon : a trash can, for example
-        if(nbAdmins==0){
-            menu.setHeaderTitle("You can't delete your last admin !");
+        if(nbAdmins<=1){
+            getMenuInflater().inflate(R.menu.delete_admin_context_empty, menu);
+            menu.setHeaderIcon(R.drawable.ic_launcher_foreground); //TODO change this icon : a stop sign, for example. Also make it actually show an icon
+            menu.setHeaderTitle("Can't delete your last admin !");
         } else {
+            getMenuInflater().inflate(R.menu.delete_admin_context, menu);
+            menu.setHeaderIcon(R.drawable.googleg_disabled_color_18); //TODO change this icon : a trash can, for example. Also make it actually show an icon
             menu.setHeaderTitle("Delete this Admin ?");
-            menu.
         }
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        if(item.getItemId()==R.id.delete_admin_context_item){
-            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-            SettingsPartnerAdminDataRowAdapter.ViewHolder vh = (SettingsPartnerAdminDataRowAdapter.ViewHolder) info.targetView.getTag();
-            String username = vh.username.getText().toString(); //TODO access DB and remove this admin
-            info.
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        SettingsPartnerAdminDataRowAdapter.ViewHolder vh = (SettingsPartnerAdminDataRowAdapter.ViewHolder) info.targetView.getTag();
+        String username = vh.username.getText().toString();
+        if(username.equals(User.connectedUser.getUsername())){
+            Toast.makeText(this, "You can't remove yourself from the Admin position", Toast.LENGTH_SHORT).show();
             return true;
         } else {
-            return false;
+            switch (item.getItemId()) {
+                case R.id.delete_admin_context_item:
+                    if (safeDeleteAdmin(username)) {
+                        nbAdmins--;
+                        Toast.makeText(this, "Admin successfully deleted", Toast.LENGTH_SHORT).show();
+                        fillListView(listAdmins, this); //Refreshing the admins list
+                        registerForContextMenu(listAdmins);
+                        fillSpinner(dropDownUsers, this); //Refresh the spinner
+                        return true;
+                    } else {
+                        Toast.makeText(this, "Could not delete this admin. Please try again.", Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
+
+                    //case R.id.delete_admin_context_item_disabled :
+                    //Do nothing ?
+                    //    return true;
+                default:
+                    return false;
+            }
         }
     }
 
@@ -233,5 +256,25 @@ public class SettingsPartnerActivity extends AppCompatActivity {
                 db.close();
             }
         }
+    }
+
+    private boolean safeDeleteAdmin(String username){
+        if (nbAdmins<=1){
+            return false;
+        }
+        SQLHelper db = null;
+        boolean ret;
+        try{
+            db = new SQLHelper(this);
+            ret = db.removeAdmin(username, currentPartner.getId());
+        } catch (IOException e){
+            e.printStackTrace();
+            return false;
+        } finally {
+            if(db!=null){
+                db.close();
+            }
+        }
+        return ret;
     }
 }

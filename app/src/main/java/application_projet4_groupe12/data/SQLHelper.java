@@ -1212,7 +1212,7 @@ public class SQLHelper extends SQLiteOpenHelper {
         char tze = tzCode.charAt(tzCode.length()-1);
 
         StringBuilder sb = new StringBuilder();
-        sb.append(month).append(day).append(hour).append(min).append(sec).append(millisec).append(((int) tzb)-97).append(((int) tze)-97);
+        sb.append(month).append(day).append(hour).append(min).append(sec).append(millisec);
         return Long.parseLong(sb.toString());
     }
 

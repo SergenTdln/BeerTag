@@ -1,5 +1,6 @@
 package application_projet4_groupe12.activities;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -56,10 +57,12 @@ import application_projet4_groupe12.exceptions.WrongEmailFormatException;
 import application_projet4_groupe12.fragment.Fragment1;
 import application_projet4_groupe12.fragment.Fragment2;
 import application_projet4_groupe12.activities.SignUp;
-import application_projet4_groupe12.fragment.Fragment3;
+import application_projet4_groupe12.utils.AppUtils;
 import application_projet4_groupe12.utils.FacebookUtils;
 import application_projet4_groupe12.utils.Global;
 import application_projet4_groupe12.utils.ActivityUtils;
+import application_projet4_groupe12.utils.Hash;
+import application_projet4_groupe12.utils.Password;
 
 
 public class SignUp extends AppCompatActivity {
@@ -253,50 +256,62 @@ public class SignUp extends AppCompatActivity {
 
                             /*
                             TODO : faire l'ajout en DB
-                            // TODO Et appeler User.connectUser() @Sergen
                              */
 
-//                            Context ct = getApplicationContext();
-//                            try {
-//                                db = new SQLHelper(ct);
-////                                db = new SQLHelper(getContext());
-//
-//                                if(db.doesUserExist(session_email)){
-//                                    Log.d(Global.debug_text, "fb user already exists in db");
-//                                } else {
-////                                    int id = Integer.valueOf(session_id);
-//                                    int id = Integer.valueOf(session_id);
-//                                    Date date = Calendar.getInstance().getTime();
-//                                    DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-//                                    String today = formatter.format(date);
-//
-//                                    User user = new User(
-//                                            id,
-//                                            name,
-//                                            null,
-//                                            today,
-//                                            firstname,
-//                                            lastname,
-//                                            "04/05/2010",
-//                                            imagepath.toString()
-//                                    );
-//
-//                                    Log.d(Global.debug_text, "utilisateur fb inséré");
-//
-//                                    db_firebase.collection("Users").add(user);
-//                                    Log.d(Global.debug_text, "utilisateur fb inséré à firebase");
-//
-//                                }
-//
-//                            } catch (IOException e) {
-//                                e.printStackTrace();
-//                                Log.d(Global.debug_text, "fb login db error"+e);
-//                            }
 
-                            Intent intent = new Intent(SignUp.this, MainActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            startActivity(intent);
-                            finish();
+                            Context ct = getApplicationContext();
+                            try {
+                                db = new SQLHelper(ct);
+//                                db = new SQLHelper(getContext());
+
+                                if(db.doesUserExist(session_email)){
+                                    Log.d(Global.debug_text, "fb user already exists in db");
+                                } else {
+//                                    int id = Integer.valueOf(session_id); //id de la session facebook
+                                    long db_id = db.getFreeIDUser();
+                                    Date date = Calendar.getInstance().getTime();
+                                    DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                                    String today = formatter.format(date);
+
+                                    User user = new User(
+                                            db_id,
+                                            session_email,
+                                            Hash.hash(Password.GetPassword(6)),
+                                            today,
+                                            firstname,
+                                            lastname,
+                                            today, //TODO remplacer par la date de naissance à récupérer via fb
+                                            imagepath.toString(),
+                                            false
+                                    );
+
+                                    try {
+                                        db.addUser(user);
+                                    }
+                                    catch (WrongEmailFormatException e) {
+                                        e.printStackTrace();
+                                        Log.d(Global.debug_text, "WrongEmailFormatException"+e);
+                                    }
+                                    catch (WrongDateFormatException e) {
+                                        e.printStackTrace();
+                                        Log.d(Global.debug_text, "WrongDateFormatException"+e);
+                                    }
+
+                                    User.connectUser(ct, user);
+                                    Log.d(Global.debug_text, "utilisateur fb inséré");
+
+                                    db_firebase.collection("Users").add(user);
+                                    Log.d(Global.debug_text, "utilisateur fb inséré à firebase");
+
+                                }
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                Log.d(Global.debug_text, "fb login db error"+e);
+                            }
+
+
+                            startActivity(new Intent(SignUp.this, MainActivity.class));
                         }else{
                             Toast.makeText(SignUp.this, "Authentication error",
                                     Toast.LENGTH_SHORT).show();
@@ -312,7 +327,6 @@ public class SignUp extends AppCompatActivity {
             SectionsStatePagerAdapter adapter = new SectionsStatePagerAdapter(getSupportFragmentManager());
             adapter.addFragment(new Fragment1(), "Fragment1");
             adapter.addFragment(new Fragment2(), "Fragment2");
-            adapter.addFragment(new Fragment3(), "Fragment3");
             viewPager.setAdapter(adapter);
         }
 

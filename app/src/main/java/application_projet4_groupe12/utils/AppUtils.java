@@ -19,6 +19,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Random;
 
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.activities.SignUp;
@@ -275,4 +276,7 @@ public class AppUtils {
     public static String[] getSupportedFormats(){
         return ImageInfo.FORMAT_NAMES;
     }
+
+
+
 }

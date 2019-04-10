@@ -64,7 +64,7 @@ public class SettingsUserActivity extends AppCompatActivity {
             URL image_url = new FacebookUtils().getFacebookProfilePic();
             Picasso.with(this).load(String.valueOf(image_url)).into(picture);
             selectFileButton.setText("Disabled for accounts created from Facebook");
-            selectFileButton.setTextColor(getResources().getColor(R.color.grey, null));
+            selectFileButton.setTextColor(getResources().getColor(R.color.red, null)); //j'ai un cannot resolve avec grey, wtf
             selectFileButton.setClickable(false);
         } else {
             picture.setImageBitmap(BitmapFactory.decodeFile(this.getFilesDir() + "/" + User.connectedUser.getImagePath()));

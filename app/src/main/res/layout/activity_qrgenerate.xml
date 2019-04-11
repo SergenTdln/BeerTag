@@ -19,6 +19,7 @@ tools:context=".activities.QRGenerateActivity">
         android:background="?attr/colorPrimary"
         app:popupTheme="@style/AppTheme.PopupOverlay"
         app:titleTextAppearance="@style/Widget.BottomNavigationView"
+        android:backgroundTint="@color/admin_colorPrimary"
         app:titleTextColor="@color/white"/>
 
 

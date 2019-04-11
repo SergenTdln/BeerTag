@@ -52,7 +52,8 @@ public class MainActivity extends AppCompatActivity
 
         SharedPreferences shared = getSharedPreferences("login_choice", MODE_PRIVATE);
         Boolean choice_made = shared.getBoolean("loggin_chosed", false);
-        if(User.connectedUser.isAdmin() &&  !choice_made){
+        Log.v(Global.debug_text,""+choice_made);
+        if( User.connectedUser.isAdmin() &&  (choice_made == false)){
             startActivity(new Intent(MainActivity.this, LoginChoiceActivity.class));
             finish();
         }
@@ -76,17 +77,6 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        /*
-         * Floating button - generate QR
-         */
-        FloatingActionButton fab_gen = findViewById(R.id.fab_gen);
-        fab_gen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, QRGenerateActivity.class));
-                finish();
-            }
-        });
 
         /*
          * Sliding drawer
@@ -101,13 +91,7 @@ public class MainActivity extends AppCompatActivity
          * Navigation view
          */
         NavigationView navigationView = findViewById(R.id.nav_view);
-        if(User.connectedUser.isAdmin()){
-            navigationView.inflateMenu(R.menu.activity_main_navigation_drawer_admin);
-            MenuItem adminTitle = navigationView.getMenu().findItem(R.id.nav_admin_title);
-            adminTitle.setTitle("Account of " + User.connectedUser.getAdministratedPartner(this).getName());
-        } else {
-            navigationView.inflateMenu(R.menu.activity_main_navigation_drawer);
-        }
+        navigationView.inflateMenu(R.menu.activity_main_navigation_drawer);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.bringToFront();
     }
@@ -214,10 +198,6 @@ public class MainActivity extends AppCompatActivity
                 startActivity(new Intent(MainActivity.this, QRScanActivity.class));
                 break;
 
-            case R.id.nav_generate:
-                startActivity(new Intent(MainActivity.this, QRGenerateActivity.class));
-                break;
-
             case R.id.nav_browse_points:
                 //Toast.makeText(getApplicationContext(), "Clicked on Browse points", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(MainActivity.this, BrowsePointsActivity.class));
@@ -251,12 +231,6 @@ public class MainActivity extends AppCompatActivity
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //Clears the Activity stack
                 startActivity(intent);
                 finish();
-                break;
-            case R.id.nav_admin_browse_clients:
-                startActivity(new Intent(MainActivity.this, BrowseClientsActivity.class));
-                break;
-            case R.id.nav_admin_settings:
-                startActivity(new Intent(MainActivity.this, SettingsPartnerActivity.class));
                 break;
         }
 

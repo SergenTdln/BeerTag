@@ -100,7 +100,7 @@ public class QRResultActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
 //                finish()
-                startActivity(new Intent(QRResultActivity.this, MainActivity.class));
+                startActivity(new Intent(QRResultActivity.this, AdminActivity.class));
 //                return true;
 
             default:

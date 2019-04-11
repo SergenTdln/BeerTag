@@ -32,7 +32,7 @@
     <string name="nav_title_management">Account management</string>
     <string name="nav_settings">Settings</string>
     <string name="nav_logout">Log Out</string>
-    <string name="nav_title_priv_account">Your user account</string>
+    <string name="nav_title_priv_account">Your partner account</string>
     <string name="nav_title_admin_default">Admin of Partner &quot;default partner&quot;</string>
     <string name="nav_add_admin">Add an Administrator</string>
     <string name="nav_admin_settings">Settings</string>

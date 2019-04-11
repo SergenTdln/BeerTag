@@ -912,6 +912,16 @@ public class SQLHelper extends SQLiteOpenHelper {
                 .size() > 0);
     }
 
+    /**
+     * Returns whether this Promotion is reusable.
+     * @param promoID the internal ID of the Promotion to look for
+     * @return True if this Promotion is reusable, or False otherwise
+     */
+    public boolean isReusable(long promoID){
+        List<String> res = getElementFromDB("Promotion", "is_reusable", "_id = \""+promoID+"\"");
+        return (Integer.parseInt(res.get(0))==1);
+    }
+
     //*****
     //VALIDITY METHODS
     //*****
@@ -1060,7 +1070,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * Adds <code>amount</code> points to the User's account.
      * @param username the user's email address
      * @param amount the amount of points to add. This can be positive or negative.
-     * @param shopID Please not this is different from the partner's name.
+     * @param shopID please note this is different from the partner's name.
      * @return True if the insertion was successful, False if it failed (for any reason not covered by a thrown exception).
      */
     public boolean addPoints(String username, int amount, long shopID){
@@ -1073,6 +1083,20 @@ public class SQLHelper extends SQLiteOpenHelper {
         cv.put("\"points\"", (currentPoints + amount));
 
         return (myDB.insert("User_points", null, cv) != -1);
+    }
+
+    /**
+     * Notifies the DB that this User has used the passed Promotion.
+     * @param userID the user's internal ID.
+     * @param promoID the promotion's internal ID.
+     * @return True if the insertion was successful, False if it failed.
+     */
+    private boolean addUserPromotion(long userID, long promoID, String date){
+        ContentValues cv = new ContentValues();
+        cv.put("id_user", userID);
+        cv.put("id_promotion", promoID);
+        cv.put("used_on", date);
+        return (myDB.insert("User_promotion", null, cv) != -1);
     }
 
     /**
@@ -1176,6 +1200,29 @@ public class SQLHelper extends SQLiteOpenHelper {
     //*****
     //DELETION METHODS
     //*****
+
+    /**
+     * Simulate the consumption of the Promotion with ID <code>promoID</code> by the passed User. If this Promotion was not reusable, it is deleted from the database.
+     * @param promoID the ID of the Promotion to delete
+     * @param user the User who activated this Promotion
+     * @return
+     */
+    public boolean usePromotion(long promoID, User user, String date){
+        if(! isReusable(promoID)) {
+            removePromotion(promoID);
+        }
+        return addUserPromotion(user.getId(), promoID, date);
+    }
+
+    /**
+     * Removes a Promotion from the database. Use this method wisely.
+     * @param promoID the Promotion's ID in the local database as a long
+     * @return True if the operation succeeded, false otherwise
+     */
+    private boolean removePromotion(long promoID){
+        return (myDB.delete("Promotion", "_id = \""+promoID+"\"", null) > 0);
+    }
+
     /**
      * Removes an association between an existing User and a Partner.
      * @param username the User's username/e-mail address as a String
@@ -1212,7 +1259,7 @@ public class SQLHelper extends SQLiteOpenHelper {
         char tze = tzCode.charAt(tzCode.length()-1);
 
         StringBuilder sb = new StringBuilder();
-        sb.append(month).append(day).append(hour).append(min).append(sec).append(millisec).append(((int) tzb)-97).append(((int) tze)-97);
+        sb.append(month).append(day).append(hour).append(min).append(sec).append(millisec);
         return Long.parseLong(sb.toString());
     }
 

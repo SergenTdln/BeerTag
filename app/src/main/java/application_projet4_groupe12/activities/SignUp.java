@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -50,12 +52,14 @@ import java.util.Calendar;
 import java.util.Date;
 
 import application_projet4_groupe12.R;
+import application_projet4_groupe12.data.Constants;
 import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.exceptions.WrongDateFormatException;
 import application_projet4_groupe12.exceptions.WrongEmailFormatException;
 import application_projet4_groupe12.fragment.Fragment1;
 import application_projet4_groupe12.fragment.Fragment2;
+import application_projet4_groupe12.fragment.Fragment3;
 import application_projet4_groupe12.activities.SignUp;
 import application_projet4_groupe12.utils.AppUtils;
 import application_projet4_groupe12.utils.FacebookUtils;
@@ -74,8 +78,8 @@ public class SignUp extends AppCompatActivity {
 
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseAuth mAuth;
-    private SQLHelper db;
-
+    //    private SQLHelper db;
+    public static SQLHelper db;
 
     LoginButton loginButton;
     CallbackManager mCallbackManager;
@@ -89,6 +93,35 @@ public class SignUp extends AppCompatActivity {
             finish();
             startActivity(new Intent(SignUp.this, MainActivity.class));
         }
+
+        // Here, thisActivity is the current activity
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_CONTACTS)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Permission is not granted
+            // Should we show an explanation?
+            Log.v("permission not granted","perm");
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.READ_CONTACTS)) {
+                Log.v("permission not granted","perm exlanation");
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+            } else {
+                // No explanation needed; request the permission
+                ActivityCompat.requestPermissions(
+                        this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.PERMISSION_REQ);
+                Log.v("permission not granted","perm no expl, request");
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        } else {
+            Log.v("permission not granted","perm already ok");
+            // Permission has already been granted
+        }
+
         //FacebookSdk.sdkInitialize(getApplicationContext());
 
         setContentView(R.layout.activity_sign_up);
@@ -113,6 +146,7 @@ public class SignUp extends AppCompatActivity {
         loginButton.setReadPermissions("email, public_profile");
 
         loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+
             @Override
             public void onSuccess(LoginResult loginResult) {
 
@@ -137,7 +171,7 @@ public class SignUp extends AppCompatActivity {
                                     Log.v(Global.debug_text, "name fb"+name);
 //
                                     /* initalize facebook session
-                                    * src: https://webkul.com/blog/how-to-manage-session-in-android-app/ */
+                                     * src: https://webkul.com/blog/how-to-manage-session-in-android-app/ */
                                     SharedPreferences shared = getApplicationContext().getSharedPreferences(id, MODE_PRIVATE);
                                     SharedPreferences.Editor editor = shared.edit();
 
@@ -258,6 +292,8 @@ public class SignUp extends AppCompatActivity {
                             TODO : faire l'ajout en DB
                              */
 
+                            // todo vérifier les permissions
+//                            checkDbPermissions();
 
                             Context ct = getApplicationContext();
                             try {
@@ -290,24 +326,26 @@ public class SignUp extends AppCompatActivity {
                                     }
                                     catch (WrongEmailFormatException e) {
                                         e.printStackTrace();
-                                        Log.d(Global.debug_text, "WrongEmailFormatException"+e);
+                                        Log.v(Global.debug_text, "WrongEmailFormatException"+e);
                                     }
                                     catch (WrongDateFormatException e) {
                                         e.printStackTrace();
-                                        Log.d(Global.debug_text, "WrongDateFormatException"+e);
+                                        Log.v(Global.debug_text, "WrongDateFormatException"+e);
                                     }
 
+
+
                                     User.connectUser(ct, user);
-                                    Log.d(Global.debug_text, "utilisateur fb inséré");
+                                    Log.v(Global.debug_text, "utilisateur fb inséré");
 
                                     db_firebase.collection("Users").add(user);
-                                    Log.d(Global.debug_text, "utilisateur fb inséré à firebase");
+                                    Log.v(Global.debug_text, "utilisateur fb inséré à firebase");
 
                                 }
 
                             } catch (IOException e) {
                                 e.printStackTrace();
-                                Log.d(Global.debug_text, "fb login db error"+e);
+                                Log.v(Global.debug_text, "fb login db error"+e);
                             }
 
 
@@ -327,6 +365,7 @@ public class SignUp extends AppCompatActivity {
             SectionsStatePagerAdapter adapter = new SectionsStatePagerAdapter(getSupportFragmentManager());
             adapter.addFragment(new Fragment1(), "Fragment1");
             adapter.addFragment(new Fragment2(), "Fragment2");
+            adapter.addFragment(new Fragment3(), "Fragment3");
             viewPager.setAdapter(adapter);
         }
 
@@ -336,5 +375,24 @@ public class SignUp extends AppCompatActivity {
         mViewPager.setCurrentItem(fragmentNumber);
     }
 
+//    private void checkDbPermissions() {
+//        if  (ContextCompat.checkSelfPermission( getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+//            ActivityCompat.requestPermissions(
+//                    this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.PERMISSION_REQ);
+//        } else {
+////            setUpViewPager();
+//        }
+//    }
+//
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+//        if (requestCode == Constants.PERMISSION_REQ) {
+//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                setupViewPager(mViewPager);
+//            } else {
+//                AppUtils.showToast(getApplicationContext(), getString(R.string.permission_not_granted));
+//            }
+//        }
+//    }
 
 }

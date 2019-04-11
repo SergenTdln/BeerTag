@@ -50,6 +50,12 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        SharedPreferences shared = getSharedPreferences("login_choice", MODE_PRIVATE);
+        Boolean choice_made = shared.getBoolean("loggin_chosed", false);
+        if(User.connectedUser.isAdmin() &&  !choice_made){
+            startActivity(new Intent(MainActivity.this, LoginChoiceActivity.class));
+            finish();
+        }
         setContentView(R.layout.activity_main);
 
         /*
@@ -230,6 +236,10 @@ public class MainActivity extends AppCompatActivity
                     //Déconnecter en local
                     User.disconnectUser(this);
                     standard_login.edit().clear().apply();
+
+                    SharedPreferences login_choice  =getSharedPreferences("login_choice",Context.MODE_PRIVATE);
+                    login_choice.edit().clear().apply();
+                    finish();
                 }
 
                 //couper la session firebase

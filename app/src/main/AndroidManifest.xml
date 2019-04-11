@@ -41,6 +41,9 @@
         <activity android:name="application_projet4_groupe12.activities.MainActivity"
             android:screenOrientation="portrait"/>
 
+        <activity android:name="application_projet4_groupe12.activities.LoginChoiceActivity"
+            android:screenOrientation="portrait"/>
+
         <activity
             android:name="application_projet4_groupe12.activities.QRResultActivity"
             android:theme="@style/AppTheme.NoActionBar"

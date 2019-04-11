@@ -7,8 +7,10 @@ import android.database.sqlite.SQLiteCantOpenDatabaseException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 import android.widget.CursorAdapter;
 import android.widget.Toast;
+
 
 import java.io.FileOutputStream;
 import java.io.IOException;

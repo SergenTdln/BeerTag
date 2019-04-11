@@ -103,6 +103,7 @@ public class MainActivity extends AppCompatActivity
         }
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.bringToFront();
+        TransferFromFirestore.Transfer2();
     }
 
     /*

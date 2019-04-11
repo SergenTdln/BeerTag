@@ -165,11 +165,11 @@ public class User {
     }
 
     public String getFullName(){
-        return this.fullName;
+        return fullName;
     }
 
     public boolean isAdmin(){
-        return this.isAdmin;
+        return isAdmin;
     }
 
     public void setId(Context c, long id) {

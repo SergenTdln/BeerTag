@@ -38,7 +38,8 @@
         app:layout_constraintTop_toTopOf="parent"/>
     <EditText
         android:id="@+id/sign_up_partner_input_name"
-        android:layout_width="160dp"
+        android:layout_width="wrap_content"
+        android:minWidth="160dp"
         android:layout_height="45dp"
         android:fontFamily="@font/roboto"
         android:gravity="center_horizontal"
@@ -64,7 +65,8 @@
         app:layout_constraintTop_toBottomOf="@id/sign_up_partner_input_name"/>
     <EditText
         android:id="@+id/sign_up_partner_input_address"
-        android:layout_width="160dp"
+        android:layout_width="wrap_content"
+        android:minWidth="160dp"
         android:layout_height="45dp"
         android:fontFamily="@font/roboto"
         android:gravity="center_horizontal"
@@ -91,6 +93,7 @@
     <Spinner
         android:id="@+id/sign_up_partner_input_spinner_admin"
         android:layout_width="wrap_content"
+        android:minWidth="160dp"
         android:layout_height="45dp"
         android:fontFamily="@font/roboto"
         android:textColor="@color/login_text"

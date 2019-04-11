@@ -2,6 +2,7 @@ package application_projet4_groupe12.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -26,7 +27,6 @@ import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.utils.ActivityUtils;
 import application_projet4_groupe12.utils.AppUtils;
 import application_projet4_groupe12.utils.FacebookUtils;
-import application_projet4_groupe12.activities.GetDataFromFirebase;
 
 import java.net.URL;
 
@@ -40,8 +40,6 @@ import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
 
-import static android.content.ContentValues.TAG;
-
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -50,8 +48,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
-        Log.e("TAG", "Hello");
 
         /*
          * Toolbar
@@ -67,6 +65,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainActivity.this, QRScanActivity.class));
+                finish();
             }
         });
 
@@ -77,8 +76,8 @@ public class MainActivity extends AppCompatActivity
         fab_gen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
                 startActivity(new Intent(MainActivity.this, QRGenerateActivity.class));
+                finish();
             }
         });
 
@@ -98,14 +97,12 @@ public class MainActivity extends AppCompatActivity
         if(User.connectedUser.isAdmin()){
             navigationView.inflateMenu(R.menu.activity_main_navigation_drawer_admin);
             MenuItem adminTitle = navigationView.getMenu().findItem(R.id.nav_admin_title);
-            adminTitle.setTitle("Admin of " + User.connectedUser.getAdministratedPartner(this).getName());
+            adminTitle.setTitle("Account of " + User.connectedUser.getAdministratedPartner(this).getName());
         } else {
             navigationView.inflateMenu(R.menu.activity_main_navigation_drawer);
         }
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.bringToFront();
-        GetDataFromFirebase.Transfer2();
-
     }
 
     /*
@@ -140,12 +137,14 @@ public class MainActivity extends AppCompatActivity
         /*
          * Navigation view header data
          */
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        //navigationView.inflateHeaderView(R.layout.activity_main_navigation_header);
         ImageView navHeaderImage = findViewById(R.id.activity_main_navigation_header_image);
-        TextView navHeaderText1 = findViewById(R.id.activity_main_navigation_header_text1);
+        TextView navHeaderText1 = (TextView) findViewById(R.id.activity_main_navigation_header_text1);
         TextView navHeaderText2 = findViewById(R.id.activity_main_navigation_header_text2);
 
-        /* Remplacer le logo par la photo de profil fb*/
         if (ActivityUtils.getInstance().isLoggedInFacebook()) {
+            /* Remplacer les données par celles du profil fb*/
             Log.i(Global.debug_text, "nav" + navHeaderImage);
             String id = new FacebookUtils().getFacebookId();
             SharedPreferences shared = getSharedPreferences(id, MODE_PRIVATE);
@@ -157,6 +156,7 @@ public class MainActivity extends AppCompatActivity
             navHeaderText1.setText(session_name);
             navHeaderText2.setText(session_email);
         } else {
+            /* Remplacer les données par celles de la db locale*/
             String userFullName = User.connectedUser.getFullName();
             Log.i(Global.debug_text, "userFullName" + userFullName);
             navHeaderText1.setText(userFullName);
@@ -164,7 +164,11 @@ public class MainActivity extends AppCompatActivity
             String userUsername = User.connectedUser.getUsername();
             Log.i(Global.debug_text, "getUsername" + userUsername);
             navHeaderText2.setText(userUsername);
-            navHeaderImage.setImageBitmap(BitmapFactory.decodeFile(this.getFilesDir()+"/"+User.connectedUser.getImagePath()));
+
+            Bitmap bitmap = BitmapFactory.decodeFile(this.getFilesDir()+"/"+User.connectedUser.getImagePath());
+            if(bitmap!=null) {
+                navHeaderImage.setImageBitmap(bitmap);
+            }
         }
         return true;
     }

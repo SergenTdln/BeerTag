@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
@@ -47,12 +49,14 @@ public class SettingsPartnerAdminDataRowAdapter extends ArrayAdapter<User> {
                 viewHolder.userFullName.setText(user.getFullName());
                 viewHolder.username.setText(user.getUsername());
                 viewHolder.userPic.setImageBitmap(BitmapFactory.decodeFile(convertView.getContext().getFilesDir()+"/"+user.getImagePath()));
-            }
+        }
 
         return convertView;
     }
 
-    private class ViewHolder {
+    //TODO allow to delete an admin by long-pressing the view ? be careful about not allowing to delete the last one, though ! @Martin
+
+    class ViewHolder {
         TextView userFullName;
         TextView username;
         ImageView userPic;

@@ -44,7 +44,7 @@ public class BrowsePointsActivity extends AppCompatActivity {
 
         } catch (IOException e) {
             Toast.makeText(this, "Error while initializing the database. Cannot display results.", Toast.LENGTH_SHORT).show();
-            Log.i(Global.debug_text, "Browse points error "+e);
+            Log.i(Global.debug_text, "Browse points error " + e);
             // (exception in SQLHelper constructor)
         } finally {
             if(db != null) {

@@ -31,7 +31,7 @@ public class BrowseClientsActivity extends AppCompatActivity {
         try {
             db = new SQLHelper(this);
 
-            elements = db.getAllClientPoints(db.getAdminFromUser(User.connectedUser.getId()));
+            elements = db.getAllClientPoints(db.getPartnerIDFromUser(User.connectedUser.getId()));
 
             if(elements.isEmpty()){
                 Toast.makeText(getApplicationContext(), "Empty list", Toast.LENGTH_SHORT).show();

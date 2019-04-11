@@ -101,10 +101,18 @@ public class SettingsUserActivity extends AppCompatActivity {
                 String newBirthdayS = newBirthday.getText().toString();
 
                 if(! newFirstNameS.equals("")){
-                    User.connectedUser.setFirstName(newFirstNameS);
+                    newFirstName.setText("");
+                    newFirstName.setHint(newFirstNameS);
+                    User.connectedUser.setFirstName(v.getContext(), newFirstNameS);
+                    System.out.println("First Name changed");
+                    Toast.makeText(v.getContext(), "Done", Toast.LENGTH_LONG).show();
                 }
                 if(! newLastNameS.equals("")){
-                    User.connectedUser.setLastName(newLastNameS);
+                    newLastName.setText("");
+                    newLastName.setHint(newLastNameS);
+                    User.connectedUser.setLastName(v.getContext(), newLastNameS);
+                    System.out.println("Last Name changed");
+                    Toast.makeText(v.getContext(), "Done", Toast.LENGTH_LONG).show();
                 }
                 if( (currPasswordS.equals("")) != (newPasswordS.equals(""))){ //XOR
                     currentPassword.setBackgroundResource(R.drawable.border_error);
@@ -121,7 +129,10 @@ public class SettingsUserActivity extends AppCompatActivity {
                     if(Hash.hash(currPasswordS).equals(User.connectedUser.getPasswordHashed())) {
                         currentPassword.setBackgroundResource(0);
                         newPassword.setBackgroundResource(0);
-                        User.connectedUser.setPasswordHashed(Hash.hash(newPasswordS));
+                        User.connectedUser.setPasswordHashed(v.getContext(), Hash.hash(newPasswordS));
+                        currentPassword.setText("");
+                        newPassword.setText("");
+                        System.out.println("Password changed");
                         Toast.makeText(v.getContext(), "Password changed successfully", Toast.LENGTH_SHORT).show();
                     } else {
                         currentPassword.setBackgroundResource(R.drawable.border_error);
@@ -131,7 +142,10 @@ public class SettingsUserActivity extends AppCompatActivity {
                 }
                 if(! newBirthdayS.equals("")){
                     try {
-                        User.connectedUser.setBirthday(newBirthdayS);
+                        newBirthday.setText("");
+                        User.connectedUser.setBirthday(v.getContext(), newBirthdayS);
+                        System.out.println("Birthday changed");
+                        Toast.makeText(v.getContext(), "Done", Toast.LENGTH_LONG).show();
                     } catch (WrongDateFormatException e) {
                         Toast.makeText(v.getContext(), "Invalid Birthdate format", Toast.LENGTH_SHORT).show();
                         newBirthday.setBackgroundResource(R.drawable.border_error);

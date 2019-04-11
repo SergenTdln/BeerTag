@@ -9,10 +9,6 @@
             android:icon="@drawable/ic_menu_camera"
             android:title="@string/nav_scan_code" />
         <item
-            android:id="@+id/nav_generate"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/nav_generate_code" />
-        <item
             android:id="@+id/nav_browse_points"
             android:icon="@drawable/ic_menu_slideshow"
             android:title="@string/nav_browse_points" />

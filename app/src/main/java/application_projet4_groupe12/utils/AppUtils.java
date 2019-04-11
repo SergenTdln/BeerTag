@@ -56,6 +56,16 @@ public class AppUtils {
     }
 
     /**
+     * Returns the number of occurrences of the character <code>pattern</code> in the <code>target</code> String.
+     * @param pattern the pattern character to look for
+     * @param target the String in which we are searching
+     * @return the number of occurrences as a long.
+     */
+    public static long occurrences(char pattern, String target){
+        return target.codePoints().filter(c -> c==pattern).count();
+    }
+
+    /**
      * This method converts dp unit to equivalent pixels, depending on device density.
      *
      * @author user "Muhammad Nabeel Arif" on StackOverflow
@@ -201,7 +211,7 @@ public class AppUtils {
         newFileII.setInput(newFileInputStream);
         newFileII.setDetermineImageNumber(true);
         newFileII.setCollectComments(true);
-        boolean newFileOK = newFileII.check(); //TODO show some sort of progress bar ?
+        boolean newFileOK = newFileII.check(); //TODO show some sort of progress bar ? / or place it in another thread
         if(!newFileOK){
             //TODO
             //TODO close streams

@@ -2,6 +2,7 @@ package application_projet4_groupe12.entities;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteException;
+import android.support.annotation.NonNull;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -18,7 +19,7 @@ public class User {
 
     public static User connectedUser;
 
-    private int id; // Internal ID, should not be displayed to the user. Unique
+    private long id; // Internal ID, should not be displayed to the user. Unique
     private String username; // Username/email of the user. Unique
     private String hashedPassword; //Output of hashing function
     private String creationDate; // This HAS to follow this format : DD/MM/YYYY. (Example: "31/01/2000")
@@ -30,7 +31,7 @@ public class User {
     private String fullName;
 
     // Call SQLHelper.getFreeIDUser to obtain an available ID to use
-    public User(int id, String username, String hashedPassword, String creationDate, String firstName, String lastName, String birthday, String imagePath, boolean isAdmin) {
+    public User(long id, String username, String hashedPassword, String creationDate, String firstName, String lastName, String birthday, String imagePath, boolean isAdmin) {
         this.id = id;
         this.username = username;
         this.hashedPassword = hashedPassword;
@@ -104,7 +105,7 @@ public class User {
             SQLHelper db = null;
             try {
                 db = new SQLHelper(c);
-                return db.getPartner(db.getAdminFromUser(this.id));
+                return db.getPartner(db.getPartnerIDFromUser(this.id));
             } catch (IOException e) {
                 e.printStackTrace();
                 Toast.makeText(c, "Could not retrieve Partner from database.", Toast.LENGTH_SHORT).show();
@@ -116,11 +117,11 @@ public class User {
     }
 
     /**
-     * TODO
-     * @param users
-     * @return
+     * Returns the usernames/e-mail addresses of all the User instances in the passed <code>List</code>.
+     * @param users a <code>List</code> of User instances. This list may be empty.
+     * @return a <code>List</code> of Strings containing the usernames of the passed User instances, in the same order as the original <code>List</code>
      */
-    public static List<String> getUsernames(List<User> users){
+    public static List<String> getUsernames(@NonNull List<User> users){
         List<String> ret = new LinkedList<>();
         for (User user : users) {
             ret.add(user.getUsername());
@@ -131,7 +132,7 @@ public class User {
     //******
     //Getter and setter methods
     //******
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -171,40 +172,67 @@ public class User {
         return this.isAdmin;
     }
 
-    //TODO : Setter methods should update the DB ?
-
-    public void setId(int id) {
+    public void setId(Context c, long id) {
         this.id = id;
+        this.refreshDB(c);
     }
 
-    public void setUsername(String username) {
+    public void setUsername(Context c, String username) {
         this.username = username;
+        this.refreshDB(c);
     }
 
-    public void setPasswordHashed(String hashedPassword){
+    public void setPasswordHashed(Context c, String hashedPassword){
         this.hashedPassword = hashedPassword;
+        this.refreshDB(c);
     }
 
-    public void setCreationDate(String creationDate) {
+    public void setCreationDate(Context c, String creationDate) {
         this.creationDate = creationDate;
+        this.refreshDB(c);
     }
 
-    public void setFirstName(String firstName) {
+    public void setFirstName(Context c, String firstName) {
         this.firstName = firstName;
+        this.refreshDB(c);
     }
 
-    public void setLastName(String lastName) {
+    public void setLastName(Context c, String lastName) {
         this.lastName = lastName;
+        this.refreshDB(c);
     }
 
-    public void setBirthday(String birthdate) throws WrongDateFormatException {
+    public void setBirthday(Context c, String birthdate) throws WrongDateFormatException {
         if(! SQLHelper.isValidDate(birthdate)){
             throw new WrongDateFormatException("Invalid date format");
         }
         this.birthday = birthdate;
+        this.refreshDB(c);
     }
 
-    public void setImagePath(String imagePath){
+    public void setImagePath(Context c, String imagePath){
         this.imagePath = imagePath;
+        this.refreshDB(c);
+    }
+
+    /**
+     * Updates the DB with the newly inserted values
+     * @param c the Context used to instantiate the database helper.
+     */
+    private void refreshDB(Context c){
+        SQLHelper db = null;
+        try {
+            db = new SQLHelper(c);
+            if(! db.updateUserData(this)){
+                Toast.makeText(c, "Database update did not work. Please try again", Toast.LENGTH_SHORT).show();
+            }
+        } catch (IOException e){
+            e.printStackTrace();
+            Toast.makeText(c, "Could not update the database. Please try again", Toast.LENGTH_SHORT).show();
+        } finally {
+            if(db!=null) {
+                db.close();
+            }
+        }
     }
 }

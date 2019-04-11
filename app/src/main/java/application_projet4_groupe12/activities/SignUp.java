@@ -1,10 +1,13 @@
 package application_projet4_groupe12.activities;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -49,17 +52,21 @@ import java.util.Calendar;
 import java.util.Date;
 
 import application_projet4_groupe12.R;
+import application_projet4_groupe12.data.Constants;
 import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.exceptions.WrongDateFormatException;
 import application_projet4_groupe12.exceptions.WrongEmailFormatException;
 import application_projet4_groupe12.fragment.Fragment1;
 import application_projet4_groupe12.fragment.Fragment2;
-import application_projet4_groupe12.activities.SignUp;
 import application_projet4_groupe12.fragment.Fragment3;
+import application_projet4_groupe12.activities.SignUp;
+import application_projet4_groupe12.utils.AppUtils;
 import application_projet4_groupe12.utils.FacebookUtils;
 import application_projet4_groupe12.utils.Global;
 import application_projet4_groupe12.utils.ActivityUtils;
+import application_projet4_groupe12.utils.Hash;
+import application_projet4_groupe12.utils.Password;
 
 
 public class SignUp extends AppCompatActivity {
@@ -71,8 +78,8 @@ public class SignUp extends AppCompatActivity {
 
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseAuth mAuth;
-    private SQLHelper db;
-
+    //    private SQLHelper db;
+    public static SQLHelper db;
 
     LoginButton loginButton;
     CallbackManager mCallbackManager;
@@ -86,6 +93,35 @@ public class SignUp extends AppCompatActivity {
             finish();
             startActivity(new Intent(SignUp.this, MainActivity.class));
         }
+
+        // Here, thisActivity is the current activity
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_CONTACTS)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Permission is not granted
+            // Should we show an explanation?
+            Log.v("permission not granted","perm");
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.READ_CONTACTS)) {
+                Log.v("permission not granted","perm exlanation");
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+            } else {
+                // No explanation needed; request the permission
+                ActivityCompat.requestPermissions(
+                        this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.PERMISSION_REQ);
+                Log.v("permission not granted","perm no expl, request");
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        } else {
+            Log.v("permission not granted","perm already ok");
+            // Permission has already been granted
+        }
+
         //FacebookSdk.sdkInitialize(getApplicationContext());
 
         setContentView(R.layout.activity_sign_up);
@@ -110,6 +146,7 @@ public class SignUp extends AppCompatActivity {
         loginButton.setReadPermissions("email, public_profile");
 
         loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+
             @Override
             public void onSuccess(LoginResult loginResult) {
 
@@ -134,7 +171,7 @@ public class SignUp extends AppCompatActivity {
                                     Log.v(Global.debug_text, "name fb"+name);
 //
                                     /* initalize facebook session
-                                    * src: https://webkul.com/blog/how-to-manage-session-in-android-app/ */
+                                     * src: https://webkul.com/blog/how-to-manage-session-in-android-app/ */
                                     SharedPreferences shared = getApplicationContext().getSharedPreferences(id, MODE_PRIVATE);
                                     SharedPreferences.Editor editor = shared.edit();
 
@@ -253,50 +290,66 @@ public class SignUp extends AppCompatActivity {
 
                             /*
                             TODO : faire l'ajout en DB
-                            // TODO Et appeler User.connectUser() @Sergen
                              */
 
-//                            Context ct = getApplicationContext();
-//                            try {
-//                                db = new SQLHelper(ct);
-////                                db = new SQLHelper(getContext());
-//
-//                                if(db.doesUserExist(session_email)){
-//                                    Log.d(Global.debug_text, "fb user already exists in db");
-//                                } else {
-////                                    int id = Integer.valueOf(session_id);
-//                                    int id = Integer.valueOf(session_id);
-//                                    Date date = Calendar.getInstance().getTime();
-//                                    DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-//                                    String today = formatter.format(date);
-//
-//                                    User user = new User(
-//                                            id,
-//                                            name,
-//                                            null,
-//                                            today,
-//                                            firstname,
-//                                            lastname,
-//                                            "04/05/2010",
-//                                            imagepath.toString()
-//                                    );
-//
-//                                    Log.d(Global.debug_text, "utilisateur fb inséré");
-//
-//                                    db_firebase.collection("Users").add(user);
-//                                    Log.d(Global.debug_text, "utilisateur fb inséré à firebase");
-//
-//                                }
-//
-//                            } catch (IOException e) {
-//                                e.printStackTrace();
-//                                Log.d(Global.debug_text, "fb login db error"+e);
-//                            }
+                            // todo vérifier les permissions
+//                            checkDbPermissions();
 
-                            Intent intent = new Intent(SignUp.this, MainActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            startActivity(intent);
-                            finish();
+                            Context ct = getApplicationContext();
+                            try {
+                                db = new SQLHelper(ct);
+//                                db = new SQLHelper(getContext());
+
+                                if(db.doesUserExist(session_email)){
+                                    Log.d(Global.debug_text, "fb user already exists in db");
+                                } else {
+//                                    int id = Integer.valueOf(session_id); //id de la session facebook
+                                    long db_id = db.getFreeIDUser();
+                                    Date date = Calendar.getInstance().getTime();
+                                    DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                                    String today = formatter.format(date);
+
+                                    User user = new User(
+                                            db_id,
+                                            session_email,
+                                            Hash.hash(Password.GetPassword(6)),
+                                            today,
+                                            firstname,
+                                            lastname,
+                                            today, //TODO remplacer par la date de naissance à récupérer via fb
+                                            imagepath.toString(),
+                                            false
+                                    );
+
+                                    try {
+                                        db.addUser(user);
+                                    }
+                                    catch (WrongEmailFormatException e) {
+                                        e.printStackTrace();
+                                        Log.v(Global.debug_text, "WrongEmailFormatException"+e);
+                                    }
+                                    catch (WrongDateFormatException e) {
+                                        e.printStackTrace();
+                                        Log.v(Global.debug_text, "WrongDateFormatException"+e);
+                                    }
+
+
+
+                                    User.connectUser(ct, user);
+                                    Log.v(Global.debug_text, "utilisateur fb inséré");
+
+                                    db_firebase.collection("Users").add(user);
+                                    Log.v(Global.debug_text, "utilisateur fb inséré à firebase");
+
+                                }
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                Log.v(Global.debug_text, "fb login db error"+e);
+                            }
+
+
+                            startActivity(new Intent(SignUp.this, MainActivity.class));
                         }else{
                             Toast.makeText(SignUp.this, "Authentication error",
                                     Toast.LENGTH_SHORT).show();
@@ -322,5 +375,24 @@ public class SignUp extends AppCompatActivity {
         mViewPager.setCurrentItem(fragmentNumber);
     }
 
+//    private void checkDbPermissions() {
+//        if  (ContextCompat.checkSelfPermission( getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+//            ActivityCompat.requestPermissions(
+//                    this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.PERMISSION_REQ);
+//        } else {
+////            setUpViewPager();
+//        }
+//    }
+//
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+//        if (requestCode == Constants.PERMISSION_REQ) {
+//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                setupViewPager(mViewPager);
+//            } else {
+//                AppUtils.showToast(getApplicationContext(), getString(R.string.permission_not_granted));
+//            }
+//        }
+//    }
 
 }

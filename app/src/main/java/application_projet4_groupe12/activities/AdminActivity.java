@@ -41,7 +41,7 @@ import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
 
-public class MainActivity extends AppCompatActivity
+public class AdminActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     static boolean active = false;
@@ -50,14 +50,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SharedPreferences shared = getSharedPreferences("login_choice", MODE_PRIVATE);
-        Boolean choice_made = shared.getBoolean("loggin_chosed", false);
-        Log.v(Global.debug_text,""+choice_made);
-        if( User.connectedUser.isAdmin() &&  (choice_made == false)){
-            startActivity(new Intent(MainActivity.this, LoginChoiceActivity.class));
-            finish();
-        }
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_admin);
 
         /*
          * Toolbar
@@ -65,18 +58,18 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
         /*
-         * Floating button - scan QR
+         * Floating button - generate QR
          */
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fab_gen = findViewById(R.id.fab_gen);
+        fab_gen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, QRScanActivity.class));
+                startActivity(new Intent(AdminActivity.this, QRGenerateActivity.class));
                 finish();
             }
         });
-
 
         /*
          * Sliding drawer
@@ -91,7 +84,9 @@ public class MainActivity extends AppCompatActivity
          * Navigation view
          */
         NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.inflateMenu(R.menu.activity_main_navigation_drawer);
+        navigationView.inflateMenu(R.menu.activity_main_navigation_drawer_admin);
+        MenuItem adminTitle = navigationView.getMenu().findItem(R.id.nav_admin_title);
+        adminTitle.setTitle("Account of " + User.connectedUser.getAdministratedPartner(this).getName());
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.bringToFront();
     }
@@ -107,7 +102,7 @@ public class MainActivity extends AppCompatActivity
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer == null) {
-            Intent intent = new Intent(MainActivity.this, MainActivity.class);
+            Intent intent = new Intent(AdminActivity.this, AdminActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
             finish();
@@ -194,17 +189,10 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.nav_scan:
-                startActivity(new Intent(MainActivity.this, QRScanActivity.class));
+            case R.id.nav_generate:
+                startActivity(new Intent(AdminActivity.this, QRGenerateActivity.class));
                 break;
 
-            case R.id.nav_browse_points:
-                //Toast.makeText(getApplicationContext(), "Clicked on Browse points", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(MainActivity.this, BrowsePointsActivity.class));
-                break;
-            case R.id.nav_settings:
-                startActivity(new Intent(MainActivity.this, SettingsUserActivity.class));
-                break;
             case R.id.nav_logout:
                 //reset la session globale fb ou standar
                 if (ActivityUtils.getInstance().isLoggedInFacebook()) {
@@ -227,10 +215,17 @@ public class MainActivity extends AppCompatActivity
                 //couper la session facebook
                 LoginManager.getInstance().logOut();
 
-                Intent intent = new Intent(MainActivity.this, SignUp.class);
+                Intent intent = new Intent(AdminActivity.this, SignUp.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //Clears the Activity stack
                 startActivity(intent);
                 finish();
+                break;
+
+            case R.id.nav_admin_browse_clients:
+                startActivity(new Intent(AdminActivity.this, BrowseClientsActivity.class));
+                break;
+            case R.id.nav_admin_settings:
+                startActivity(new Intent(AdminActivity.this, SettingsPartnerActivity.class));
                 break;
         }
 

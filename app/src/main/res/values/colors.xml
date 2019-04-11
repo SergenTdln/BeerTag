@@ -17,4 +17,11 @@
     <!-- -->
     <color name="login_text">#FFFFFF</color>
     <color name="login_text_hint">#97FFFFFF</color>
+
+
+
+
+    <!-- admin colors -->
+    <color name="admin_colorPrimary">#DF781E</color>
+    <color name="admin_fab_generate">#DF781E</color>
 </resources>

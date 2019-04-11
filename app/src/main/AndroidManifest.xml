@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="application_projet4_groupe12">
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- SD card write permission -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <!-- camera permission -->
     <uses-permission android:name="android.permission.CAMERA" />
@@ -39,6 +39,12 @@
             android:screenOrientation="portrait"/>
 
         <activity android:name="application_projet4_groupe12.activities.MainActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name="application_projet4_groupe12.activities.LoginChoiceActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name="application_projet4_groupe12.activities.AdminActivity"
             android:screenOrientation="portrait"/>
 
         <activity

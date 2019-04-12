@@ -212,8 +212,6 @@ public class MainActivity extends AppCompatActivity
                     String session_id = new FacebookUtils().getFacebookId();
                     SharedPreferences fb_login = getApplicationContext().getSharedPreferences(session_id, Context.MODE_PRIVATE);
                     fb_login.edit().clear().apply();
-                    SharedPreferences shared_login_choice  =getSharedPreferences("login_choice",Context.MODE_PRIVATE);
-                    shared_login_choice.edit().clear().apply();
                     //login_choice.edit().putBoolean("loggin_chosed", false).commit();
                 } else {
                     SharedPreferences standard_login = getApplicationContext().getSharedPreferences("session", Context.MODE_PRIVATE);
@@ -222,6 +220,9 @@ public class MainActivity extends AppCompatActivity
                     standard_login.edit().clear().apply();
                     finish();
                 }
+
+                SharedPreferences shared_login_choice  =getSharedPreferences("login_choice",Context.MODE_PRIVATE);
+                shared_login_choice.edit().clear().apply();
 
                 //couper la session firebase
                 FirebaseAuth.getInstance().signOut();

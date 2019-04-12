@@ -164,9 +164,10 @@ public class Fragment1 extends Fragment {
                 User.connectUser(getContext(), user);
 
                 /* creation d'une sessions globale lors du login */
-                SharedPreferences shared = getApplicationContext().getSharedPreferences("session", MODE_PRIVATE);
-                SharedPreferences.Editor editor = shared.edit();
+                SharedPreferences session = getApplicationContext().getSharedPreferences("session", MODE_PRIVATE);
+                SharedPreferences.Editor editor = session.edit();
                 editor.putString("email", email); // Storing string value
+                editor.putBoolean("login_status", true);
                 editor.apply();
                 /* end */
             } else {

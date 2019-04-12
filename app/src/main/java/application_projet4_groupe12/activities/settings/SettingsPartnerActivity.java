@@ -27,6 +27,7 @@ import application_projet4_groupe12.R;
 import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.entities.Partner;
 import application_projet4_groupe12.entities.User;
+import application_projet4_groupe12.utils.AppUtils;
 
 public class SettingsPartnerActivity extends AppCompatActivity {
 
@@ -69,11 +70,20 @@ public class SettingsPartnerActivity extends AppCompatActivity {
         selectFileButton = (Button) findViewById(R.id.settings_partner_picture_select_button);
         selectFileButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                //TODO
-                //select a file from local path
-                String imagePath = null;
-                currentPartner.setImagePath(v.getContext(), imagePath);
+            public void onClick(View v) {//TODO
+                //Prompts the user to select a file from local storage and COPY it into the app's internal storage
+
+                if(AppUtils.changeProfilePicture(v.getContext(), currentPartner)){
+                    //Image changed
+                    String imagePath = null;
+                    currentPartner.setImagePath(v.getContext(), imagePath);
+                    //Show new pic in this Activity
+                    picture.setImageBitmap(BitmapFactory.decodeFile(v.getContext().getFilesDir()+"/"+currentPartner.getImagePath()));
+                } else {
+                    //An error occurred
+                    //Image  was not changed
+                    System.err.println("Partner logo was not changed");
+                }
             }
         });
 

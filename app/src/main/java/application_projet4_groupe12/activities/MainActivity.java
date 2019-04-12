@@ -43,6 +43,10 @@ public class MainActivity extends AppCompatActivity
 
     static boolean active = false;
 
+    Toolbar toolbar;
+    FloatingActionButton fab;
+    ImageView navImageView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,26 +59,10 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(MainActivity.this, LoginChoiceActivity.class));
             finish();
         }
-        setContentView(R.layout.activity_main);
 
-        /*
-         * Toolbar
-         */
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        handleToolBar();
 
-        /*
-         * Floating button - scan QR
-         */
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, QRScanActivity.class));
-                finish();
-            }
-        });
-
+        handleFloatingButtons();
 
         /*
          * Sliding drawer
@@ -92,6 +80,45 @@ public class MainActivity extends AppCompatActivity
         navigationView.inflateMenu(R.menu.activity_main_navigation_drawer);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.bringToFront();
+
+        /*
+         * Navigation view header data
+         */
+        //navigationView.inflateHeaderView(R.layout.activity_main_navigation_header);
+        navImageView = findViewById(R.id.activity_main_navigation_header_image);
+        TextView navHeaderText1 = (TextView) findViewById(R.id.activity_main_navigation_header_text1);
+        TextView navHeaderText2 = (TextView) findViewById(R.id.activity_main_navigation_header_text2);
+
+        if (ActivityUtils.getInstance().isLoggedInFacebook()) {
+            /* Remplacer les données par celles du profil fb*/
+            Log.i(Global.debug_text, "nav" + navigationView);
+            String id = new FacebookUtils().getFacebookId();
+            shared = getSharedPreferences(id, MODE_PRIVATE);
+            String session_name = shared.getString("name", "");
+            String session_email = shared.getString("email", "");
+            URL image_url = new FacebookUtils().getFacebookProfilePic();
+            Log.i(Global.debug_text, "session img url / name / email " + image_url + session_name + session_email);
+            Picasso.with(this).load(String.valueOf(image_url)).into(navImageView);
+            navHeaderText1.setText(session_name);
+            navHeaderText2.setText(session_email);
+        } else {
+            /* Remplacer les données par celles de la db locale*/
+            String userFullName = User.connectedUser.getFullName();
+            Log.i(Global.debug_text, "userFullName" + userFullName);
+            navHeaderText1.setText(userFullName);
+
+            String userUsername = User.connectedUser.getUsername();
+            Log.i(Global.debug_text, "getUsername" + userUsername);
+            navHeaderText2.setText(userUsername);
+
+            /*
+            System.err.println("Loading profile picture in Navigation View");
+            Bitmap bitmap = BitmapFactory.decodeFile(this.getFilesDir()+"/"+User.connectedUser.getImagePath());
+            if(bitmap!=null) {
+                navImageView.setImageBitmap(bitmap);
+            }
+            */
+        }
     }
 
     /*
@@ -122,43 +149,6 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
-
-        /*
-         * Navigation view header data
-         */
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        //navigationView.inflateHeaderView(R.layout.activity_main_navigation_header);
-        ImageView navHeaderImage = findViewById(R.id.activity_main_navigation_header_image);
-        TextView navHeaderText1 = (TextView) findViewById(R.id.activity_main_navigation_header_text1);
-        TextView navHeaderText2 = findViewById(R.id.activity_main_navigation_header_text2);
-
-        if (ActivityUtils.getInstance().isLoggedInFacebook()) {
-            /* Remplacer les données par celles du profil fb*/
-            Log.i(Global.debug_text, "nav" + navHeaderImage);
-            String id = new FacebookUtils().getFacebookId();
-            SharedPreferences shared = getSharedPreferences(id, MODE_PRIVATE);
-            String session_name = shared.getString("name", "");
-            String session_email = shared.getString("email", "");
-            URL image_url = new FacebookUtils().getFacebookProfilePic();
-            Log.i(Global.debug_text, "session img url / name / email " + image_url + session_name + session_email);
-            Picasso.with(this).load(String.valueOf(image_url)).into(navHeaderImage);
-            navHeaderText1.setText(session_name);
-            navHeaderText2.setText(session_email);
-        } else {
-            /* Remplacer les données par celles de la db locale*/
-            String userFullName = User.connectedUser.getFullName();
-            Log.i(Global.debug_text, "userFullName" + userFullName);
-            navHeaderText1.setText(userFullName);
-
-            String userUsername = User.connectedUser.getUsername();
-            Log.i(Global.debug_text, "getUsername" + userUsername);
-            navHeaderText2.setText(userUsername);
-
-            Bitmap bitmap = BitmapFactory.decodeFile(this.getFilesDir()+"/"+User.connectedUser.getImagePath());
-            if(bitmap!=null) {
-                navHeaderImage.setImageBitmap(bitmap);
-            }
-        }
         return true;
     }
 
@@ -176,6 +166,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onStart() {
         super.onStart();
+        System.err.println("Loading profile picture in Navigation View");
+        Bitmap bitmap = BitmapFactory.decodeFile(this.getFilesDir()+"/"+User.connectedUser.getImagePath());
+        if(bitmap!=null) {
+            navImageView.setImageBitmap(bitmap);
+        }
         active = true;
     }
 
@@ -202,6 +197,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_settings:
                 startActivity(new Intent(MainActivity.this, SettingsUserActivity.class));
+                onStop();
                 break;
             case R.id.nav_logout:
                 //reset la session globale fb ou standar
@@ -235,5 +231,27 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void handleToolBar() {
+        /*
+         * Toolbar
+         */
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+    }
+
+    private void handleFloatingButtons() {
+        /*
+         * Floating button - scan QR
+         */
+        fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, QRScanActivity.class));
+                finish();
+            }
+        });
     }
 }

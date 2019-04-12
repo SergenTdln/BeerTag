@@ -36,6 +36,7 @@ public class AppUtils {
     private static long backPressed = 0;
 
     public static void tapToExit(Activity activity) {
+        backPressed = System.currentTimeMillis();
         if (backPressed + 3000 > System.currentTimeMillis()){
             if(activity.isTaskRoot()){
                 SharedPreferences shared = getApplicationContext().getSharedPreferences("login_choice", MODE_PRIVATE);
@@ -49,11 +50,9 @@ public class AppUtils {
 
             }
             activity.finish();
+        } else {
+            showToast(activity.getApplicationContext(), activity.getResources().getString(R.string.tapAgain));
         }
-        else{
-            //showToast(activity.getApplicationContext(), activity.getResources().getString(R.string.tapAgain));
-        }
-        backPressed = System.currentTimeMillis();
     }
 
     public static void showToast(Context context, String msg) {

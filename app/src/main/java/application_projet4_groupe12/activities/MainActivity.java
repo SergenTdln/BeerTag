@@ -43,81 +43,37 @@ public class MainActivity extends AppCompatActivity
 
     static boolean active = false;
 
+    SharedPreferences shared_login_choice;
+
     Toolbar toolbar;
     FloatingActionButton fab;
-    ImageView navImageView;
+    DrawerLayout drawer;
+    NavigationView navigationView;
+
+    ImageView navHeaderImage;
+    TextView navHeaderText1;
+    TextView navHeaderText2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main_user);
 
-        SharedPreferences shared_login_choice = getSharedPreferences("login_choice", MODE_PRIVATE);
+        handleToolBar();
+
+        handleFloatingButtons();
+
+        handleDrawer();
+
+        handleNavigationView();
+
+        shared_login_choice = getSharedPreferences("login_choice", MODE_PRIVATE);
         Boolean choice_made = shared_login_choice.getBoolean("loggin_chosed", false);
         Log.v(Global.debug_text,"choice made "+choice_made);
         Log.v(Global.debug_text,"is admin"+User.connectedUser.isAdmin());
         if( User.connectedUser.isAdmin() &&  (!choice_made)){
             startActivity(new Intent(MainActivity.this, LoginChoiceActivity.class));
             finish();
-        }
-
-        handleToolBar();
-
-        handleFloatingButtons();
-
-        /*
-         * Sliding drawer
-         */
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-        /*
-         * Navigation view
-         */
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.inflateMenu(R.menu.activity_main_navigation_drawer);
-        navigationView.setNavigationItemSelectedListener(this);
-        navigationView.bringToFront();
-
-        /*
-         * Navigation view header data
-         */
-        //navigationView.inflateHeaderView(R.layout.activity_main_navigation_header);
-        navImageView = findViewById(R.id.activity_main_navigation_header_image);
-        TextView navHeaderText1 = (TextView) findViewById(R.id.activity_main_navigation_header_text1);
-        TextView navHeaderText2 = (TextView) findViewById(R.id.activity_main_navigation_header_text2);
-
-        if (ActivityUtils.getInstance().isLoggedInFacebook()) {
-            /* Remplacer les données par celles du profil fb*/
-            Log.i(Global.debug_text, "nav" + navigationView);
-            String id = new FacebookUtils().getFacebookId();
-            shared = getSharedPreferences(id, MODE_PRIVATE);
-            String session_name = shared.getString("name", "");
-            String session_email = shared.getString("email", "");
-            URL image_url = new FacebookUtils().getFacebookProfilePic();
-            Log.i(Global.debug_text, "session img url / name / email " + image_url + session_name + session_email);
-            Picasso.with(this).load(String.valueOf(image_url)).into(navImageView);
-            navHeaderText1.setText(session_name);
-            navHeaderText2.setText(session_email);
-        } else {
-            /* Remplacer les données par celles de la db locale*/
-            String userFullName = User.connectedUser.getFullName();
-            Log.i(Global.debug_text, "userFullName" + userFullName);
-            navHeaderText1.setText(userFullName);
-
-            String userUsername = User.connectedUser.getUsername();
-            Log.i(Global.debug_text, "getUsername" + userUsername);
-            navHeaderText2.setText(userUsername);
-
-            /*
-            System.err.println("Loading profile picture in Navigation View");
-            Bitmap bitmap = BitmapFactory.decodeFile(this.getFilesDir()+"/"+User.connectedUser.getImagePath());
-            if(bitmap!=null) {
-                navImageView.setImageBitmap(bitmap);
-            }
-            */
         }
     }
 
@@ -130,7 +86,7 @@ public class MainActivity extends AppCompatActivity
         if(active){
             AppUtils.tapToExit(this);
         }
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout_user);
         if (drawer == null) {
             Intent intent = new Intent(MainActivity.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -166,11 +122,36 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onStart() {
         super.onStart();
-        System.err.println("Loading profile picture in Navigation View");
-        Bitmap bitmap = BitmapFactory.decodeFile(this.getFilesDir()+"/"+User.connectedUser.getImagePath());
-        if(bitmap!=null) {
-            navImageView.setImageBitmap(bitmap);
+
+        if (ActivityUtils.getInstance().isLoggedInFacebook()) {
+            /* Remplacer les données par celles du profil fb*/
+            Log.i(Global.debug_text, "nav" + navigationView);
+            String id = new FacebookUtils().getFacebookId();
+            shared_login_choice = getSharedPreferences(id, MODE_PRIVATE);
+            String session_name = shared_login_choice.getString("name", "");
+            String session_email = shared_login_choice.getString("email", "");
+            URL image_url = new FacebookUtils().getFacebookProfilePic();
+            Log.i(Global.debug_text, "session img url / name / email " + image_url + session_name + session_email);
+            Picasso.with(this).load(String.valueOf(image_url)).into(navHeaderImage);
+            navHeaderText1.setText(session_name);
+            navHeaderText2.setText(session_email);
+        } else {
+            /* Remplacer les données par celles de la db locale*/
+            String userFullName = User.connectedUser.getFullName();
+            Log.i(Global.debug_text, "userFullName" + userFullName);
+            navHeaderText1.setText(userFullName);
+
+            String userUsername = User.connectedUser.getUsername();
+            Log.i(Global.debug_text, "getUsername" + userUsername);
+            navHeaderText2.setText(userUsername);
+
+            System.err.println("Loading profile picture in Navigation View");
+            Bitmap bitmap = BitmapFactory.decodeFile(this.getFilesDir()+"/"+User.connectedUser.getImagePath());
+            if(bitmap!=null) {
+                navHeaderImage.setImageBitmap(bitmap);
+            }
         }
+
         active = true;
     }
 
@@ -190,7 +171,6 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_scan:
                 startActivity(new Intent(MainActivity.this, QRScanActivity.class));
                 break;
-
             case R.id.nav_browse_points:
                 //Toast.makeText(getApplicationContext(), "Clicked on Browse points", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(MainActivity.this, BrowsePointsActivity.class));
@@ -228,7 +208,7 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout_user);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -237,7 +217,7 @@ public class MainActivity extends AppCompatActivity
         /*
          * Toolbar
          */
-        toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.app_bar_main_toolbar);
         setSupportActionBar(toolbar);
     }
 
@@ -245,7 +225,7 @@ public class MainActivity extends AppCompatActivity
         /*
          * Floating button - scan QR
          */
-        fab = findViewById(R.id.fab);
+        fab = findViewById(R.id.app_bar_main_fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -253,5 +233,32 @@ public class MainActivity extends AppCompatActivity
                 finish();
             }
         });
+    }
+
+    private void handleDrawer() {
+        /*
+         * Sliding drawer
+         */
+        drawer = findViewById(R.id.drawer_layout_user);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+    }
+
+    private void handleNavigationView(){
+        /*
+         * Navigation view
+         */
+        navigationView = findViewById(R.id.main_nav_view);
+        navigationView.inflateMenu(R.menu.activity_main_navigation_drawer);
+        View headerLayout = navigationView.inflateHeaderView(R.layout.activity_main_navigation_header_user);
+
+        navHeaderImage = (ImageView) headerLayout.findViewById(R.id.activity_main_navigation_header_image);
+        navHeaderText1 = (TextView) headerLayout.findViewById(R.id.activity_main_navigation_header_text1);
+        navHeaderText2 = (TextView) headerLayout.findViewById(R.id.activity_main_navigation_header_text2);
+
+        navigationView.setNavigationItemSelectedListener(this);
+        navigationView.bringToFront();
     }
 }

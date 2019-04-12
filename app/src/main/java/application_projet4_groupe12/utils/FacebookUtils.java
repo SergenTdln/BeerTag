@@ -1,25 +1,14 @@
 package application_projet4_groupe12.utils;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 
-import com.facebook.AccessToken;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
 import com.facebook.Profile;
-import com.squareup.picasso.Request;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import application_projet4_groupe12.R;
 
 public class FacebookUtils {
 

@@ -1,19 +1,17 @@
 package application_projet4_groupe12.activities.settings;
 
 import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.graphics.Bitmap;
 
 import com.squareup.picasso.Picasso;
 
@@ -25,7 +23,6 @@ import application_projet4_groupe12.exceptions.WrongDateFormatException;
 import application_projet4_groupe12.utils.ActivityUtils;
 import application_projet4_groupe12.utils.AppUtils;
 import application_projet4_groupe12.utils.FacebookUtils;
-import application_projet4_groupe12.utils.Global;
 import application_projet4_groupe12.utils.Hash;
 
 public class SettingsUserActivity extends AppCompatActivity {
@@ -45,6 +42,7 @@ public class SettingsUserActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings_user);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN); // Prevents the keyboard from automatically opening up when arriving on the activity
 
         subTitle = (TextView) findViewById(R.id.settings_user_sub_title);
         subTitle.setText(User.connectedUser.getUsername());
@@ -64,7 +62,7 @@ public class SettingsUserActivity extends AppCompatActivity {
             URL image_url = new FacebookUtils().getFacebookProfilePic();
             Picasso.with(this).load(String.valueOf(image_url)).into(picture);
             selectFileButton.setText("Disabled for accounts created from Facebook");
-            selectFileButton.setTextColor(getResources().getColor(R.color.red, null)); //j'ai un cannot resolve avec grey, wtf
+            selectFileButton.setTextColor(getResources().getColor(R.color.red, null)); //TODO j'ai un cannot resolve avec grey, wtf
             selectFileButton.setClickable(false);
         } else {
             picture.setImageBitmap(BitmapFactory.decodeFile(this.getFilesDir() + "/" + User.connectedUser.getImagePath()));

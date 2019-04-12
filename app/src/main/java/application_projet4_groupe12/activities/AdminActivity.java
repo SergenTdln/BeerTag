@@ -2,7 +2,6 @@ package application_projet4_groupe12.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.DatabaseUtils;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -21,9 +20,7 @@ import android.view.MenuItem;
 
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.activities.browse_clients.BrowseClientsActivity;
-import application_projet4_groupe12.activities.browse_points.BrowsePointsActivity;
 import application_projet4_groupe12.activities.settings.SettingsPartnerActivity;
-import application_projet4_groupe12.activities.settings.SettingsUserActivity;
 import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.utils.ActivityUtils;
 import application_projet4_groupe12.utils.AppUtils;

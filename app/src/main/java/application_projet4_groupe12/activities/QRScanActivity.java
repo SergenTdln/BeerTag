@@ -18,7 +18,6 @@ import java.util.ArrayList;
 
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.data.Constants;
-import application_projet4_groupe12.fragment.GenerateFragment;
 import application_projet4_groupe12.fragment.QRScanFragment;
 import application_projet4_groupe12.item.ItemMainPager;
 import application_projet4_groupe12.utils.AppUtils;

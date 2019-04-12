@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteCantOpenDatabaseException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.widget.CursorAdapter;
 import android.widget.Toast;
 
 import java.io.FileOutputStream;
@@ -34,7 +33,6 @@ import application_projet4_groupe12.exceptions.WrongDateFormatException;
 import application_projet4_groupe12.exceptions.WrongEmailFormatException;
 
 import static application_projet4_groupe12.utils.AppUtils.occurrences;
-import static application_projet4_groupe12.utils.AppUtils.showToast;
 
 
 /**

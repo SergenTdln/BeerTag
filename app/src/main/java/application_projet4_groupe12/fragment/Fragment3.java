@@ -36,7 +36,6 @@ import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.exceptions.UnknownUserException;
 import application_projet4_groupe12.exceptions.WrongDateFormatException;
 import application_projet4_groupe12.utils.Global;
-import application_projet4_groupe12.utils.Pair;
 
 import static android.content.ContentValues.TAG;
 

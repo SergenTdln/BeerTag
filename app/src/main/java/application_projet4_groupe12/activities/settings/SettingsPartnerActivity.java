@@ -8,7 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Adapter;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -20,8 +20,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.common.base.Strings;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -29,7 +27,6 @@ import application_projet4_groupe12.R;
 import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.entities.Partner;
 import application_projet4_groupe12.entities.User;
-import application_projet4_groupe12.utils.Pair;
 
 public class SettingsPartnerActivity extends AppCompatActivity {
 
@@ -53,6 +50,7 @@ public class SettingsPartnerActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings_partner);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN); // Prevents the keyboard from automatically opening up when arriving on the activity
 
         currentPartner = User.connectedUser.getAdministratedPartner(this);
 

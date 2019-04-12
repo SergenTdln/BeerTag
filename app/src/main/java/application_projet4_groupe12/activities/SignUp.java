@@ -1,13 +1,10 @@
 package application_projet4_groupe12.activities;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,15 +13,12 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.util.Base64;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
-import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.Profile;
@@ -52,7 +46,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import application_projet4_groupe12.R;
-import application_projet4_groupe12.data.Constants;
 import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.exceptions.WrongDateFormatException;
@@ -60,8 +53,6 @@ import application_projet4_groupe12.exceptions.WrongEmailFormatException;
 import application_projet4_groupe12.fragment.Fragment1;
 import application_projet4_groupe12.fragment.Fragment2;
 import application_projet4_groupe12.fragment.Fragment3;
-import application_projet4_groupe12.activities.SignUp;
-import application_projet4_groupe12.utils.AppUtils;
 import application_projet4_groupe12.utils.FacebookUtils;
 import application_projet4_groupe12.utils.Global;
 import application_projet4_groupe12.utils.ActivityUtils;
@@ -78,7 +69,6 @@ public class SignUp extends AppCompatActivity {
 
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseAuth mAuth;
-    //    private SQLHelper db;
     public static SQLHelper db;
 
     LoginButton loginButton;
@@ -91,38 +81,24 @@ public class SignUp extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         if(ActivityUtils.getInstance().isLoggedInFacebook()){
             finish();
+            String facebook_user_id = new FacebookUtils().getFacebookId();
+            SharedPreferences shared = getApplicationContext().getSharedPreferences(facebook_user_id, MODE_PRIVATE);
+            String session_email = shared.getString("email", "");
+
+            Context ct = getApplicationContext();
+            try {
+                db = new SQLHelper(ct);
+                User fbuser = db.getUser(session_email);
+                User.connectUser(ct, fbuser);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                db.close();
+            }
+
+            //User.connectUser()
             startActivity(new Intent(SignUp.this, MainActivity.class));
         }
-
-        // Here, thisActivity is the current activity
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.READ_CONTACTS)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Permission is not granted
-            // Should we show an explanation?
-            Log.v("permission not granted","perm");
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.READ_CONTACTS)) {
-                Log.v("permission not granted","perm exlanation");
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-            } else {
-                // No explanation needed; request the permission
-                ActivityCompat.requestPermissions(
-                        this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.PERMISSION_REQ);
-                Log.v("permission not granted","perm no expl, request");
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
-        } else {
-            Log.v("permission not granted","perm already ok");
-            // Permission has already been granted
-        }
-
-        //FacebookSdk.sdkInitialize(getApplicationContext());
 
         setContentView(R.layout.activity_sign_up);
         loginButton = findViewById(R.id.login_button);
@@ -151,7 +127,6 @@ public class SignUp extends AppCompatActivity {
             public void onSuccess(LoginResult loginResult) {
 
                 Log.i(TAG,"Hello"+loginResult.getAccessToken().getToken());
-//                Toast.makeText(SignUp.this, "Token:"+loginResult.getAccessToken(), Toast.LENGTH_SHORT).show();
 
                 GraphRequest request = GraphRequest.newMeRequest(
                         loginResult.getAccessToken(),
@@ -160,7 +135,6 @@ public class SignUp extends AppCompatActivity {
                             public void onCompleted(JSONObject object, GraphResponse response) {
                                 Log.v("LoginActivity", response.toString());
 
-                                // Retrieve facebook user data
                                 try {
                                     String id = object.getString("id");
                                     String email = object.getString("email");
@@ -169,21 +143,15 @@ public class SignUp extends AppCompatActivity {
                                     Log.v(Global.debug_text, "id fb"+id);
                                     Log.v(Global.debug_text, "email fb"+email);
                                     Log.v(Global.debug_text, "name fb"+name);
-//
-                                    /* initalize facebook session
-                                     * src: https://webkul.com/blog/how-to-manage-session-in-android-app/ */
+
                                     SharedPreferences shared = getApplicationContext().getSharedPreferences(id, MODE_PRIVATE);
                                     SharedPreferences.Editor editor = shared.edit();
-
-//                                    URL image_url = new FacebookUtils().getFacebookProfilePic();
-//                                    Log.i(Global.debug_text,"login session image url string"+image_url);
 
 
                                     editor.putBoolean("loggedIn", true); // Storing boolean - true/false
                                     editor.putString("id_facebook", id); // Storing boolean - true/false
                                     editor.putString("email", email); // Storing string value
                                     editor.putString("name", name); // Storing integer value
-//                                    editor.putString("session_img_url", String.valueOf(image_url)); // Storing integer value
                                     editor.commit();
                                     /* end */
 
@@ -227,8 +195,6 @@ public class SignUp extends AppCompatActivity {
                 }else {
                     Toast.makeText(SignUp.this,"something went wrong",Toast.LENGTH_LONG).show();
                 }
-
-
             }
         };
 
@@ -259,13 +225,7 @@ public class SignUp extends AppCompatActivity {
                             Log.w(Global.debug_text, "signInWithCredential", task.getException());
                             String user_id = Profile.getCurrentProfile().getId();
                             Log.w(Global.debug_text, "facebook user ud "+user_id, task.getException());
-//                            Toast.makeText(SignUp.this, "Success",
-//                                    Toast.LENGTH_SHORT).show();
 
-                            //TODO : récupérer le prénom, l'adresse email et la photo de profil.
-                            //sauvegarder prénom email et photo en bdd local
-                            //synchroniser photo dans le cloud
-                            /* synchroniser avec le cloud > firebase */
 
                             String session_id = new FacebookUtils().getFacebookId();
                             SharedPreferences shared = getSharedPreferences(session_id, MODE_PRIVATE);
@@ -273,27 +233,11 @@ public class SignUp extends AppCompatActivity {
                             String session_email = shared.getString("email", "");
 
                             /* on split l'username name en firstname et lastname*/
-                            String[] str = session_name.split(" ");  //now str[0] is "hello" and str[1] is "goodmorning,2,1"
-                            String firstname = str[0];  //hello
-                            String lastname = str[1];  //hello
+                            String[] str = session_name.split(" ");
+                            String firstname = str[0];
+                            String lastname = str[1];
                             URL imagepath = new FacebookUtils().getFacebookProfilePic();
 
-//                            User user = new User(
-//                                    Integer.valueOf(session_id),
-//                                    name,
-//                                    null,
-//                                    "04/05/2010",
-//                                    firstname,
-//                                    lastname,
-//                                    "04/05/2010",
-//                                    imagepath.toString());
-
-                            /*
-                            TODO : faire l'ajout en DB
-                             */
-
-                            // todo vérifier les permissions
-//                            checkDbPermissions();
 
                             Context ct = getApplicationContext();
                             try {
@@ -323,16 +267,11 @@ public class SignUp extends AppCompatActivity {
 
                                     try {
                                         db.addUser(user);
-                                    }
-                                    catch (WrongEmailFormatException e) {
+                                    } catch (WrongEmailFormatException e) {
                                         e.printStackTrace();
-                                        Log.v(Global.debug_text, "WrongEmailFormatException"+e);
-                                    }
-                                    catch (WrongDateFormatException e) {
+                                    } catch (WrongDateFormatException e) {
                                         e.printStackTrace();
-                                        Log.v(Global.debug_text, "WrongDateFormatException"+e);
                                     }
-
 
 
                                     User.connectUser(ct, user);
@@ -350,6 +289,7 @@ public class SignUp extends AppCompatActivity {
 
 
                             startActivity(new Intent(SignUp.this, MainActivity.class));
+                            finish();
                         }else{
                             Toast.makeText(SignUp.this, "Authentication error",
                                     Toast.LENGTH_SHORT).show();
@@ -375,24 +315,5 @@ public class SignUp extends AppCompatActivity {
         mViewPager.setCurrentItem(fragmentNumber);
     }
 
-//    private void checkDbPermissions() {
-//        if  (ContextCompat.checkSelfPermission( getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
-//            ActivityCompat.requestPermissions(
-//                    this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.PERMISSION_REQ);
-//        } else {
-////            setUpViewPager();
-//        }
-//    }
-//
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
-//        if (requestCode == Constants.PERMISSION_REQ) {
-//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                setupViewPager(mViewPager);
-//            } else {
-//                AppUtils.showToast(getApplicationContext(), getString(R.string.permission_not_granted));
-//            }
-//        }
-//    }
 
 }

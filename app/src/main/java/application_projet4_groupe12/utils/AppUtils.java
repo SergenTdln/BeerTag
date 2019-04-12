@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
@@ -22,25 +24,34 @@ import java.io.IOException;
 import java.util.Random;
 
 import application_projet4_groupe12.R;
+import application_projet4_groupe12.activities.MainActivity;
 import application_projet4_groupe12.activities.SignUp;
 import application_projet4_groupe12.entities.User;
+
+import static android.content.Context.MODE_PRIVATE;
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class AppUtils {
 
     private static long backPressed = 0;
 
     public static void tapToExit(Activity activity) {
-        if (backPressed + 2500 > System.currentTimeMillis()){
+        if (backPressed + 3000 > System.currentTimeMillis()){
             if(activity.isTaskRoot()){
-                //TODO deco de la db locale
-                FirebaseAuth.getInstance().signOut();
-                LoginManager.getInstance().logOut();
-                ActivityUtils.getInstance().invokeActivity(activity, SignUp.class, true);
+                SharedPreferences shared = getApplicationContext().getSharedPreferences("login_choice", MODE_PRIVATE);
+                // TODO sauve l'email, puis recup et recheck apd de l'email pour recup l'user et faire connect user
+                //FirebaseAuth.getInstance().signOut();
+                //LoginManager.getInstance().logOut();
+                ActivityUtils.getInstance().invokeActivity(activity, MainActivity.class, true);
+                //Intent intent = new Intent(activity, MainActivity.class);
+                //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK |Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+
             }
             activity.finish();
         }
         else{
-            showToast(activity.getApplicationContext(), activity.getResources().getString(R.string.tapAgain));
+            //showToast(activity.getApplicationContext(), activity.getResources().getString(R.string.tapAgain));
         }
         backPressed = System.currentTimeMillis();
     }

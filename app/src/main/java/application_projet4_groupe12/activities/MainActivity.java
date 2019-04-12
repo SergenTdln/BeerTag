@@ -50,10 +50,11 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SharedPreferences shared = getSharedPreferences("login_choice", MODE_PRIVATE);
-        Boolean choice_made = shared.getBoolean("loggin_chosed", false);
-        Log.v(Global.debug_text,""+choice_made);
-        if( User.connectedUser.isAdmin() &&  (choice_made == false)){
+        SharedPreferences shared_login_choice = getSharedPreferences("login_choice", MODE_PRIVATE);
+        Boolean choice_made = shared_login_choice.getBoolean("loggin_chosed", false);
+        Log.v(Global.debug_text,"choice made "+choice_made);
+        Log.v(Global.debug_text,"is admin"+User.connectedUser.isAdmin());
+        if( User.connectedUser.isAdmin() &&  (!choice_made)){
             startActivity(new Intent(MainActivity.this, LoginChoiceActivity.class));
             finish();
         }
@@ -211,14 +212,14 @@ public class MainActivity extends AppCompatActivity
                     String session_id = new FacebookUtils().getFacebookId();
                     SharedPreferences fb_login = getApplicationContext().getSharedPreferences(session_id, Context.MODE_PRIVATE);
                     fb_login.edit().clear().apply();
+                    SharedPreferences shared_login_choice  =getSharedPreferences("login_choice",Context.MODE_PRIVATE);
+                    shared_login_choice.edit().clear().apply();
+                    //login_choice.edit().putBoolean("loggin_chosed", false).commit();
                 } else {
                     SharedPreferences standard_login = getApplicationContext().getSharedPreferences("session", Context.MODE_PRIVATE);
                     //Déconnecter en local
                     User.disconnectUser(this);
                     standard_login.edit().clear().apply();
-
-                    SharedPreferences login_choice  =getSharedPreferences("login_choice",Context.MODE_PRIVATE);
-                    login_choice.edit().clear().apply();
                     finish();
                 }
 

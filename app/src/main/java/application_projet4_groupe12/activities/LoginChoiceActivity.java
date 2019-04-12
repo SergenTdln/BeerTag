@@ -33,11 +33,11 @@ public class LoginChoiceActivity extends AppCompatActivity {
         goToAdmin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(LoginChoiceActivity.this, AdminActivity.class));
                 SharedPreferences shared = getApplicationContext().getSharedPreferences("login_choice", MODE_PRIVATE);
                 SharedPreferences.Editor editor = shared.edit();
                 editor.putBoolean("loggin_chosed", true); // Storing boolean - true/false
                 editor.commit();
+                startActivity(new Intent(LoginChoiceActivity.this, AdminActivity.class));
                 finish();
             }
         });
@@ -46,11 +46,11 @@ public class LoginChoiceActivity extends AppCompatActivity {
         goToUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(LoginChoiceActivity.this, MainActivity.class));
                 SharedPreferences shared = getApplicationContext().getSharedPreferences("login_choice", MODE_PRIVATE);
                 SharedPreferences.Editor editor = shared.edit();
                 editor.putBoolean("loggin_chosed", true); // Storing boolean - true/false
                 editor.commit();
+                startActivity(new Intent(LoginChoiceActivity.this, MainActivity.class));
                 finish();
             }
         });

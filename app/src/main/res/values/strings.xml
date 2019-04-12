@@ -23,6 +23,7 @@
     <string name="default_username">Default Username</string>
 
     <string name="login_fields">Please complete all fields</string>
+    <string name="email_field">Please complete email field</string>
     <string name="login_success">Login success</string>
     <string name="login_check_credentials">Check credentials</string>
 

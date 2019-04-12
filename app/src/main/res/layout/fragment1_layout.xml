@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -10,12 +9,12 @@
     <EditText
         android:id="@+id/sign_in_input_email"
         android:layout_width="wrap_content"
-        android:minWidth="160dp"
         android:layout_height="45dp"
         android:layout_marginBottom="16dp"
         android:fontFamily="@font/roboto"
         android:gravity="center_horizontal"
         android:hint="Email"
+        android:minWidth="160dp"
         android:textColorHint="@color/login_text_hint"
         app:layout_constraintBottom_toTopOf="@+id/sign_in_input_password"
         app:layout_constraintEnd_toEndOf="parent"
@@ -24,32 +23,21 @@
     <EditText
         android:id="@+id/sign_in_input_password"
         android:layout_width="wrap_content"
-        android:minWidth="160dp"
         android:layout_height="45dp"
         android:layout_marginTop="300dp"
         android:fontFamily="@font/roboto"
         android:gravity="center_horizontal"
         android:hint="Password"
         android:inputType="textPassword"
+        android:minWidth="160dp"
         android:textColorHint="@color/login_text_hint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/sign_in_button_forgot_password"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:fontFamily="@font/roboto"
-        android:text="Forgot password?"
-        android:textColor="@color/login_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sign_in_input_password" />
-
     <Button
         android:id="@+id/fragment1_sign_in"
+        style="@android:style/Widget.DeviceDefault.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="48dp"
@@ -61,10 +49,22 @@
         android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/fragment1_forgot_password"
+        style="@android:style/Widget.DeviceDefault.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/roboto"
+        android:text="Forgot password?"
+        android:textAllCaps="false"
+        android:textColor="@color/login_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.512"
         app:layout_constraintStart_toStartOf="parent"
-        style="@android:style/Widget.DeviceDefault.Button.Borderless" />
-
-
+        app:layout_constraintTop_toBottomOf="@+id/sign_in_input_password" />
 
 
 </android.support.constraint.ConstraintLayout>

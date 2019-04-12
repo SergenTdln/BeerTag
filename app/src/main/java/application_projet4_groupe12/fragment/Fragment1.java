@@ -40,6 +40,7 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 public class Fragment1 extends Fragment {
 
     private Button fragment1_sign_in;
+    private Button fragment1_forgot_password;
     private SQLHelper db;
     private User user;
 
@@ -55,6 +56,7 @@ public class Fragment1 extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment1_layout, container, false);
         fragment1_sign_in = view.findViewById(R.id.fragment1_sign_in);
+        fragment1_forgot_password = view.findViewById(R.id.fragment1_forgot_password);
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
@@ -77,9 +79,10 @@ public class Fragment1 extends Fragment {
                         if(db.doesUserExist(email)) {
                             String hashedPassword = Hash.hash(pass);
                             System.out.println("hashedPassword = "+hashedPassword);
+/*
                             if (db.getHashedPassword(email).equals(hashedPassword)) { //If password is correct
-
-                                mAuth.signInWithEmailAndPassword(email, hashedPassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+*/
+                                mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                     @Override
                                     public void onComplete(@NonNull Task<AuthResult> task) {
                                         if (task.isSuccessful()) {
@@ -102,10 +105,11 @@ public class Fragment1 extends Fragment {
                                         }
                                     }
                                 });
-
+/*
                             } else {
                                 Toast.makeText(getActivity(), "Wrong password", Toast.LENGTH_SHORT).show();
                             }
+*/
                         } else {
                             Toast.makeText(getActivity(), "This username does not exist", Toast.LENGTH_SHORT).show();
                         }
@@ -115,6 +119,32 @@ public class Fragment1 extends Fragment {
                         db.close();
                     }
 
+                }
+            }
+        });
+
+        fragment1_forgot_password.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                username = getView().findViewById(R.id.sign_in_input_email);
+                String email = username.getText().toString();
+
+                if (TextUtils.isEmpty(email)) {
+                    Toast.makeText(getActivity(),R.string.email_field, Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(getActivity(),"ok", Toast.LENGTH_SHORT).show();
+                    mAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(getActivity(),"password sent", Toast.LENGTH_SHORT).show();
+                            }
+                            else {
+                                Toast.makeText(getActivity(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
                 }
             }
         });
@@ -138,6 +168,8 @@ public class Fragment1 extends Fragment {
                         // App code
                     }
                 });*/
+
+
 
         return view;
     }

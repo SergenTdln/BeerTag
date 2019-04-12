@@ -36,13 +36,11 @@ import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.exceptions.UnknownUserException;
 import application_projet4_groupe12.exceptions.WrongDateFormatException;
 import application_projet4_groupe12.utils.Global;
-import application_projet4_groupe12.utils.Pair;
 
 import static android.content.ContentValues.TAG;
 
 public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedListener {
 
-    private Button fragment3_sign_up;
     private SQLHelper db;
     private Partner partner;
     private FirebaseFirestore dab = FirebaseFirestore.getInstance();
@@ -50,7 +48,9 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
 
     private EditText name;
     private EditText address;
+    private EditText tva;
     private Spinner dropDownUsers;
+    private Button fragment3_sign_up;
 
     String selectedUsername;
 
@@ -64,7 +64,6 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
         mAuth = FirebaseAuth.getInstance();
 
         dropDownUsers = view.findViewById(R.id.sign_up_partner_input_spinner_admin);
-
         try {
             db = new SQLHelper(getContext());
 
@@ -79,7 +78,6 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
         } finally {
             db.close();
         }
-
         dropDownUsers.setOnItemSelectedListener(this);
 
         fragment3_sign_up.setOnClickListener(new View.OnClickListener() {
@@ -87,6 +85,7 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
             public void onClick(View v) {
                 name = getView().findViewById(R.id.sign_up_partner_input_name);
                 address = getView().findViewById(R.id.sign_up_partner_input_address);
+                tva = getView().findViewById(R.id.sign_up_partner_input_tva);
 
                 signUp();
             }
@@ -148,11 +147,12 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Partner partner = document.toObject(Partner.class);
                                 int id = Integer.parseInt(document.getString("id"));
+                                String tvaNumber = document.getString("tva");
                                 String creationDate = document.getString("created_on");
                                 String address = document.getString("id_address");
                                 String name = document.getString("name");
                                 String imagePath = document.getString("image_path");
-                                partner = new Partner(id, name, address, creationDate, imagePath);
+                                partner = new Partner(id, tvaNumber, name, address, creationDate, imagePath);
                                 try {
                                     db.addPartner(partner);
                                 }
@@ -167,38 +167,35 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
                 });
     }
 
-    private void signUp() {
+    private boolean signUp() {
         String mName = name.getText().toString();
         String mAddress = address.getText().toString();
-        if( mName.equals("") || mAddress.equals("") )
+        String mTVA = tva.getText().toString();
+        if( mName.equals("") || mAddress.equals("") || mTVA.equals(""))
         {
             Toast.makeText(getActivity(), "Please fill in all the fields", Toast.LENGTH_SHORT).show();
-            return;
+            return false;
         }
         try {
             db = new SQLHelper(getContext());
 
-            /**
-             * Deleted those lines because two Partners could have the same name.
-             * //TODO Maybe check if a Partner with ALL same fields exist ? THEN stop creating a duplicate
-             if (db.doesPartnerExist(name))  {
-             Toast.makeText(getActivity(),  "This email already exists", Toast.LENGTH_SHORT).show();
+             if (db.doesPartnerExist(mTVA))  {
+                 Toast.makeText(getActivity(),  "This Partner already exists", Toast.LENGTH_SHORT).show();
+                 return false;
              }
-             else {
-             **/
             long id = db.getFreeIDPartner();
 
             Date date = Calendar.getInstance().getTime();
             DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             String today = formatter.format(date);
 
-            partner = new Partner(id, mName, mAddress, today, ""); //ImagePath will be edited later by partner in Settings Activity
+            partner = new Partner(id, mTVA, mName, mAddress, today, ""); //ImagePath will be edited later by partner in Settings Activity
             try {
                 System.out.println("Partner inséré : " + db.addPartner(partner));
             } catch (WrongDateFormatException e){
                 e.printStackTrace();
                 Toast.makeText(getActivity(), "Invalid date format : please use DD/MM/YYYY", Toast.LENGTH_SHORT).show();
-                return;
+                return false;
             }
 
             //Now we need to add the admin User for this Partner
@@ -207,7 +204,7 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
             } catch (UnknownUserException e) {
                 e.printStackTrace();
                 Toast.makeText(getActivity(), "Invalid User : \""+selectedUsername+"\"", Toast.LENGTH_SHORT).show();
-                return;
+                return false;
             }
 
             //Firebase stuff
@@ -243,5 +240,6 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
         } finally {
             db.close();
         }
+        return true;
     }
 }

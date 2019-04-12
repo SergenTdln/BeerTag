@@ -22,7 +22,6 @@ import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.data.preference.AppPreference;
 import application_projet4_groupe12.data.preference.PrefKey;
 import application_projet4_groupe12.entities.User;
-import application_projet4_groupe12.exceptions.UnknownPartnerException;
 import application_projet4_groupe12.utils.AppUtils;
 import application_projet4_groupe12.utils.Encryption;
 

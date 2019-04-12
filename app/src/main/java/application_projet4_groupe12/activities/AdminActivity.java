@@ -2,7 +2,6 @@ package application_projet4_groupe12.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.DatabaseUtils;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -21,9 +20,7 @@ import android.view.MenuItem;
 
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.activities.browse_clients.BrowseClientsActivity;
-import application_projet4_groupe12.activities.browse_points.BrowsePointsActivity;
 import application_projet4_groupe12.activities.settings.SettingsPartnerActivity;
-import application_projet4_groupe12.activities.settings.SettingsUserActivity;
 import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.utils.ActivityUtils;
 import application_projet4_groupe12.utils.AppUtils;
@@ -50,7 +47,7 @@ public class AdminActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_admin);
+        setContentView(R.layout.activity_main_admin);
 
         /*
          * Toolbar
@@ -74,7 +71,7 @@ public class AdminActivity extends AppCompatActivity
         /*
          * Sliding drawer
          */
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout_admin);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -83,7 +80,7 @@ public class AdminActivity extends AppCompatActivity
         /*
          * Navigation view
          */
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.admin_nav_view);
         navigationView.inflateMenu(R.menu.activity_main_navigation_drawer_admin);
         MenuItem adminTitle = navigationView.getMenu().findItem(R.id.nav_admin_title);
         adminTitle.setTitle("Account of " + User.connectedUser.getAdministratedPartner(this).getName());
@@ -100,7 +97,7 @@ public class AdminActivity extends AppCompatActivity
         if(active){
             AppUtils.tapToExit(this);
         }
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout_admin);
         if (drawer == null) {
             Intent intent = new Intent(AdminActivity.this, AdminActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -123,8 +120,8 @@ public class AdminActivity extends AppCompatActivity
         /*
          * Navigation view header data
          */
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        //navigationView.inflateHeaderView(R.layout.activity_main_navigation_header);
+        NavigationView navigationView = findViewById(R.id.admin_nav_view);
+        //navigationView.inflateHeaderView(R.layout.activity_main_navigation_header_user_admin);
         ImageView navHeaderImage = findViewById(R.id.activity_main_navigation_header_image);
         TextView navHeaderText1 = (TextView) findViewById(R.id.activity_main_navigation_header_text1);
         TextView navHeaderText2 = findViewById(R.id.activity_main_navigation_header_text2);
@@ -229,7 +226,7 @@ public class AdminActivity extends AppCompatActivity
                 break;
         }
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout_admin);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

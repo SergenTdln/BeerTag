@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteCantOpenDatabaseException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.widget.CursorAdapter;
 import android.widget.Toast;
 
 import java.io.FileOutputStream;
@@ -34,7 +33,6 @@ import application_projet4_groupe12.exceptions.WrongDateFormatException;
 import application_projet4_groupe12.exceptions.WrongEmailFormatException;
 
 import static application_projet4_groupe12.utils.AppUtils.occurrences;
-import static application_projet4_groupe12.utils.AppUtils.showToast;
 
 
 /**
@@ -282,6 +280,7 @@ public class SQLHelper extends SQLiteOpenHelper {
                 Toast.makeText(context, "A duplicated entry of partner with ID \""+partnerID+"\" was found in the database", Toast.LENGTH_LONG).show();
             }
             Partner out = new Partner(c.getLong(c.getColumnIndex("_id")),
+                    c.getString(c.getColumnIndex("tva")),
                     c.getString(c.getColumnIndex("name")),
                     c.getString(c.getColumnIndex("address")),
                     c.getString(c.getColumnIndex("created_on")),
@@ -822,6 +821,22 @@ public class SQLHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * Returns whether this partner is already present in the database
+     * @param tvaNumber the tva number of the partner to look for
+     * @return True if this tvaNumber already exists, False otherwise
+     */
+    public boolean doesPartnerExist(String tvaNumber){
+        boolean out;
+        Cursor c = getEntriesFromDB("Partner",
+                new String[]{"name"},
+                "tva = \""+tvaNumber+"\"",
+                null);
+        out = (c.moveToFirst());
+        c.close();
+        return out;
+    }
+
+    /**
      * Returns whether this promotion is present in the database
      * @param promotionID the internal ID of the promotion to look for
      * @return True if this promotion already exists, False otherwise
@@ -1211,6 +1226,7 @@ public class SQLHelper extends SQLiteOpenHelper {
         if(! isReusable(promoID)) {
             removePromotion(promoID);
         }
+        //TODO call addPoints(- X points) @Martin
         return addUserPromotion(user.getId(), promoID, date);
     }
 

@@ -21,11 +21,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Random;
 
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.activities.MainActivity;
 import application_projet4_groupe12.activities.SignUp;
+import application_projet4_groupe12.entities.Partner;
 import application_projet4_groupe12.entities.User;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -36,6 +36,7 @@ public class AppUtils {
     private static long backPressed = 0;
 
     public static void tapToExit(Activity activity) {
+        backPressed = System.currentTimeMillis();
         if (backPressed + 3000 > System.currentTimeMillis()){
             if(activity.isTaskRoot()){
                 SharedPreferences session = getApplicationContext().getSharedPreferences("session", MODE_PRIVATE);
@@ -52,11 +53,9 @@ public class AppUtils {
 
             }
             activity.finish();
+        } else {
+            showToast(activity.getApplicationContext(), activity.getResources().getString(R.string.tapAgain));
         }
-        else{
-            //showToast(activity.getApplicationContext(), activity.getResources().getString(R.string.tapAgain));
-        }
-        backPressed = System.currentTimeMillis();
     }
 
     public static void showToast(Context context, String msg) {
@@ -204,6 +203,10 @@ public class AppUtils {
     }
 
 
+    public static boolean changeProfilePicture(Context c, Partner partner){
+        //TODO
+        return false;
+    }
     /**
      * TODO completely rewrite this method using BitmapFactory from File object directly
      * Does NOT support transparency channels when it comes to bit-depth computation : when using such images, behavior is unpredicted.
@@ -212,7 +215,6 @@ public class AppUtils {
      * @return True if the operation succeeded, or False if an error occurred
      */
     public static boolean changeProfilePicture(Context c, User user){
-
         //Read new file chosen by user
         File newFile = null; //TODO (tell the user it has to be square to fit in 150*150 dp) --- get a full path
         FileInputStream newFileInputStream = getStreamIn(newFile);

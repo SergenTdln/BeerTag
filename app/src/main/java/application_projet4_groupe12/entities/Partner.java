@@ -13,14 +13,16 @@ import application_projet4_groupe12.data.SQLHelper;
 public class Partner {
 
     private long id; // Internal ID of the partner, should not be displayed to the user. Unique
+    private String tvaNumber; //Unique
     private String name; // Name displayed to the user. Might not be unique
     private String address;
     private String creationDate; //This HAS to follow this format : DD/MM/YYYY. (Example: "31/01/2000")
     private String imagePath; //Image path inside of the assets folder
 
     // Call SQLHelper.getFreeIDPartner() to obtain an available ID to use
-    public Partner(long id, String name, String address, String creationDate, String imagePath) {
+    public Partner(long id, String tvaNumber, String name, String address, String creationDate, String imagePath) {
         this.id = id;
+        this.tvaNumber = tvaNumber;
         this.name = name;
         this.address = address;
         this.creationDate = creationDate;
@@ -32,6 +34,10 @@ public class Partner {
     //******
     public long getId() {
         return id;
+    }
+
+    public String getTvaNumber(){
+        return tvaNumber;
     }
 
     public String getName() {
@@ -52,6 +58,11 @@ public class Partner {
 
     public void setId(Context c, long id) {
         this.id = id;
+        this.refreshDB(c);
+    }
+
+    public void setTvaNumber(Context c, String tvaNumber) {
+        this.tvaNumber = tvaNumber;
         this.refreshDB(c);
     }
 

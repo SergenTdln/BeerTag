@@ -85,11 +85,10 @@ public class SignUp extends AppCompatActivity {
             SharedPreferences shared = getApplicationContext().getSharedPreferences(facebook_user_id, MODE_PRIVATE);
             String session_email = shared.getString("email", "");
 
-            Context ct = getApplicationContext();
             try {
-                db = new SQLHelper(ct);
+                db = new SQLHelper(this);
                 User fbuser = db.getUser(session_email);
-                User.connectUser(ct, fbuser);
+                User.connectUser(this, fbuser);
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
@@ -98,6 +97,27 @@ public class SignUp extends AppCompatActivity {
 
             //User.connectUser()
             startActivity(new Intent(SignUp.this, MainActivity.class));
+        } else {
+            SharedPreferences session = getApplicationContext().getSharedPreferences("sessions", MODE_PRIVATE);
+            Boolean login_status = session.getBoolean("login_status",false);
+            Log.v(Global.debug_text,"login status"+ login_status);
+
+            if (login_status){
+                String session_email = session.getString("email","");
+                try {
+                    db = new SQLHelper(this);
+                    User local_user = db.getUser(session_email);
+                    User.connectUser(this, local_user);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    db.close();
+                }
+
+                //startActivity(new Intent(SignUp.this, MainActivity.class));
+                //finish();
+            }
+
         }
 
         setContentView(R.layout.activity_sign_up);

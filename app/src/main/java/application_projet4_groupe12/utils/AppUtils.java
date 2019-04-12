@@ -39,7 +39,10 @@ public class AppUtils {
         backPressed = System.currentTimeMillis();
         if (backPressed + 3000 > System.currentTimeMillis()){
             if(activity.isTaskRoot()){
-                SharedPreferences shared = getApplicationContext().getSharedPreferences("login_choice", MODE_PRIVATE);
+                SharedPreferences session = getApplicationContext().getSharedPreferences("session", MODE_PRIVATE);
+                session.edit()
+                        .putBoolean("logged_in", true)
+                        .apply();
                 // TODO sauve l'email, puis recup et recheck apd de l'email pour recup l'user et faire connect user
                 //FirebaseAuth.getInstance().signOut();
                 //LoginManager.getInstance().logOut();

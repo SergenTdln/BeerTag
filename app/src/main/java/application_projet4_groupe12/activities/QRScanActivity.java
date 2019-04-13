@@ -18,7 +18,6 @@ import java.util.ArrayList;
 
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.data.Constants;
-import application_projet4_groupe12.fragment.GenerateFragment;
 import application_projet4_groupe12.fragment.QRScanFragment;
 import application_projet4_groupe12.item.ItemMainPager;
 import application_projet4_groupe12.utils.AppUtils;
@@ -69,7 +68,7 @@ public class QRScanActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout_user);
         if (drawer == null) {
             startActivity(new Intent(QRScanActivity.this, MainActivity.class));
             finish();

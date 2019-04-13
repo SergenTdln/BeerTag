@@ -1,15 +1,12 @@
 package application_projet4_groupe12.activities.browse_clients;
 
 import android.content.Context;
-import android.widget.ListView;
 
 import java.io.IOException;
 import java.util.List;
 
 import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.entities.Address;
-import application_projet4_groupe12.entities.Shop;
-import application_projet4_groupe12.entities.User;
 
 public class BrowseClientsShopDataAssociation {
 

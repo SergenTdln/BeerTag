@@ -69,7 +69,9 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_toStartOf="@+id/settings_partner_picture"
-            android:ellipsize="middle"
+            android:scrollHorizontally="true"
+            android:inputType="textMultiLine"
+            android:maxLines="1"
             android:hint="Default Name"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/settings_partner_change_name_title" />
@@ -90,7 +92,9 @@
             android:minWidth="160dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:ellipsize="middle"
+            android:scrollHorizontally="true"
+            android:inputType="textMultiLine"
+            android:maxLines="1"
             android:hint="Your new address"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/settings_partner_change_address_title" />

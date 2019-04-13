@@ -19,6 +19,7 @@ import javax.crypto.spec.DESKeySpec;
 
 public class Encryption {
 
+    //todo utiliser le temps systeme pour crypter decrypter et faire la vérif du qr code, gps
     private static String cryptoPass = "clé_de_cryptage_qr_code";
 
     public static String encryptQrCode(String value) {

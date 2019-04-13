@@ -5,8 +5,6 @@ import android.content.Context;
 import java.io.IOException;
 
 import application_projet4_groupe12.data.SQLHelper;
-import application_projet4_groupe12.entities.Address;
-import application_projet4_groupe12.entities.Shop;
 import application_projet4_groupe12.entities.User;
 
 public class BrowseClientsClientDataAssociation {

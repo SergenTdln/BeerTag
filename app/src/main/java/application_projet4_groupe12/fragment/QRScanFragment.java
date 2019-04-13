@@ -2,11 +2,9 @@ package application_projet4_groupe12.fragment;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,8 +16,6 @@ import com.google.zxing.Result;
 import java.util.ArrayList;
 import java.util.List;
 
-import application_projet4_groupe12.activities.MainActivity;
-import application_projet4_groupe12.utils.Encryption;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.activities.QRResultActivity;

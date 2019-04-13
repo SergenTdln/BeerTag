@@ -43,55 +43,43 @@ public class AdminActivity extends AppCompatActivity
 
     static boolean active = false;
 
+    SharedPreferences shared_login_choice;
+
+    Toolbar toolbar;
+    FloatingActionButton fab_gen;
+    DrawerLayout drawer;
+    NavigationView navigationView;
+
+    ImageView navHeaderImage;
+    TextView navHeaderText1;
+    TextView navHeaderText2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main_admin);
 
-        /*
-         * Toolbar
-         */
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        handleToolbar();
 
+        handleFloatingButtons();
 
-        /*
-         * Floating button - generate QR
-         */
-        FloatingActionButton fab_gen = findViewById(R.id.fab_gen);
-        fab_gen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(AdminActivity.this, QRGenerateActivity.class));
-                finish();
-            }
-        });
+        handleDrawer();
 
-        /*
-         * Sliding drawer
-         */
-        DrawerLayout drawer = findViewById(R.id.drawer_layout_admin);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-        /*
-         * Navigation view
-         */
-        NavigationView navigationView = findViewById(R.id.admin_nav_view);
-        navigationView.inflateMenu(R.menu.activity_main_navigation_drawer_admin);
-        MenuItem adminTitle = navigationView.getMenu().findItem(R.id.nav_admin_title);
-        adminTitle.setTitle("Account of " + User.connectedUser.getAdministratedPartner(this).getName());
-        navigationView.setNavigationItemSelectedListener(this);
-        navigationView.bringToFront();
+        handleNavigationView();
+        /* Useless on this screen : see MainActivity.java instead
+        shared_login_choice = getSharedPreferences("login_choice", MODE_PRIVATE);
+        boolean choice_made = shared_login_choice.getBoolean("loggin_chosed", false);
+        Log.v(Global.debug_text,"choice made "+choice_made);
+        Log.v(Global.debug_text,"is admin"+User.connectedUser.isAdmin());
+        if( User.connectedUser.isAdmin() &&  (!choice_made)){
+            startActivity(new Intent(AdminActivity.this, LoginChoiceActivity.class));
+            finish();
+        }*/
     }
 
     /*
         Quand on appuie sur le boutton de retour en arrière
      */
-
     @Override
     public void onBackPressed() {
         if(active){
@@ -116,15 +104,23 @@ public class AdminActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
 
-        /*
-         * Navigation view header data
-         */
-        NavigationView navigationView = findViewById(R.id.admin_nav_view);
-        //navigationView.inflateHeaderView(R.layout.activity_main_navigation_header_user_admin);
-        ImageView navHeaderImage = findViewById(R.id.activity_main_navigation_header_image);
-        TextView navHeaderText1 = (TextView) findViewById(R.id.activity_main_navigation_header_text1);
-        TextView navHeaderText2 = findViewById(R.id.activity_main_navigation_header_text2);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
 
         if (ActivityUtils.getInstance().isLoggedInFacebook()) {
             /* Remplacer les données par celles du profil fb*/
@@ -153,23 +149,7 @@ public class AdminActivity extends AppCompatActivity
                 navHeaderImage.setImageBitmap(bitmap);
             }
         }
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
         active = true;
     }
 
@@ -201,11 +181,11 @@ public class AdminActivity extends AppCompatActivity
                     //Déconnecter en local
                     User.disconnectUser(this);
                     standard_login.edit().clear().apply();
-
-                    SharedPreferences login_choice  =getSharedPreferences("login_choice",Context.MODE_PRIVATE);
-                    login_choice.edit().clear().apply();
                     finish();
                 }
+
+                SharedPreferences login_choice  =getSharedPreferences("login_choice",Context.MODE_PRIVATE);
+                login_choice.edit().clear().apply();
 
                 //couper la session firebase
                 FirebaseAuth.getInstance().signOut();
@@ -226,8 +206,58 @@ public class AdminActivity extends AppCompatActivity
                 break;
         }
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout_admin);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void handleToolbar() {
+        /*
+         * Toolbar
+         */
+        toolbar = findViewById(R.id.app_bar_main_admin_toolbar);
+        setSupportActionBar(toolbar);
+    }
+
+    private void handleFloatingButtons() {
+        /*
+         * Floating button - generate QR
+         */
+        fab_gen = findViewById(R.id.app_bar_main_admin_fab_gen);
+        fab_gen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(AdminActivity.this, QRGenerateActivity.class));
+                finish();
+            }
+        });
+    }
+
+    private void handleDrawer() {
+        /*
+         * Sliding drawer
+         */
+        drawer = findViewById(R.id.drawer_layout_admin);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+    }
+
+    private void handleNavigationView() {
+        /*
+         * Navigation view
+         */
+        navigationView = findViewById(R.id.admin_nav_view);
+        navigationView.inflateMenu(R.menu.activity_main_navigation_drawer_admin);
+        View headerLayout = navigationView.inflateHeaderView(R.layout.activity_main_navigation_header);
+
+        navHeaderImage = (ImageView) headerLayout.findViewById(R.id.activity_main_navigation_header_image);
+        navHeaderText1 = (TextView) headerLayout.findViewById(R.id.activity_main_navigation_header_text1);
+        navHeaderText2 = (TextView) headerLayout.findViewById(R.id.activity_main_navigation_header_text2);
+
+        MenuItem adminTitle = navigationView.getMenu().findItem(R.id.nav_admin_title);
+        adminTitle.setTitle("Account of " + User.connectedUser.getAdministratedPartner(this).getName());
+        navigationView.setNavigationItemSelectedListener(this);
+        navigationView.bringToFront();
     }
 }

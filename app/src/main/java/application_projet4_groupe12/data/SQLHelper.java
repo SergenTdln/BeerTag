@@ -499,7 +499,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * Returns the amount of points the passed User currently has at the passed Shop.
      * @param userID the username (email) to look for
      * @param shopID the internal ID of the shop to look for
-     * @return the amount of points the user has earned as a long. Returns 0 if the User has never earned points at this Shop before.
+     * @return the amount of points the user has earned as a long. Returns -1 if the User has never earned points at this Shop before.
      */
     public int getPoints(long userID, long shopID){
         List<String> res = this.getElementFromDB("User_points",
@@ -509,7 +509,7 @@ public class SQLHelper extends SQLiteOpenHelper {
         if( l == 0 ){
             // No pair userID - shopID was found in the User_points table.
             // This user has never earned points here before.
-            return 0;
+            return -1;
         } else {
             return Integer.parseInt(res.get(0));
         }
@@ -542,6 +542,16 @@ public class SQLHelper extends SQLiteOpenHelper {
         } else {
             return getAddress(Long.parseLong(res.get(0)));
         }
+    }
+
+    /**
+     * Returns the amount of points required to be aligible for the given Promotion
+     * @param promoID the internal ID of the Promotion to look for
+     * @return the amount of points required as an int.
+     */
+    public int getPointsRequired(long promoID){
+        List<String> list = getElementFromDB("Promotion", "points_required", "_id = \""+promoID+"\"");
+        return Integer.parseInt(list.get(0));
     }
 
     /**
@@ -601,13 +611,13 @@ public class SQLHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Returns a list of User IDs representing all this Shop's clients.
+     * Returns a list of User IDs representing all this Shop's clients (that is, all clients who currently have points there).
      * @param shopID the Shop to look for
      * @return a list of Longs. This list can be empty if this Shop has no client registered in the database.
      */
     public List<Long> getAllClientsUserIDs(long shopID){
         List<Long> res = new LinkedList<>();
-        List<String> userIds = getElementFromDB("User_points", "id_user", "id_shop = \""+shopID+"\"");
+        List<String> userIds = getElementFromDB("User_points", "id_user", "id_shop = \""+shopID+"\" AND points > 0");
         for (String userID : userIds){
             res.add(Long.parseLong(userID));
         }
@@ -1084,7 +1094,7 @@ public class SQLHelper extends SQLiteOpenHelper {
     /**
      * Adds <code>amount</code> points to the User's account.
      * @param username the user's email address
-     * @param amount the amount of points to add. This can be positive or negative.
+     * @param amount the amount of points to add. This number can be positive or negative.
      * @param shopID please note this is different from the partner's name.
      * @return True if the insertion was successful, False if it failed (for any reason not covered by a thrown exception).
      */
@@ -1092,12 +1102,20 @@ public class SQLHelper extends SQLiteOpenHelper {
 
         int currentPoints = this.getPoints(getUserID(username), shopID);
 
-        ContentValues cv = new ContentValues();
-        cv.put("\"id_user\"", getUserID(username));
-        cv.put("\"id_shop\"", shopID);
-        cv.put("\"points\"", (currentPoints + amount));
+        if(currentPoints >= 0){
+            //Make an update
+            ContentValues cv = new ContentValues();
+            cv.put("\"points\"", (currentPoints+amount));
+            return (myDB.update("User_points", cv, "id_user = \""+getUserID(username)+"\" AND id_shop = \""+shopID+"\"", null) != 0);
+        } else {
+            //Insert a new row
+            ContentValues cv = new ContentValues();
+            cv.put("\"id_user\"", getUserID(username));
+            cv.put("\"id_shop\"", shopID);
+            cv.put("\"points\"", amount);
 
-        return (myDB.insert("User_points", null, cv) != -1);
+            return (myDB.insert("User_points", null, cv) != -1);
+        }
     }
 
     /**
@@ -1222,11 +1240,12 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param user the User who activated this Promotion
      * @return
      */
-    public boolean usePromotion(long promoID, User user, String date){
+    public boolean usePromotion(long promoID, long shopID, User user, String date){
         if(! isReusable(promoID)) {
             removePromotion(promoID);
         }
-        //TODO call addPoints(- X points) @Martin
+        int pointsCost = getPointsRequired(promoID);
+        addPoints(user.getUsername(), pointsCost, shopID);
         return addUserPromotion(user.getId(), promoID, date);
     }
 

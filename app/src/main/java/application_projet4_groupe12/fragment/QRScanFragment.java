@@ -70,7 +70,7 @@ public class QRScanFragment extends Fragment  {
 
     private void initView(View rootView) {
         contentFrame = rootView.findViewById(R.id.content_frame);
-        //todo : corriger le toolbar sur le scanner
+        //todo : corriger le toolbar sur le scanner @Sergen j'imagine ?
 //        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Scanning");
 
     }
@@ -163,7 +163,7 @@ public class QRScanFragment extends Fragment  {
         AppPreference.getInstance(mContext).setInteger(PrefKey.CAM_ID, 0);
     }
 
-    //todo : corriger le retour à Home
+    //todo : corriger le retour à Home @Sergen j'imagine ?
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

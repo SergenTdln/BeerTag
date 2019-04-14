@@ -157,7 +157,6 @@ public class Fragment2 extends Fragment {
         }
         try {
             db = new SQLHelper(getContext());
-
             if (db.doesUserExist(email))  {
                 Toast.makeText(getActivity(),  "This email already exists", Toast.LENGTH_SHORT).show();
             }

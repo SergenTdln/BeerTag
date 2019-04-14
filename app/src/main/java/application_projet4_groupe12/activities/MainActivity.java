@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /*
-        Quand on appuie sur le boutton de retour en arrière
+        Quand on appuie sur le bouton de retour en arrière
      */
 
     @Override

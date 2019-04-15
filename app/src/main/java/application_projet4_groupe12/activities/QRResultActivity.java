@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -24,6 +25,7 @@ import application_projet4_groupe12.data.preference.PrefKey;
 import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.utils.AppUtils;
 import application_projet4_groupe12.utils.Encryption;
+import application_projet4_groupe12.utils.Global;
 
 
 public class QRResultActivity extends AppCompatActivity {
@@ -67,19 +69,31 @@ public class QRResultActivity extends AppCompatActivity {
 
         ArrayList<String> arrayList = AppPreference.getInstance(mContext).getStringArray(PrefKey.RESULT_LIST);
         String lastResult = arrayList.get(arrayList.size()-1);
-        String encryptedQrCode = Encryption.decryptQrCode(lastResult);
+        String decryptedQrCode = Encryption.decryptQrCode(lastResult, this);
+
+        /* recup des infos via qr code */
+        String[] data = decryptedQrCode.split("_5%/");
+        int achat = Integer.parseInt(data[0]);
+        Long partnerId = Long.valueOf(data[1]);
+//        String createTimeStr = data[2];
+
+        Log.v(Global.debug_text, "montant= " + achat + " partnerId= " + partnerId);
+
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 //            result.setText(Html.fromHtml(lastResult, Html.FROM_HTML_MODE_LEGACY));
-            result.setText(Html.fromHtml("qr code crypté= "+ lastResult + "| qr code  décrypté= " + encryptedQrCode, Html.FROM_HTML_MODE_LEGACY));
+            result.setText(Html.fromHtml("qr code crypté= "+ lastResult + "| qr code  décrypté= " + decryptedQrCode, Html.FROM_HTML_MODE_LEGACY));
         } else {
             result.setText(Html.fromHtml(lastResult));
         }
         result.setMovementMethod(LinkMovementMethod.getInstance());
         try {
             db = new SQLHelper(this);
-            db.addPoints(User.connectedUser.getUsername(), Integer.parseInt(encryptedQrCode), 1); //TODO à terminer : il me faut accès à l'ID du shop qui a généré le qr code
+            db.addPoints(User.connectedUser.getUsername(), achat, partnerId);
+//            db.addPoints(User.connectedUser.getUsername(), Integer.parseInt(encryptedQrCode), 1); //TODO à terminer : il me faut accès à l'ID du shop qui a généré le qr code
         } catch (IOException e){
             e.printStackTrace();
+            Log.v(Global.debug_text,""+e);
         } finally {
             db.close();
         }

@@ -76,6 +76,9 @@
         <activity android:name=".activities.ExpiredActivity"
             android:screenOrientation="portrait" />
 
+        <activity android:name=".activities.ShareActivity"
+            android:screenOrientation="portrait" />
+
 
         <meta-data
             android:name="io.fabric.ApiKey"

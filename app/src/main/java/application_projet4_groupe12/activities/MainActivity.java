@@ -67,14 +67,8 @@ public class MainActivity extends AppCompatActivity
 
         handleNavigationView();
 
-        shared_login_choice = getSharedPreferences("login_choice", MODE_PRIVATE);
-        boolean choice_made = shared_login_choice.getBoolean("loggin_chosed", false);
-        Log.v(Global.debug_text,"choice made "+choice_made);
-        Log.v(Global.debug_text,"is admin"+User.connectedUser.isAdmin());
-        if( User.connectedUser.isAdmin() &&  (!choice_made)){
-            startActivity(new Intent(MainActivity.this, LoginChoiceActivity.class));
-            finish();
-        }
+        AdminChoiceCheck();
+
     }
 
     /*
@@ -163,6 +157,7 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        handleInterfaceButton();
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -178,6 +173,12 @@ public class MainActivity extends AppCompatActivity
                 startActivity(new Intent(MainActivity.this, SettingsUserActivity.class));
                 onStop();
                 break;
+
+            case R.id.change_interface_user:
+                startActivity(new Intent(MainActivity.this, AdminActivity.class));
+                finish();
+                break;
+
             case R.id.nav_logout:
                 //reset la session globale fb ou standar
                 if (ActivityUtils.getInstance().isLoggedInFacebook()) {
@@ -206,6 +207,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
                 finish();
                 break;
+
         }
 
         drawer.closeDrawer(GravityCompat.START);
@@ -253,11 +255,33 @@ public class MainActivity extends AppCompatActivity
         navigationView.inflateMenu(R.menu.activity_main_navigation_drawer_user);
         View headerLayout = navigationView.inflateHeaderView(R.layout.activity_main_navigation_header);
 
-        navHeaderImage = (ImageView) headerLayout.findViewById(R.id.activity_main_navigation_header_image);
-        navHeaderText1 = (TextView) headerLayout.findViewById(R.id.activity_main_navigation_header_text1);
-        navHeaderText2 = (TextView) headerLayout.findViewById(R.id.activity_main_navigation_header_text2);
+        navHeaderImage = headerLayout.findViewById(R.id.activity_main_navigation_header_image);
+        navHeaderText1 = headerLayout.findViewById(R.id.activity_main_navigation_header_text1);
+        navHeaderText2 = headerLayout.findViewById(R.id.activity_main_navigation_header_text2);
 
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.bringToFront();
+    }
+
+    private void handleInterfaceButton(){
+        if(User.connectedUser.isAdmin()) {
+            MenuItem item_change_interface = findViewById(R.id.change_interface_user);
+            if(item_change_interface != null ){
+                item_change_interface.setVisible(true); //View.GONE, View.INVISIBLE are available too.
+            }
+        }
+    }
+
+
+
+    private void AdminChoiceCheck(){
+        shared_login_choice = getSharedPreferences("login_choice", MODE_PRIVATE);
+        boolean choice_made = shared_login_choice.getBoolean("loggin_chosed", false);
+        Log.v(Global.debug_text,"choice made "+choice_made);
+        Log.v(Global.debug_text,"is admin"+User.connectedUser.isAdmin());
+        if( User.connectedUser.isAdmin() &&  (!choice_made)){
+            startActivity(new Intent(MainActivity.this, LoginChoiceActivity.class));
+            finish();
+        }
     }
 }

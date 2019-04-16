@@ -2,7 +2,8 @@
 <resources>
     <color name="red">#FF0089</color>
     <color name="blue">#36C6EA</color>
-    <color name="colorPrimary">#E42261FF</color>
+    <color name="colorPrimary">#2261FF</color>
+    <!--<color name="colorPrimary">#E42261FF</color>-->
     <color name="colorPrimaryDark">#033A86</color>
     <color name="colorAccent">#6E1C03</color>
     <color name="white">#F0F0F0</color>
@@ -16,7 +17,8 @@
 
     <!-- -->
     <color name="login_text">#FFFFFF</color>
-    <color name="login_text_hint">#97FFFFFF</color>
+    <!--<color name="login_text_hint">#97FFFFFF</color>-->
+    <color name="login_text_hint">#FFFFFF</color>
 
 
 

@@ -66,15 +66,7 @@ public class AdminActivity extends AppCompatActivity
         handleDrawer();
 
         handleNavigationView();
-        /* Useless on this screen : see MainActivity.java instead
-        shared_login_choice = getSharedPreferences("login_choice", MODE_PRIVATE);
-        boolean choice_made = shared_login_choice.getBoolean("loggin_chosed", false);
-        Log.v(Global.debug_text,"choice made "+choice_made);
-        Log.v(Global.debug_text,"is admin"+User.connectedUser.isAdmin());
-        if( User.connectedUser.isAdmin() &&  (!choice_made)){
-            startActivity(new Intent(AdminActivity.this, LoginChoiceActivity.class));
-            finish();
-        }*/
+
     }
 
     /*
@@ -162,6 +154,7 @@ public class AdminActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        handleInterfaceButton();
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -201,6 +194,12 @@ public class AdminActivity extends AppCompatActivity
             case R.id.nav_admin_browse_clients:
                 startActivity(new Intent(AdminActivity.this, BrowseClientsActivity.class));
                 break;
+
+            case R.id.change_interface_admin:
+                startActivity(new Intent(AdminActivity.this, MainActivity.class));
+                finish();
+                break;
+
             case R.id.nav_admin_settings:
                 startActivity(new Intent(AdminActivity.this, SettingsPartnerActivity.class));
                 break;
@@ -259,5 +258,14 @@ public class AdminActivity extends AppCompatActivity
         adminTitle.setTitle("Account of " + User.connectedUser.getAdministratedPartner(this).getName());
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.bringToFront();
+    }
+
+    private void handleInterfaceButton(){
+        if(User.connectedUser.isAdmin()) {
+            MenuItem item_change_interface = findViewById(R.id.change_interface_admin);
+            if(item_change_interface != null ){
+                item_change_interface.setVisible(true); //View.GONE, View.INVISIBLE are available too.
+            }
+        }
     }
 }

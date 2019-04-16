@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity
             /* Remplacer les données par celles du profil fb*/
             Log.i(Global.debug_text, "nav" + navigationView);
             String id = new FacebookUtils().getFacebookId();
-            shared_login_choice = getSharedPreferences(id, MODE_PRIVATE);
+            shared_login_choice = getSharedPreferences("session", MODE_PRIVATE);
             String session_name = shared_login_choice.getString("name", "");
             String session_email = shared_login_choice.getString("email", "");
             URL image_url = new FacebookUtils().getFacebookProfilePic();
@@ -183,9 +183,8 @@ public class MainActivity extends AppCompatActivity
                 //reset la session globale fb ou standar
                 if (ActivityUtils.getInstance().isLoggedInFacebook()) {
                     String session_id = new FacebookUtils().getFacebookId();
-                    SharedPreferences fb_login = getApplicationContext().getSharedPreferences(session_id, Context.MODE_PRIVATE);
+                    SharedPreferences fb_login = getApplicationContext().getSharedPreferences("session", Context.MODE_PRIVATE);
                     fb_login.edit().clear().apply();
-                    //login_choice.edit().putBoolean("loggin_chosed", false).commit();
                 } else {
                     SharedPreferences standard_login = getApplicationContext().getSharedPreferences("session", Context.MODE_PRIVATE);
                     //Déconnecter en local
@@ -194,7 +193,7 @@ public class MainActivity extends AppCompatActivity
                     finish();
                 }
 
-                SharedPreferences shared_login_choice  =getSharedPreferences("login_choice",Context.MODE_PRIVATE);
+                SharedPreferences shared_login_choice  =getSharedPreferences("session",Context.MODE_PRIVATE);
                 shared_login_choice.edit().clear().apply();
 
                 //couper la session firebase
@@ -267,7 +266,7 @@ public class MainActivity extends AppCompatActivity
         if(User.connectedUser.isAdmin()) {
             MenuItem item_change_interface = findViewById(R.id.change_interface_user);
             if(item_change_interface != null ){
-                item_change_interface.setVisible(true); //View.GONE, View.INVISIBLE are available too.
+                item_change_interface.setVisible(true);
             }
         }
     }
@@ -275,7 +274,7 @@ public class MainActivity extends AppCompatActivity
 
 
     private void AdminChoiceCheck(){
-        shared_login_choice = getSharedPreferences("login_choice", MODE_PRIVATE);
+        shared_login_choice = getSharedPreferences("session", MODE_PRIVATE);
         boolean choice_made = shared_login_choice.getBoolean("loggin_chosed", false);
         Log.v(Global.debug_text,"choice made "+choice_made);
         Log.v(Global.debug_text,"is admin"+User.connectedUser.isAdmin());

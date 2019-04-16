@@ -30,7 +30,5 @@ public class ExpiredActivity extends AppCompatActivity {
                 finish();
             }
         });
-
     }
-
 }

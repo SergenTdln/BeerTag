@@ -2,6 +2,7 @@ package application_projet4_groupe12.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Base64;
 import android.util.Log;
 
@@ -22,6 +23,9 @@ import javax.crypto.spec.DESKeySpec;
 
 import application_projet4_groupe12.activities.ExpiredActivity;
 import application_projet4_groupe12.activities.MainActivity;
+
+import static android.content.Context.MODE_PRIVATE;
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 
 public class Encryption {
@@ -86,7 +90,16 @@ public class Encryption {
             Log.v(Global.debug_text,"create time str"+createTimeStr);
             Log.v(Global.debug_text,"create time int"+createTime);
             if(validity_expired(createTime)){
+                Log.v(Global.debug_text,"activity expired");
                 ActivityUtils.getInstance().invokeActivity(activity, ExpiredActivity.class, true);
+
+
+                //TODO SOLUTION TEMPORAIRE POUR PASSER L'INFO VERS L'ACTI
+                SharedPreferences shared = getApplicationContext().getSharedPreferences("session", MODE_PRIVATE);
+                SharedPreferences.Editor editor = shared.edit();
+                editor.putBoolean("expired_qr", true); // Storing boolean - true/false
+//                getActivity().finish();
+
             }
 
 //            Log.d(Global.debug_text, "Decrypted: " + value + " -> " + decryptedValue);
@@ -123,14 +136,16 @@ public class Encryption {
     Checks the validity of a qr code according to its generation datetime
     If the qrcode has not expired (has to be used within 2 minutes) then its considered as valid
      */
-    private static boolean validity_expired(long qrtime){
-        boolean expired = false;
+    private static Boolean validity_expired(long qrtime){
+        Boolean expired = false;
         Long now_time = GetUnixTime();
 
         Log.v(Global.debug_text,"qr time"+ qrtime);
         Log.v(Global.debug_text,"now  time"+now_time);
 
-        if (now_time - qrtime >= 120000) {
+        Long diff = now_time - qrtime;
+        Log.v(Global.debug_text,"time diff "+diff);
+        if (diff >= 180000) {
             expired = true;
         }
 

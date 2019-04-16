@@ -116,9 +116,8 @@ public class AdminActivity extends AppCompatActivity
 
         if (ActivityUtils.getInstance().isLoggedInFacebook()) {
             /* Remplacer les données par celles du profil fb*/
-            Log.i(Global.debug_text, "nav" + navHeaderImage);
             String id = new FacebookUtils().getFacebookId();
-            SharedPreferences shared = getSharedPreferences(id, MODE_PRIVATE);
+            SharedPreferences shared = getSharedPreferences("session", MODE_PRIVATE);
             String session_name = shared.getString("name", "");
             String session_email = shared.getString("email", "");
             URL image_url = new FacebookUtils().getFacebookProfilePic();
@@ -129,11 +128,9 @@ public class AdminActivity extends AppCompatActivity
         } else {
             /* Remplacer les données par celles de la db locale*/
             String userFullName = User.connectedUser.getFullName();
-            Log.i(Global.debug_text, "userFullName" + userFullName);
             navHeaderText1.setText(userFullName);
 
             String userUsername = User.connectedUser.getUsername();
-            Log.i(Global.debug_text, "getUsername" + userUsername);
             navHeaderText2.setText(userUsername);
 
             Bitmap bitmap = BitmapFactory.decodeFile(this.getFilesDir()+"/"+User.connectedUser.getImagePath());
@@ -161,6 +158,7 @@ public class AdminActivity extends AppCompatActivity
         switch (id) {
             case R.id.nav_generate:
                 startActivity(new Intent(AdminActivity.this, QRGenerateActivity.class));
+                finish();
                 break;
 
             case R.id.nav_logout:
@@ -193,6 +191,7 @@ public class AdminActivity extends AppCompatActivity
 
             case R.id.nav_admin_browse_clients:
                 startActivity(new Intent(AdminActivity.this, BrowseClientsActivity.class));
+                finish();
                 break;
 
             case R.id.change_interface_admin:
@@ -202,6 +201,7 @@ public class AdminActivity extends AppCompatActivity
 
             case R.id.nav_admin_settings:
                 startActivity(new Intent(AdminActivity.this, SettingsPartnerActivity.class));
+                finish();
                 break;
         }
 

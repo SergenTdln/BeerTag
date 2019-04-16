@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Build;
@@ -50,13 +51,15 @@ public class QRResultActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         initVars();
         initViews();
         initFunctionality();
-        loadShareActivity();
-//        initListeners();
 
+        if(initCheckQrExp()){
+            loadShareActivity();
+        } else{
+            loadExpiredActivity();
+        }
     }
 
     private void initVars() {
@@ -125,6 +128,7 @@ public class QRResultActivity extends AppCompatActivity {
             case android.R.id.home:
 //                finish()
                 startActivity(new Intent(QRResultActivity.this, AdminActivity.class));
+                finish();
 //                return true;
 
             default:
@@ -134,6 +138,24 @@ public class QRResultActivity extends AppCompatActivity {
 
     private void loadShareActivity(){
         ActivityUtils.getInstance().invokeActivity(this, ShareActivity.class, true);
+        finish();
+    }
+
+    private void loadExpiredActivity(){
+        ActivityUtils.getInstance().invokeActivity(this, ExpiredActivity.class, true);
+        finish();
+    }
+
+    private Boolean initCheckQrExp(){
+        Boolean expired = false;
+        SharedPreferences shared = getSharedPreferences("session", MODE_PRIVATE);
+        Boolean expired_qr = shared.getBoolean("expired_qr", false);
+        if(expired_qr){
+            expired = true;
+//            startActivity(new Intent(QRResultActivity.this, MainActivity.class));
+//            finish();
+        }
+        return expired;
     }
 
 }

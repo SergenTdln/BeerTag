@@ -73,16 +73,15 @@ public class SignUp extends AppCompatActivity {
 
     LoginButton loginButton;
     CallbackManager mCallbackManager;
-    String TAG ="debug";
+    String TAG = "debug";
     String name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(ActivityUtils.getInstance().isLoggedInFacebook()){
+        if (ActivityUtils.getInstance().isLoggedInFacebook()) {
             finish();
-            String facebook_user_id = new FacebookUtils().getFacebookId();
-            SharedPreferences shared = getApplicationContext().getSharedPreferences(facebook_user_id, MODE_PRIVATE);
+            SharedPreferences shared = getApplicationContext().getSharedPreferences("session", MODE_PRIVATE);
             String session_email = shared.getString("email", "");
 
             try {
@@ -95,15 +94,14 @@ public class SignUp extends AppCompatActivity {
                 db.close();
             }
 
-            //User.connectUser()
             startActivity(new Intent(SignUp.this, MainActivity.class));
         } else {
-            SharedPreferences session = getApplicationContext().getSharedPreferences("sessions", MODE_PRIVATE);
-            Boolean login_status = session.getBoolean("login_status",false);
-            Log.v(Global.debug_text,"login status"+ login_status);
+            SharedPreferences session = getApplicationContext().getSharedPreferences("session", MODE_PRIVATE);
+            Boolean login_status = session.getBoolean("login_status", false);
+            Log.v(Global.debug_text, "login status" + login_status);
 
-            if (login_status){
-                String session_email = session.getString("email","");
+            if (login_status) {
+                String session_email = session.getString("email", "");
                 try {
                     db = new SQLHelper(this);
                     User local_user = db.getUser(session_email);
@@ -113,11 +111,7 @@ public class SignUp extends AppCompatActivity {
                 } finally {
                     db.close();
                 }
-
-                //startActivity(new Intent(SignUp.this, MainActivity.class));
-                //finish();
             }
-
         }
 
         setContentView(R.layout.activity_sign_up);
@@ -146,7 +140,7 @@ public class SignUp extends AppCompatActivity {
             @Override
             public void onSuccess(LoginResult loginResult) {
 
-                Log.i(TAG,"Hello"+loginResult.getAccessToken().getToken());
+                Log.i(TAG, "Hello" + loginResult.getAccessToken().getToken());
 
                 GraphRequest request = GraphRequest.newMeRequest(
                         loginResult.getAccessToken(),
@@ -160,13 +154,8 @@ public class SignUp extends AppCompatActivity {
                                     String email = object.getString("email");
                                     String name = object.getString("name");
 
-                                    Log.v(Global.debug_text, "id fb"+id);
-                                    Log.v(Global.debug_text, "email fb"+email);
-                                    Log.v(Global.debug_text, "name fb"+name);
-
-                                    SharedPreferences shared = getApplicationContext().getSharedPreferences(id, MODE_PRIVATE);
+                                    SharedPreferences shared = getApplicationContext().getSharedPreferences("session", MODE_PRIVATE);
                                     SharedPreferences.Editor editor = shared.edit();
-
 
                                     editor.putBoolean("loggedIn", true); // Storing boolean - true/false
                                     editor.putString("id_facebook", id); // Storing boolean - true/false
@@ -200,20 +189,18 @@ public class SignUp extends AppCompatActivity {
         });
 
 
-        mAuthListener = new FirebaseAuth.AuthStateListener(){
-
-
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
 
                 FirebaseUser user = firebaseAuth.getCurrentUser();
 
-                if (user!=null){
+                if (user != null) {
                     name = user.getDisplayName();
-                    Toast.makeText(SignUp.this,""+user.getDisplayName(),Toast.LENGTH_LONG).show();
-                    Log.d(Global.debug_text, "user connected"+user.getDisplayName());
-                }else {
-                    Toast.makeText(SignUp.this,"something went wrong",Toast.LENGTH_LONG).show();
+                    Toast.makeText(SignUp.this, "" + user.getDisplayName(), Toast.LENGTH_LONG).show();
+                    Log.d(Global.debug_text, "user connected" + user.getDisplayName());
+                } else {
+                    Toast.makeText(SignUp.this, "something went wrong", Toast.LENGTH_LONG).show();
                 }
             }
         };
@@ -223,7 +210,6 @@ public class SignUp extends AppCompatActivity {
         setupViewPager(mViewPager);
 
     }
-
 
 
     @Override
@@ -244,11 +230,11 @@ public class SignUp extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             Log.w(Global.debug_text, "signInWithCredential", task.getException());
                             String user_id = Profile.getCurrentProfile().getId();
-                            Log.w(Global.debug_text, "facebook user ud "+user_id, task.getException());
+                            Log.w(Global.debug_text, "facebook user ud " + user_id, task.getException());
 
 
                             String session_id = new FacebookUtils().getFacebookId();
-                            SharedPreferences shared = getSharedPreferences(session_id, MODE_PRIVATE);
+                            SharedPreferences shared = getSharedPreferences("session", MODE_PRIVATE);
                             String session_name = shared.getString("name", "");
                             String session_email = shared.getString("email", "");
 
@@ -264,7 +250,7 @@ public class SignUp extends AppCompatActivity {
                                 db = new SQLHelper(ct);
 //                                db = new SQLHelper(getContext());
 
-                                if(db.doesUserExist(session_email)){
+                                if (db.doesUserExist(session_email)) {
                                     Log.d(Global.debug_text, "fb user already exists in db");
                                 } else {
 //                                    int id = Integer.valueOf(session_id); //id de la session facebook
@@ -293,35 +279,27 @@ public class SignUp extends AppCompatActivity {
                                         e.printStackTrace();
                                     }
 
-
                                     User.connectUser(ct, user);
-                                    Log.v(Global.debug_text, "utilisateur fb inséré");
-
                                     db_firebase.collection("Users").add(user);
-                                    Log.v(Global.debug_text, "utilisateur fb inséré à firebase");
-
                                 }
 
                             } catch (IOException e) {
                                 e.printStackTrace();
-                                Log.v(Global.debug_text, "fb login db error"+e);
+                                Log.v(Global.debug_text, "fb login db error" + e);
                             }
-
 
                             startActivity(new Intent(SignUp.this, MainActivity.class));
                             finish();
-                        }else{
+                        } else {
                             Toast.makeText(SignUp.this, "Authentication error",
                                     Toast.LENGTH_SHORT).show();
                         }
-
-
                     }
                 });
     }
 
-    private void setupViewPager(ViewPager viewPager){
-        if(!ActivityUtils.getInstance().isLoggedInFacebook()){
+    private void setupViewPager(ViewPager viewPager) {
+        if (!ActivityUtils.getInstance().isLoggedInFacebook()) {
             SectionsStatePagerAdapter adapter = new SectionsStatePagerAdapter(getSupportFragmentManager());
             adapter.addFragment(new Fragment1(), "Fragment1");
             adapter.addFragment(new Fragment2(), "Fragment2");

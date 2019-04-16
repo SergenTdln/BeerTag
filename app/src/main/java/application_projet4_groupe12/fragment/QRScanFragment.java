@@ -2,6 +2,8 @@ package application_projet4_groupe12.fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,12 +18,15 @@ import com.google.zxing.Result;
 import java.util.ArrayList;
 import java.util.List;
 
+import application_projet4_groupe12.activities.MainActivity;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.activities.QRResultActivity;
 import application_projet4_groupe12.data.preference.AppPreference;
 import application_projet4_groupe12.data.preference.PrefKey;
 import application_projet4_groupe12.utils.ActivityUtils;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class QRScanFragment extends Fragment  {
 
@@ -176,5 +181,7 @@ public class QRScanFragment extends Fragment  {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+
 
 }

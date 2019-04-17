@@ -39,8 +39,11 @@ import application_projet4_groupe12.exceptions.UnknownUserException;
 import application_projet4_groupe12.exceptions.WrongDateFormatException;
 import application_projet4_groupe12.exceptions.WrongEmailFormatException;
 
+import static android.icu.text.MessagePattern.ArgType.SELECT;
+import static android.view.Gravity.END;
 import static application_projet4_groupe12.activities.SignUp.db;
 import static application_projet4_groupe12.utils.AppUtils.occurrences;
+import static com.google.common.net.HttpHeaders.FROM;
 
 
 /**
@@ -1380,6 +1383,16 @@ public class SQLHelper extends SQLiteOpenHelper {
         }
         return candidate;
     }
+
+    public boolean isUserExists(long id) {
+        Cursor cursor = null;
+        cursor = myDB.rawQuery("SELECT * FROM User WHERE _id =" + id,null);
+        if (cursor != null && cursor.getCount() > 0) {
+            return true;
+        }
+        return false;
+    }
+
     public void TransferUser() {
         Log.e("TAG", "Hello");
         dab.collection("Users")
@@ -1388,41 +1401,53 @@ public class SQLHelper extends SQLiteOpenHelper {
                     public void onComplete(Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                String username = document.getString("username");
-                                Log.e("TAG", "username: " + username);
-                                String password = document.getString("passwordHashed");
-                                Log.e("TAG", "password: " + password);
-                                String created_on = document.getString("creationDate");
-                                Log.e("TAG", "created_on: " + created_on);
-                                String firstName = document.getString("firstName");
-                                Log.e("TAG", "firstName: " + firstName);
-                                String lastName = document.getString("lastName");
-                                Log.e("TAG", "lastName: " + lastName);
-                                String birthday = document.getString("birthday");
-                                Log.e("TAG", "birthday: " + birthday);
-                                String image_path = document.getString("imagePath");
-                                Log.e("TAG", "image_path: " + image_path);
-                                boolean admin = document.getBoolean("admin");
-                                Log.e("TAG", "admin: " + admin);
                                 long id = (new Double(document.getDouble("id"))).longValue();
                                 Log.e("TAG", "id : " + id);
-                                ContentValues cv = new ContentValues();
-                                cv.put("\"_id\"", id);
-                                cv.put("\"username\"", username);
-                                cv.put("\"password\"", password);
-                                cv.put("\"created_on\"", created_on);
-                                cv.put("\"first_name\"", firstName);
-                                cv.put("\"last_name\"", lastName);
-                                cv.put("\"birthday\"", birthday);
-                                cv.put("\"image_path\"", image_path);
-                                myDB.insert("User", null, cv);
-                            }
+                                if (!isUserExists(id)) {
+                                    String lastName = document.getString("lastName");
+                                    Log.e("TAG", "lastName: " + lastName);
+                                    String firstName = document.getString("firstName");
+                                    Log.e("TAG", "firstName: " + firstName);
+                                    String username = document.getString("username");
+                                    Log.e("TAG", "username: " + username);
+                                    String password = document.getString("passwordHashed");
+                                    Log.e("TAG", "password: " + password);
+                                    String created_on = document.getString("creationDate");
+                                    Log.e("TAG", "created_on: " + created_on);
+                                    String birthday = document.getString("birthday");
+                                    Log.e("TAG", "birthday: " + birthday);
+                                    String image_path = document.getString("imagePath");
+                                    Log.e("TAG", "image_path: " + image_path);
+                                    boolean admin = document.getBoolean("admin");
+                                    Log.e("TAG", "admin: " + admin);
+                                    ContentValues cv = new ContentValues();
+                                    cv.put("\"_id\"", id);
+                                    cv.put("\"username\"", username);
+                                    cv.put("\"password\"", password);
+                                    cv.put("\"created_on\"", created_on);
+                                    cv.put("\"first_name\"", firstName);
+                                    cv.put("\"last_name\"", lastName);
+                                    cv.put("\"birthday\"", birthday);
+                                    cv.put("\"image_path\"", image_path);
+                                    myDB.insert("User", null, cv);
+                                }
+                                }
                         } else {
                             Log.e("TAG", "Error getting documents: ", task.getException());
                         }
                     }
                 });
     }
+
+    public boolean isAddressExists(long id) {
+        Cursor cursor = null;
+        cursor = myDB.rawQuery("SELECT * FROM Address WHERE _id =" + id,null);
+        if (cursor != null && cursor.getCount() > 0) {
+            return true;
+        }
+        return false;
+    }
+
     public void TransferAddress() {
         dab.collection("Users")
                 .get()
@@ -1430,22 +1455,24 @@ public class SQLHelper extends SQLiteOpenHelper {
                     public void onComplete(Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                String city = document.getString("city");
-                                Log.e("TAG", "username: " + city);
-                                String country = document.getString("country");
-                                Log.e("TAG", "password: " + country);
-                                String numbers = document.getString("numbers");
-                                Log.e("TAG", "created_on: " + numbers);
-                                String street = document.getString("street");
-                                Log.e("TAG", "firstName: " + street);
                                 long id = (new Double(document.getDouble("id"))).longValue();
                                 Log.e("TAG", "id : " + id);
-                                ContentValues cv = new ContentValues();
-                                cv.put("\"city\"", city);
-                                cv.put("\"country\"", country);
-                                cv.put("\"numbers\"", numbers);
-                                cv.put("\"_id\"", id);
-                                myDB.insert("Address", null, cv);
+                                if (!isAddressExists(id)) {
+                                    String city = document.getString("city");
+                                    Log.e("TAG", "username: " + city);
+                                    String country = document.getString("country");
+                                    Log.e("TAG", "password: " + country);
+                                    String numbers = document.getString("numbers");
+                                    Log.e("TAG", "created_on: " + numbers);
+                                    String street = document.getString("street");
+                                    Log.e("TAG", "firstName: " + street);
+                                    ContentValues cv = new ContentValues();
+                                    cv.put("\"city\"", city);
+                                    cv.put("\"country\"", country);
+                                    cv.put("\"numbers\"", numbers);
+                                    cv.put("\"_id\"", id);
+                                    myDB.insert("Address", null, cv);
+                                }
                             }
                         } else {
                             Log.e("TAG", "Error getting documents: ", task.getException());
@@ -1453,6 +1480,16 @@ public class SQLHelper extends SQLiteOpenHelper {
                     }
                 });
     }
+
+    public boolean isAdmin_userExists(long id_partner,long id_user) {
+        Cursor cursor = null;
+        cursor = myDB.rawQuery("SELECT * FROM Admin_user WHERE id_partner =" + id_partner + " AND id_user =" + id_user,null);
+        if (cursor != null && cursor.getCount() > 0) {
+            return true;
+        }
+        return false;
+    }
+
     public void TransferAdmin_user() {
         dab.collection("Admin_user")
                 .get()
@@ -1464,10 +1501,12 @@ public class SQLHelper extends SQLiteOpenHelper {
                                 Log.e("TAG", "id_partner : " + id_partner);
                                 long id_user = (new Double(document.getDouble("id_user")).longValue());
                                 Log.e("TAG", "id_user: " + id_user);
-                                ContentValues cv = new ContentValues();
-                                cv.put("\"id_partner\"", id_partner);
-                                cv.put("\"id_user\"", id_user);
-                                myDB.insert("Admin_user", null, cv);
+                                if (!isAdmin_userExists(id_partner, id_user)){
+                                    ContentValues cv = new ContentValues();
+                                    cv.put("\"id_partner\"", id_partner);
+                                    cv.put("\"id_user\"", id_user);
+                                    myDB.insert("Admin_user", null, cv);
+                                }
                             }
                         } else {
                             Log.e("TAG", "Error getting documents: ", task.getException());

@@ -55,7 +55,7 @@ public class QRResultActivity extends AppCompatActivity {
         initViews();
         initFunctionality();
 
-        if(initCheckQrExp()){
+        if(!initCheckQrExp()) {
             loadShareActivity();
         } else{
             loadExpiredActivity();
@@ -137,11 +137,17 @@ public class QRResultActivity extends AppCompatActivity {
     }
 
     private void loadShareActivity(){
+        SharedPreferences shared = getSharedPreferences("session", MODE_PRIVATE);
+        shared.edit().putBoolean("expired_qr", false);
+        shared.edit().apply();
         ActivityUtils.getInstance().invokeActivity(this, ShareActivity.class, true);
         finish();
     }
 
     private void loadExpiredActivity(){
+        SharedPreferences shared = getSharedPreferences("session", MODE_PRIVATE);
+        shared.edit().putBoolean("expired_qr", false);
+        shared.edit().apply();
         ActivityUtils.getInstance().invokeActivity(this, ExpiredActivity.class, true);
         finish();
     }
@@ -151,6 +157,7 @@ public class QRResultActivity extends AppCompatActivity {
         SharedPreferences shared = getSharedPreferences("session", MODE_PRIVATE);
         Boolean expired_qr = shared.getBoolean("expired_qr", false);
         if(expired_qr){
+            Log.v(Global.debug_text,"expired initcheckqrexp");
             expired = true;
 //            startActivity(new Intent(QRResultActivity.this, MainActivity.class));
 //            finish();

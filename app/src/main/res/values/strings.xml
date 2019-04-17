@@ -60,4 +60,12 @@
 
     <string name="facebook_app_id" translatable="false">586274028466486</string>
     <string name="fb_login_protocol_scheme" translatable="false">fb586274028466486</string>
+
+
+    <string name="alcool_sensi_text" translatable="false">
+        Nous avons constaté que vous venez de scanner plusieurs fois à la suite. Nous vous invitons donc à faire attention à votre consomation.
+        Beer Tag est juste un outil pour vous faciliter la vie, Beer Tag conseille à ses utilisateurs d\'être responsables.
+    </string>
+    <string name="alcool_notification_title" translatable="false">Attention à votre consomation !</string>
+    <string name="alcool_notification_text" translatable="false">Attention à votre consomation, vous enchainez les achats, buvez de manière responsable</string>
 </resources>

@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onBackPressed() {
-        if(active){
+        if (active) {
             AppUtils.tapToExit(this);
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout_user);
@@ -139,8 +139,8 @@ public class MainActivity extends AppCompatActivity
             navHeaderText2.setText(userUsername);
 
             System.err.println("Loading profile picture in Navigation View");
-            Bitmap bitmap = BitmapFactory.decodeFile(this.getFilesDir()+"/"+User.connectedUser.getImagePath());
-            if(bitmap!=null) {
+            Bitmap bitmap = BitmapFactory.decodeFile(this.getFilesDir() + "/" + User.connectedUser.getImagePath());
+            if (bitmap != null) {
                 navHeaderImage.setImageBitmap(bitmap);
             }
         }
@@ -193,7 +193,7 @@ public class MainActivity extends AppCompatActivity
                     finish();
                 }
 
-                SharedPreferences shared_login_choice  =getSharedPreferences("session",Context.MODE_PRIVATE);
+                SharedPreferences shared_login_choice = getSharedPreferences("session", Context.MODE_PRIVATE);
                 shared_login_choice.edit().clear().apply();
 
                 //couper la session firebase
@@ -262,23 +262,22 @@ public class MainActivity extends AppCompatActivity
         navigationView.bringToFront();
     }
 
-    private void handleInterfaceButton(){
-        if(User.connectedUser.isAdmin()) {
+    private void handleInterfaceButton() {
+        if (User.connectedUser.isAdmin()) {
             MenuItem item_change_interface = findViewById(R.id.change_interface_user);
-            if(item_change_interface != null ){
+            if (item_change_interface != null) {
                 item_change_interface.setVisible(true);
             }
         }
     }
 
 
-
-    private void AdminChoiceCheck(){
+    private void AdminChoiceCheck() {
         shared_login_choice = getSharedPreferences("session", MODE_PRIVATE);
         boolean choice_made = shared_login_choice.getBoolean("loggin_chosed", false);
-        Log.v(Global.debug_text,"choice made "+choice_made);
-        Log.v(Global.debug_text,"is admin"+User.connectedUser.isAdmin());
-        if( User.connectedUser.isAdmin() &&  (!choice_made)){
+        Log.v(Global.debug_text, "choice made " + choice_made);
+        Log.v(Global.debug_text, "is admin" + User.connectedUser.isAdmin());
+        if (User.connectedUser.isAdmin() && (!choice_made)) {
             startActivity(new Intent(MainActivity.this, LoginChoiceActivity.class));
             finish();
         }

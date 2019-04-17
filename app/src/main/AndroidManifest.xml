@@ -63,6 +63,14 @@
         <activity android:name=".activities.browse_points.BrowsePointsActivity"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".activities.AlcoolSensiActivity"
+            android:parentActivityName=".activities.QRResultActivity"
+            android:launchMode="singleTask"
+            android:taskAffinity=""
+            android:excludeFromRecents="true">
+        </activity>
+
         <activity android:name=".activities.browse_clients.BrowseClientsActivity"
             android:screenOrientation="portrait" />
 

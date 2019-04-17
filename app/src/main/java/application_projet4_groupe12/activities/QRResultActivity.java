@@ -1,27 +1,28 @@
 package application_projet4_groupe12.activities;
 
-import android.Manifest;
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.support.annotation.NonNull;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,7 +33,6 @@ import application_projet4_groupe12.data.preference.AppPreference;
 import application_projet4_groupe12.data.preference.PrefKey;
 import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.utils.ActivityUtils;
-import application_projet4_groupe12.utils.AppUtils;
 import application_projet4_groupe12.utils.Encryption;
 import application_projet4_groupe12.utils.Global;
 
@@ -46,7 +46,7 @@ public class QRResultActivity extends AppCompatActivity {
     private TextView result;
     private FloatingActionButton copyButton;
 
-    static final int REQUEST_IMAGE_CAPTURE = 1;
+    private int REQUEST_CODE = 477;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,9 +55,11 @@ public class QRResultActivity extends AppCompatActivity {
         initViews();
         initFunctionality();
 
-        if(!initCheckQrExp()) {
+
+        //TODO : Pas bon, ca met le share meme si expiré, vérifier les valeurs en session
+        if (!hasQrExpired()) {
             loadShareActivity();
-        } else{
+        } else {
             loadExpiredActivity();
         }
     }
@@ -77,6 +79,8 @@ public class QRResultActivity extends AppCompatActivity {
     }
 
     private void initFunctionality() {
+        increaseCount();
+        checkConsomation();
 
         getSupportActionBar().setTitle(getString(R.string.result));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -113,30 +117,20 @@ public class QRResultActivity extends AppCompatActivity {
         }
     }
 
-//    private void initListeners() {
-//        copyButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                AppUtils.copyToClipboard(mContext, result.getText().toString());
-//            }
-//        });
-//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-//                finish()
                 startActivity(new Intent(QRResultActivity.this, AdminActivity.class));
                 finish();
-//                return true;
 
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    private void loadShareActivity(){
+    private void loadShareActivity() {
         SharedPreferences shared = getSharedPreferences("session", MODE_PRIVATE);
         shared.edit().putBoolean("expired_qr", false);
         shared.edit().apply();
@@ -144,7 +138,7 @@ public class QRResultActivity extends AppCompatActivity {
         finish();
     }
 
-    private void loadExpiredActivity(){
+    private void loadExpiredActivity() {
         SharedPreferences shared = getSharedPreferences("session", MODE_PRIVATE);
         shared.edit().putBoolean("expired_qr", false);
         shared.edit().apply();
@@ -152,18 +146,76 @@ public class QRResultActivity extends AppCompatActivity {
         finish();
     }
 
-    private Boolean initCheckQrExp(){
-        Boolean expired = false;
+    private Boolean hasQrExpired() {
+        Boolean has_expired = false;
         SharedPreferences shared = getSharedPreferences("session", MODE_PRIVATE);
         Boolean expired_qr = shared.getBoolean("expired_qr", false);
-        if(expired_qr){
-            Log.v(Global.debug_text,"expired initcheckqrexp");
-            expired = true;
-//            startActivity(new Intent(QRResultActivity.this, MainActivity.class));
-//            finish();
+        if (expired_qr) {
+            Log.v(Global.debug_text, "expired initcheckqrexp");
+            has_expired = true;
         }
-        return expired;
+        return has_expired;
     }
 
+    private void createWarningNotification() {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        String NOTIFICATION_CHANNEL = "n_alcool";
+        int NOTIFICATION_ID = 1;
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.alcool);
+
+        Intent notifyIntent = new Intent(this, AlcoolSensiActivity.class);
+        // Set the Activity to start in a new, empty task
+        notifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        // Create the PendingIntent
+        PendingIntent notifyPendingIntent = PendingIntent.getActivity(
+                this, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT
+        );
+
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL);
+        notificationBuilder.setContentIntent(notifyPendingIntent);
+
+        notificationBuilder.setAutoCancel(true)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setWhen(System.currentTimeMillis())
+                .setSmallIcon(R.drawable.ic_launcher)
+                .setTicker("Beer Tag")
+                .setPriority(Notification.PRIORITY_MAX)
+                .setContentTitle(getResources().getString(R.string.alcool_notification_title))
+                .setContentText(getResources().getString(R.string.alcool_notification_text))
+//                .setStyle(new NotificationCompat.BigTextStyle()
+//                        .bigText(getResources().getString(R.string.alcool_notification_text)))
+                .setLargeIcon(bitmap)
+                .setStyle(new NotificationCompat.BigPictureStyle()
+                        .bigPicture(bitmap)
+                        .bigLargeIcon(null));
+
+        notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
+    }
+
+    private void increaseCount(){
+        SharedPreferences session = getSharedPreferences("session", MODE_PRIVATE);
+        SharedPreferences.Editor editor = session.edit();
+
+        int prev_count = 0;
+        prev_count = session.getInt("scan_count", prev_count);
+        int new_count = prev_count + 1;
+        Log.v(Global.debug_text, "scan count updated "+new_count);
+        editor.putInt("scan_count", new_count);
+        editor.apply();
+
+    }
+
+
+    private void checkConsomation(){
+        SharedPreferences shared = getSharedPreferences("session", MODE_PRIVATE);
+        int scan_count = 0;
+        scan_count = shared.getInt("scan_count", scan_count);
+        Log.v(Global.debug_text,"scan_count "+scan_count);
+
+        if(scan_count >= 3){
+            createWarningNotification();
+        }
+    }
 }
 

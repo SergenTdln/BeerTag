@@ -11,7 +11,7 @@
 
     <!--Includes background (main window)-->
     <include
-        layout="@layout/admin_app_bar"
+        layout="@layout/app_bar_admin"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -21,9 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:fitsSystemWindows="true"
-        app:menu="@menu/activity_main_navigation_drawer_admin"
-        app:headerLayout="@layout/admin_main_navigation_header" />
+        android:fitsSystemWindows="true" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/admin_viewpager"

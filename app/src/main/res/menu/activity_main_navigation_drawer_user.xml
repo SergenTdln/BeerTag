@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
@@ -29,6 +30,12 @@
                 android:id="@+id/nav_logout"
                 android:icon="@drawable/ic_menu_send"
                 android:title="@string/nav_logout" />
+
+            <item android:title="Changer d'interface"
+                android:id="@+id/change_interface_user"
+                android:icon="@drawable/common_full_open_on_phone"
+                android:visibility="gone"/>
+
         </menu>
     </item>
 

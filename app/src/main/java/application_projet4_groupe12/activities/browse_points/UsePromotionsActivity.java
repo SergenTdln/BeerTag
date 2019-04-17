@@ -41,20 +41,13 @@ public class UsePromotionsActivity extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.use_promotions_listview);
         fillListView(listView, promotions);
         registerForContextMenu(listView);
-
-        // TODO @Martin
-        // Make an Array Adapter with all promotions
-        // Each view is a button
-        // Each button triggers the Promotion :
-        //  -> QR code for the Partner to scan ?
-        //  -> Substracts the points from DB
     }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         getMenuInflater().inflate(R.menu.use_promotion_context, menu);
-        menu.setHeaderIcon(R.drawable.ic_launcher_foreground); //TODO change this icon
+        //menu.setHeaderIcon(R.drawable.ic_launcher_foreground); //TODO change this icon
         menu.setHeaderTitle("Activate the promotion"); //TODO use string resources @Martin
 
     }
@@ -99,7 +92,7 @@ public class UsePromotionsActivity extends AppCompatActivity {
             DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             String today = formatter.format(date);
 
-            boolean fromDB = db.usePromotion(vh.promoID, user, today);
+            boolean fromDB = db.usePromotion(vh.promoID, vh.shopID, user, today);
             boolean fromList = removeFromList(list, vh.promoID);
 
             return (fromDB && fromList);

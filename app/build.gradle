@@ -63,7 +63,7 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:27.1.1'
 
     implementation 'com.squareup.picasso:picasso:2.5.0'
-    implementation 'com.firebase:firebase-client-android:2.5.0'
+    implementation 'com.android.support:mediarouter-v7:27.1.1'
 }
-apply plugin: 'com.google.gms.google-services'
+//apply plugin: 'com.google.gms.google-services'
 

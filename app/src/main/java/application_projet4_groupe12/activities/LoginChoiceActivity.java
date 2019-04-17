@@ -1,10 +1,8 @@
 package application_projet4_groupe12.activities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
@@ -12,11 +10,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
-import com.crashlytics.android.Crashlytics;
-
 import application_projet4_groupe12.R;
-import application_projet4_groupe12.utils.ActivityUtils;
-import io.fabric.sdk.android.Fabric;
 
 public class LoginChoiceActivity extends AppCompatActivity {
 
@@ -33,7 +27,7 @@ public class LoginChoiceActivity extends AppCompatActivity {
         goToAdmin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedPreferences shared = getApplicationContext().getSharedPreferences("login_choice", MODE_PRIVATE);
+                SharedPreferences shared = getApplicationContext().getSharedPreferences("session", MODE_PRIVATE);
                 SharedPreferences.Editor editor = shared.edit();
                 editor.putBoolean("loggin_chosed", true); // Storing boolean - true/false
                 editor.commit();
@@ -46,7 +40,7 @@ public class LoginChoiceActivity extends AppCompatActivity {
         goToUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedPreferences shared = getApplicationContext().getSharedPreferences("login_choice", MODE_PRIVATE);
+                SharedPreferences shared = getApplicationContext().getSharedPreferences("session", MODE_PRIVATE);
                 SharedPreferences.Editor editor = shared.edit();
                 editor.putBoolean("loggin_chosed", true); // Storing boolean - true/false
                 editor.commit();

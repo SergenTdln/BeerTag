@@ -210,7 +210,7 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
             //Firebase stuff
             dab.collection("Partner").add(partner);
             Toast.makeText(getActivity(), "Partner created", Toast.LENGTH_SHORT).show();
-            //TODO add the first admin to Firebase as well
+            //TODO add the first admin user to Firebase as well
             Log.d(Global.debug_text, "Firebase instance: " + mAuth);
             /**
              * Useless for Partner creation IMO

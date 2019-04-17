@@ -46,6 +46,8 @@ public class UsePromotionsRowAdapter extends ArrayAdapter<Promotion> {
 
         Promotion promotion = getItem(position);
         if(promotion!=null) {
+            viewHolder.promoID = promotion.getId();
+            viewHolder.shopID = promotion.getIdShop();
             viewHolder.pointsRequired.setText(String.valueOf(promotion.getPointsRequired()));
             viewHolder.pointsRequiredTitle.setText("Points required");
             viewHolder.descr.setText(promotion.getDescription());
@@ -55,13 +57,13 @@ public class UsePromotionsRowAdapter extends ArrayAdapter<Promotion> {
             viewHolder.reusability.setText(isReusable);
             viewHolder.promotionPic.setImageBitmap(BitmapFactory.decodeFile(convertView.getContext().getFilesDir() + "/" + promotion.getImagePath()));
             //TODO Use string resources instead @Martin
-            viewHolder.promoID = promotion.getId();
         }
         return convertView;
     }
 
     class ViewHolder {
         long promoID;
+        long shopID;
         TextView pointsRequired;
         TextView pointsRequiredTitle;
         TextView descr;

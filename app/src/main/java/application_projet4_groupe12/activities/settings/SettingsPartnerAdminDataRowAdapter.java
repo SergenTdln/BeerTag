@@ -49,8 +49,6 @@ public class SettingsPartnerAdminDataRowAdapter extends ArrayAdapter<User> {
         return convertView;
     }
 
-    //TODO allow to delete an admin by long-pressing the view ? be careful about not allowing to delete the last one, though ! @Martin
-
     class ViewHolder {
         TextView userFullName;
         TextView username;

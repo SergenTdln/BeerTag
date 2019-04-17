@@ -202,7 +202,6 @@ public class AppUtils {
         }
     }
 
-
     public static boolean changeProfilePicture(Context c, Partner partner){
         //TODO
         return false;

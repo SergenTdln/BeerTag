@@ -1514,6 +1514,16 @@ public class SQLHelper extends SQLiteOpenHelper {
                     }
                 });
     }
+
+    public boolean isFavorite_shopsExists(long id_shop,long id_user) {
+        Cursor cursor = null;
+        cursor = myDB.rawQuery("SELECT * FROM Favorite_shops WHERE id_partner =" + id_shop + " AND id_user =" + id_user,null);
+        if (cursor != null && cursor.getCount() > 0) {
+            return true;
+        }
+        return false;
+    }
+
     public void TransferFavorite_shops() {
         dab.collection("Favorite_shops")
                 .get()
@@ -1525,10 +1535,12 @@ public class SQLHelper extends SQLiteOpenHelper {
                                 Log.e("TAG", "id : " + id_shop);
                                 long id_user = (new Double(document.getDouble("id_user"))).longValue();
                                 Log.e("TAG", "id : " + id_user);
-                                ContentValues cv = new ContentValues();
-                                cv.put("\"id_shop\"", id_shop);
-                                cv.put("\"id_user\"", id_user);
-                                myDB.insert("Favorite_shops", null, cv);
+                                if (!isFavorite_shopsExists(id_shop, id_user)) {
+                                    ContentValues cv = new ContentValues();
+                                    cv.put("\"id_shop\"", id_shop);
+                                    cv.put("\"id_user\"", id_user);
+                                    myDB.insert("Favorite_shops", null, cv);
+                                }
                             }
                         } else {
                             Log.e("TAG", "Error getting documents: ", task.getException());
@@ -1536,6 +1548,16 @@ public class SQLHelper extends SQLiteOpenHelper {
                     }
                 });
     }
+
+    public boolean isPromotionExists(long id) {
+        Cursor cursor = null;
+        cursor = myDB.rawQuery("SELECT * FROM Promotion WHERE _id =" + id,null);
+        if (cursor != null && cursor.getCount() > 0) {
+            return true;
+        }
+        return false;
+    }
+
     public void TransferPromotion() {
         dab.collection("Promotion")
                 .get()
@@ -1545,33 +1567,35 @@ public class SQLHelper extends SQLiteOpenHelper {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 long id = (new Double(document.getDouble("id"))).longValue();
                                 Log.e("TAG", "id : " + id);
-                                boolean active = document.getBoolean("active");
-                                Log.e("TAG", "active: " + active);
-                                String description = document.getString("description");
-                                Log.e("TAG", "description: " + description);
-                                long id_partner = (new Double(document.getDouble("id_partner"))).longValue();
-                                Log.e("TAG", "id : " + id_partner);
-                                long id_shop = (new Double(document.getDouble("id_shop"))).longValue();
-                                Log.e("TAG", "id : " + id_shop);
-                                String end_date = document.getString("end_date");
-                                Log.e("TAG", "end_date: " + end_date);
-                                String image_path = document.getString("image_path");
-                                Log.e("TAG", "image_path: " + image_path);
-                                boolean is_reusable = document.getBoolean("is_reusable");
-                                Log.e("TAG", "is_reusable: " + is_reusable);
-                                long points_required = (new Double(document.getDouble("points_required"))).longValue();
-                                Log.e("TAG", "points_required : " + points_required);
-                                ContentValues cv = new ContentValues();
-                                cv.put("\"_id\"", id);
-                                cv.put("\"id_partner\"", id_partner);
-                                cv.put("\"id_shop\"", id_shop);
-                                cv.put("\"points_required\"", points_required);
-                                cv.put("\"is_reusable\"", is_reusable);
-                                cv.put("\"description\"", description);
-                                cv.put("\"image_path\"", image_path);
-                                cv.put("\"active\"", active);
-                                cv.put("\"end_date\"", end_date);
-                                myDB.insert("Promotion", null, cv);
+                                if (!isPromotionExists(id)) {
+                                    boolean active = document.getBoolean("active");
+                                    Log.e("TAG", "active: " + active);
+                                    String description = document.getString("description");
+                                    Log.e("TAG", "description: " + description);
+                                    long id_partner = (new Double(document.getDouble("id_partner"))).longValue();
+                                    Log.e("TAG", "id : " + id_partner);
+                                    long id_shop = (new Double(document.getDouble("id_shop"))).longValue();
+                                    Log.e("TAG", "id : " + id_shop);
+                                    String end_date = document.getString("end_date");
+                                    Log.e("TAG", "end_date: " + end_date);
+                                    String image_path = document.getString("image_path");
+                                    Log.e("TAG", "image_path: " + image_path);
+                                    boolean is_reusable = document.getBoolean("is_reusable");
+                                    Log.e("TAG", "is_reusable: " + is_reusable);
+                                    long points_required = (new Double(document.getDouble("points_required"))).longValue();
+                                    Log.e("TAG", "points_required : " + points_required);
+                                    ContentValues cv = new ContentValues();
+                                    cv.put("\"_id\"", id);
+                                    cv.put("\"id_partner\"", id_partner);
+                                    cv.put("\"id_shop\"", id_shop);
+                                    cv.put("\"points_required\"", points_required);
+                                    cv.put("\"is_reusable\"", is_reusable);
+                                    cv.put("\"description\"", description);
+                                    cv.put("\"image_path\"", image_path);
+                                    cv.put("\"active\"", active);
+                                    cv.put("\"end_date\"", end_date);
+                                    myDB.insert("Promotion", null, cv);
+                                }
                             }
                         } else {
                             Log.e("TAG", "Error getting documents: ", task.getException());
@@ -1579,6 +1603,16 @@ public class SQLHelper extends SQLiteOpenHelper {
                     }
                 });
     }
+
+    public boolean isShop_framesExists(long id) {
+        Cursor cursor = null;
+        cursor = myDB.rawQuery("SELECT * FROM Shop_frames WHERE _id =" + id,null);
+        if (cursor != null && cursor.getCount() > 0) {
+            return true;
+        }
+        return false;
+    }
+
     public void TransferShop_frames() {
         dab.collection("Shop_frames")
                 .get()
@@ -1588,14 +1622,17 @@ public class SQLHelper extends SQLiteOpenHelper {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 long id = (new Double(document.getDouble("id"))).longValue();
                                 Log.e("TAG", "_id : " + id);
-                                long id_shop = (new Double(document.getDouble("id_shop"))).longValue();
-                                Log.e("TAG", "id_shop : " + id_shop);
-                                String image_path = document.getString("image_path");
-                                Log.e("TAG", "image_path: " + image_path);
-                                ContentValues cv = new ContentValues();
-                                cv.put("\"id_shop\"", id_shop);
-                                cv.put("\"image_path\"", image_path);
-                                myDB.insert("Shop_frames", null, cv);
+                                if (!isShop_framesExists(id)) {
+                                    long id_shop = (new Double(document.getDouble("id_shop"))).longValue();
+                                    Log.e("TAG", "id_shop : " + id_shop);
+                                    String image_path = document.getString("image_path");
+                                    Log.e("TAG", "image_path: " + image_path);
+                                    ContentValues cv = new ContentValues();
+                                    cv.put("\"_id\"", id);
+                                    cv.put("\"id_shop\"", id_shop);
+                                    cv.put("\"image_path\"", image_path);
+                                    myDB.insert("Shop_frames", null, cv);
+                                }
                             }
                         } else {
                             Log.e("TAG", "Error getting documents: ", task.getException());
@@ -1603,6 +1640,16 @@ public class SQLHelper extends SQLiteOpenHelper {
                     }
                 });
     }
+
+    public boolean isShop_locationExists(long id) {
+        Cursor cursor = null;
+        cursor = myDB.rawQuery("SELECT * FROM Shop_location WHERE _id =" + id,null);
+        if (cursor != null && cursor.getCount() > 0) {
+            return true;
+        }
+        return false;
+    }
+
     public void TransferShop_location() {
         dab.collection("Shop_location")
                 .get()
@@ -1612,21 +1659,23 @@ public class SQLHelper extends SQLiteOpenHelper {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 long id = (new Double(document.getDouble("id"))).longValue();
                                 Log.e("TAG", "id : " + id);
-                                String description = document.getString("description");
-                                Log.e("TAG", "description: " + description);
-                                long id_partner = (new Double(document.getDouble("id_partner"))).longValue();
-                                Log.e("TAG", "id : " + id_partner);
-                                long id_address = (new Double(document.getDouble("id_address"))).longValue();
-                                Log.e("TAG", "id : " + id_address);
-                                String created_on = document.getString("created_on");
-                                Log.e("TAG", "created_on: " + created_on);
-                                ContentValues cv = new ContentValues();
-                                cv.put("\"_id\"", id);
-                                cv.put("\"id_partner\"", id_partner);
-                                cv.put("\"id_address\"", id_address);
-                                cv.put("\"description\"", description);
-                                cv.put("\"created_on\"", created_on);
-                                myDB.insert("Shop_location", null, cv);
+                                if (!isShop_locationExists(id)) {
+                                    String description = document.getString("description");
+                                    Log.e("TAG", "description: " + description);
+                                    long id_partner = (new Double(document.getDouble("id_partner"))).longValue();
+                                    Log.e("TAG", "id : " + id_partner);
+                                    long id_address = (new Double(document.getDouble("id_address"))).longValue();
+                                    Log.e("TAG", "id : " + id_address);
+                                    String created_on = document.getString("created_on");
+                                    Log.e("TAG", "created_on: " + created_on);
+                                    ContentValues cv = new ContentValues();
+                                    cv.put("\"_id\"", id);
+                                    cv.put("\"id_partner\"", id_partner);
+                                    cv.put("\"id_address\"", id_address);
+                                    cv.put("\"description\"", description);
+                                    cv.put("\"created_on\"", created_on);
+                                    myDB.insert("Shop_location", null, cv);
+                                }
                             }
                         } else {
                             Log.e("TAG", "Error getting documents: ", task.getException());
@@ -1634,6 +1683,16 @@ public class SQLHelper extends SQLiteOpenHelper {
                     }
                 });
     }
+
+    public boolean isUser_pointsExists(long id_shop,long id_user, long points) {
+        Cursor cursor = null;
+        cursor = myDB.rawQuery("SELECT * FROM User_points WHERE id_shop =" + id_shop + " AND id_user =" + id_user + " AND points =" + points,null);
+        if (cursor != null && cursor.getCount() > 0) {
+            return true;
+        }
+        return false;
+    }
+
     public void TransferUser_points() {
         dab.collection("User_points")
                 .get()
@@ -1647,11 +1706,13 @@ public class SQLHelper extends SQLiteOpenHelper {
                                 Log.e("TAG", "id_user : " + id_user);
                                 long points = (new Double(document.getDouble("points"))).longValue();
                                 Log.e("TAG", "points : " + points);
-                                ContentValues cv = new ContentValues();
-                                cv.put("\"id_user\"", id_user);
-                                cv.put("\"id_shop\"", id_shop);
-                                cv.put("\"points\"", points);
-                                myDB.insert("User_points", null, cv);
+                                if (!isUser_pointsExists(id_shop, id_user, points)) {
+                                    ContentValues cv = new ContentValues();
+                                    cv.put("\"id_user\"", id_user);
+                                    cv.put("\"id_shop\"", id_shop);
+                                    cv.put("\"points\"", points);
+                                    myDB.insert("User_points", null, cv);
+                                }
                             }
                         } else {
                             Log.e("TAG", "Error getting documents: ", task.getException());
@@ -1659,6 +1720,16 @@ public class SQLHelper extends SQLiteOpenHelper {
                     }
                 });
     }
+
+    public boolean isUser_pointsExists(long id_promotion,long id_user, long used_on) {
+        Cursor cursor = null;
+        cursor = myDB.rawQuery("SELECT * FROM User_points WHERE id_promotion =" + id_promotion + " AND id_user =" + id_user + " AND used_on =" + used_on,null);
+        if (cursor != null && cursor.getCount() > 0) {
+            return true;
+        }
+        return false;
+    }
+
     public void TransferUser_promotion() {
         dab.collection("User_promotion")
                 .get()
@@ -1672,11 +1743,13 @@ public class SQLHelper extends SQLiteOpenHelper {
                                 Log.e("TAG", "id_user : " + id_user);
                                 String used_on = document.getString("used_on");
                                 Log.e("TAG", "used_on: " + used_on);
-                                ContentValues cv = new ContentValues();
-                                cv.put("\"id_user\"", id_user);
-                                cv.put("\"id_promotion\"", id_promotion);
-                                cv.put("\"used_on\"", used_on);
-                                myDB.insert("User_promotion", null, cv);
+                                if (!isUser_pointsExists(id_promotion, id_user, used_on)) {
+                                    ContentValues cv = new ContentValues();
+                                    cv.put("\"id_user\"", id_user);
+                                    cv.put("\"id_promotion\"", id_promotion);
+                                    cv.put("\"used_on\"", used_on);
+                                    myDB.insert("User_promotion", null, cv);
+                                }
                             }
                         } else {
                             Log.e("TAG", "Error getting documents: ", task.getException());

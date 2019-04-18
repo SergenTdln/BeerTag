@@ -79,7 +79,7 @@ public class Fragment1 extends Fragment {
                             System.out.println("hashedPassword = "+hashedPassword);
                             if (db.getHashedPassword(email).equals(hashedPassword)) { //If password is correct
 
-                                mAuth.signInWithEmailAndPassword(email, hashedPassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                mAuth.signInWithEmailAndPassword(email, Hash.hash(pass)).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                     @Override
                                     public void onComplete(@NonNull Task<AuthResult> task) {
                                         if (task.isSuccessful()) {

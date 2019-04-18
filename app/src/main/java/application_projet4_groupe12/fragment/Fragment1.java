@@ -50,6 +50,7 @@ public class Fragment1 extends Fragment {
 
     private  CallbackManager callbackManager;
 
+    SharedPreferences shared = getApplicationContext().getSharedPreferences("session", MODE_PRIVATE);
 
     @Nullable
     @Override
@@ -60,7 +61,15 @@ public class Fragment1 extends Fragment {
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
-
+/*
+        if(shared.getString("email",null) != null){
+            User user = db.getUser(shared.getString("email", null));
+            User.connectUser(getContext(), user);
+            Intent intent = new Intent(getActivity(), MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }
+*/
         fragment1_sign_in.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -197,11 +206,15 @@ public class Fragment1 extends Fragment {
                 User.connectUser(getContext(), user);
 
                 /* creation d'une sessions globale lors du login */
-                SharedPreferences shared = getApplicationContext().getSharedPreferences("session", MODE_PRIVATE);
+//                SharedPreferences shared = getApplicationContext().getSharedPreferences("session", MODE_PRIVATE);
                 SharedPreferences.Editor editor = shared.edit();
                 editor.putString("email", email); // Storing string value
                 editor.apply();
                 /* end */
+
+                mAuth.updateCurrentUser(mAuth.getCurrentUser());
+
+
             } else {
                 Toast.makeText(getActivity(),"Username not in database", Toast.LENGTH_SHORT).show();
             }

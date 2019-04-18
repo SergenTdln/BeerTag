@@ -23,6 +23,7 @@
     <string name="default_username">Default Username</string>
 
     <string name="login_fields">Please complete all fields</string>
+    <string name="email_field">Please complete email field</string>
     <string name="login_success">Login success</string>
     <string name="login_check_credentials">Check credentials</string>
 
@@ -37,6 +38,7 @@
     <string name="nav_add_admin">Add an Administrator</string>
     <string name="nav_admin_settings">Settings</string>
     <string name="nav_admin_browse_clients">Look up my clients\' points</string>
+    <string name="nav_find_partner">Find partner</string>
 
     <string name="browse_points_title">Browse my points</string>
     <string name="browse_points_default_partner_name">Default Partner Name</string>
@@ -49,7 +51,6 @@
 
     <string name="settings_title">Settings</string>
     <string name="settings_partner_spinner_default">Please select an User</string>
-
 
 
     <string name="type_here_bar">Generate barcode</string>
@@ -68,4 +69,5 @@
     </string>
     <string name="alcool_notification_title" translatable="false">Attention à votre consomation !</string>
     <string name="alcool_notification_text" translatable="false">Attention à votre consomation, vous enchainez les achats, buvez de manière responsable</string>
+    <string name="title_activity_find_partner">FindPartnerActivity</string>
 </resources>

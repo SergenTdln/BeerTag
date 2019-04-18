@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="application_projet4_groupe12">
+
+    <!--
+         The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
+         Google Maps Android API v2, but you must specify either coarse or fine
+         location permissions for the 'MyLocation' functionality.
+    -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <!-- SD card write permission -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
-    <!-- camera permission -->
-    <uses-permission android:name="android.permission.CAMERA" />
-
-    <!-- vibration permission -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- camera permission -->
+    <uses-permission android:name="android.permission.CAMERA" /> <!-- vibration permission -->
     <uses-permission android:name="android.permission.VIBRATE" />
-
     <uses-permission android:name="android.permission.INTERNET" />
-
-
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <application
         android:allowBackup="true"
@@ -21,82 +24,92 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <!--
+             The API key for Google Maps-based APIs is defined as a string resource.
+             (See the file "res/values/google_maps_api.xml").
+             Note that the API key is linked to the encryption key used to sign the APK.
+             You need a different API key for each encryption key, including the release key that is used to
+             sign the APK for publishing.
+             You can define the keys for the debug and release targets in src/debug/ and src/release/.
+        -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
+        <activity
+            android:name=".activities.find_partner.FindPartnerActivity"
+            android:label="@string/title_activity_find_partner"></activity>
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
 
         <activity
-            android:name="application_projet4_groupe12.activities.SplashActivity"
+            android:name=".activities.SplashActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name="application_projet4_groupe12.activities.SignUp"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name="application_projet4_groupe12.activities.MainActivity"
-            android:screenOrientation="portrait"/>
-
         <activity
-            android:name="application_projet4_groupe12.activities.QRResultActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".activities.MainActivity" />
-
-        <activity android:name="application_projet4_groupe12.activities.QRGenerateActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name="application_projet4_groupe12.activities.QRScanActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".activities.browse_points.BrowsePointsActivity"
+            android:name=".activities.SignUp"
             android:screenOrientation="portrait" />
-
-        <activity android:name=".activities.browse_clients.BrowseClientsActivity"
+        <activity
+            android:name=".activities.MainActivity"
             android:screenOrientation="portrait" />
-
-        <activity android:name=".activities.settings.SettingsUserActivity"
+        <activity
+            android:name=".activities.QRResultActivity"
+            android:parentActivityName=".activities.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activities.QRGenerateActivity"
             android:screenOrientation="portrait" />
-
-        <activity android:name=".activities.settings.SettingsPartnerActivity"
+        <activity
+            android:name=".activities.QRScanActivity"
             android:screenOrientation="portrait" />
-
-        <activity android:name=".activities.browse_points.UsePromotionsActivity"
+        <activity
+            android:name=".activities.browse_points.BrowsePointsActivity"
             android:screenOrientation="portrait" />
-
+        <activity
+            android:name=".activities.browse_clients.BrowseClientsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.settings.SettingsUserActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.settings.SettingsPartnerActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.browse_points.UsePromotionsActivity"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="41392d700fd9c84308e00fbc73c99a03e11941f7" />
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
 
-        <meta-data android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id"/>
-
-        <activity android:name="com.facebook.FacebookActivity"
-            android:configChanges=
-                "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+        <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />
-
         <activity
             android:name="com.facebook.CustomTabActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-
     </application>
 
-
-
-
-
 </manifest>
-
-

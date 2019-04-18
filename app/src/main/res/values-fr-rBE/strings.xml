@@ -47,6 +47,8 @@
     <string name="login_success">Connexion réussie</string>
     <string name="login_check_credentials">Vérifiez vos identifiants</string>
     <string name="settings_partner_spinner_default">Veuillez selectionner un utilisateur</string>
+    <string name="nav_find_partner">Trouver des partenaires</string>
+    <string name="title_activity_find_partner">TrouverDesPartenairesActivity</string>
 
     <!--<string name="login_fields">Veuillez completer tous les champs</string>-->
     <!--<string name="login_success">Connection</string>-->

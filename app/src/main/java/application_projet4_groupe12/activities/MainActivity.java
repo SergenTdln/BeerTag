@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.activities.browse_clients.BrowseClientsActivity;
 import application_projet4_groupe12.activities.browse_points.BrowsePointsActivity;
+import application_projet4_groupe12.activities.find_partner.FindPartnerActivity;
 import application_projet4_groupe12.activities.settings.SettingsPartnerActivity;
 import application_projet4_groupe12.activities.settings.SettingsUserActivity;
 import application_projet4_groupe12.entities.User;
@@ -214,6 +215,9 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_browse_points:
                 //Toast.makeText(getApplicationContext(), "Clicked on Browse points", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(MainActivity.this, BrowsePointsActivity.class));
+                break;
+            case R.id.nav_find_partner:
+                startActivity(new Intent(MainActivity.this, FindPartnerActivity.class));
                 break;
             case R.id.nav_settings:
                 startActivity(new Intent(MainActivity.this, SettingsUserActivity.class));

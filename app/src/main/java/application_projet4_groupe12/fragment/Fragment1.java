@@ -76,7 +76,7 @@ public class Fragment1 extends Fragment {
                 else {
                     try {
                         db = new SQLHelper(getContext());
-                        if(db.doesUserExist(email)) {
+                        if(true) {
                             String hashedPassword = Hash.hash(pass);
                             System.out.println("hashedPassword = "+hashedPassword);
 /*
@@ -113,6 +113,7 @@ public class Fragment1 extends Fragment {
                         } else {
                             Toast.makeText(getActivity(), "This username does not exist", Toast.LENGTH_SHORT).show();
                         }
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     } finally {

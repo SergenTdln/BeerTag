@@ -47,6 +47,8 @@ public class Fragment1 extends Fragment {
     private EditText username;
     private EditText password;
 
+    SharedPreferences session;
+
     private  CallbackManager callbackManager;
 
 
@@ -58,6 +60,19 @@ public class Fragment1 extends Fragment {
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
+
+        session = getApplicationContext().getSharedPreferences("session", MODE_PRIVATE);
+
+        if(session.getBoolean("login_status",true)) {
+            signIn(session.getString("email",""));
+
+            Intent intent = new Intent(getActivity(), MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            if(getActivity()!=null){
+                getActivity().finish();
+            }
+        }
 
         fragment1_sign_in.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -164,7 +179,6 @@ public class Fragment1 extends Fragment {
                 User.connectUser(getContext(), user);
 
                 /* creation d'une sessions globale lors du login */
-                SharedPreferences session = getApplicationContext().getSharedPreferences("session", MODE_PRIVATE);
                 SharedPreferences.Editor editor = session.edit();
                 editor.putString("email", email); // Storing string value
                 editor.putBoolean("login_status", true);

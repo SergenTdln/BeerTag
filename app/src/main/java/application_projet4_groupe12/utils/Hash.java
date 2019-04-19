@@ -8,7 +8,6 @@ import java.security.NoSuchAlgorithmException;
  */
 public abstract class Hash {
 
-
     public static String hash(String input){
         try {
             // Create a MD5 Hash
@@ -28,4 +27,5 @@ public abstract class Hash {
         }
         return "";
     }
+
 }

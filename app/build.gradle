@@ -11,6 +11,9 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'io.fabric'
 //apply plugin: 'com.google.gms.google-services'
+// Apply the Performance Monitoring plugin to enable instrumentation
+apply plugin: 'com.google.firebase.firebase-perf'
+
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
@@ -73,6 +76,15 @@ dependencies {
     implementation "com.android.support:support-compat:27.1.1"
 
     implementation 'com.balysv:material-ripple:1.0.2'
+
+    //Performance Monitoring
+//    implementation 'com.google.firebase:firebase-perf:16.2.5'
+    implementation 'com.google.firebase:firebase-perf:15.+'
+
+    //Google Ads
+    implementation 'com.google.android.gms:play-services-ads:17.2.0'
+
+
 }
 //apply plugin: 'com.google.gms.google-services'
 

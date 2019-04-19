@@ -1,9 +1,11 @@
 package application_projet4_groupe12.activities;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -18,6 +20,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import application_projet4_groupe12.BuildConfig;
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.activities.browse_points.BrowsePointsActivity;
 import application_projet4_groupe12.activities.settings.SettingsUserActivity;
@@ -31,6 +34,9 @@ import java.net.URL;
 import application_projet4_groupe12.utils.Global;
 
 import android.content.Context;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -69,6 +75,8 @@ public class MainActivity extends AppCompatActivity
 
         AdminChoiceCheck();
 
+        display_dialog_share_check();
+
     }
 
     /*
@@ -76,7 +84,7 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onBackPressed() {
-        if(active){
+        if (active) {
             AppUtils.tapToExit(this);
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout_user);
@@ -139,8 +147,8 @@ public class MainActivity extends AppCompatActivity
             navHeaderText2.setText(userUsername);
 
             System.err.println("Loading profile picture in Navigation View");
-            Bitmap bitmap = BitmapFactory.decodeFile(this.getFilesDir()+"/"+User.connectedUser.getImagePath());
-            if(bitmap!=null) {
+            Bitmap bitmap = BitmapFactory.decodeFile(this.getFilesDir() + "/" + User.connectedUser.getImagePath());
+            if (bitmap != null) {
                 navHeaderImage.setImageBitmap(bitmap);
             }
         }
@@ -193,7 +201,7 @@ public class MainActivity extends AppCompatActivity
                     finish();
                 }
 
-                SharedPreferences shared_login_choice  =getSharedPreferences("session",Context.MODE_PRIVATE);
+                SharedPreferences shared_login_choice = getSharedPreferences("session", Context.MODE_PRIVATE);
                 shared_login_choice.edit().clear().apply();
 
                 //couper la session firebase
@@ -262,23 +270,71 @@ public class MainActivity extends AppCompatActivity
         navigationView.bringToFront();
     }
 
-    private void handleInterfaceButton(){
-        if(User.connectedUser.isAdmin()) {
+    private void handleInterfaceButton() {
+        if (User.connectedUser.isAdmin()) {
             MenuItem item_change_interface = findViewById(R.id.change_interface_user);
-            if(item_change_interface != null ){
+            if (item_change_interface != null) {
                 item_change_interface.setVisible(true);
             }
         }
     }
 
+    private void display_dialog_share_check(){
+        SharedPreferences session = getSharedPreferences("session", MODE_PRIVATE);
+        boolean dialog_share = session.getBoolean("dialog_share", false);
+        session.edit().putBoolean("dialog_share", false).apply();
+        if(dialog_share){
+            display_dialog_share();
+        }
+    }
 
 
-    private void AdminChoiceCheck(){
+    private void display_dialog_share(){
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+        dialog.setContentView(R.layout.dialog_share);
+        dialog.setCancelable(true);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        ((TextView) dialog.findViewById(R.id.tv_version)).setText("Version " + BuildConfig.VERSION_NAME);
+
+        dialog.findViewById(R.id.bt_getcode).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                SharedPreferences shared = getSharedPreferences("session", MODE_PRIVATE);
+//                shared.edit().putBoolean("expired_qr", false);
+//                shared.edit().apply();
+                startActivity(new Intent(MainActivity.this, ShareActivity.class));
+                finish();
+            }
+        });
+
+        ((ImageButton) dialog.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+
+        dialog.show();
+        dialog.getWindow().setAttributes(lp);
+
+    }
+
+
+
+    private void AdminChoiceCheck() {
         shared_login_choice = getSharedPreferences("session", MODE_PRIVATE);
         boolean choice_made = shared_login_choice.getBoolean("loggin_chosed", false);
-        Log.v(Global.debug_text,"choice made "+choice_made);
-        Log.v(Global.debug_text,"is admin"+User.connectedUser.isAdmin());
-        if( User.connectedUser.isAdmin() &&  (!choice_made)){
+        Log.v(Global.debug_text, "choice made " + choice_made);
+        Log.v(Global.debug_text, "is admin" + User.connectedUser.isAdmin());
+        if (User.connectedUser.isAdmin() && (!choice_made)) {
             startActivity(new Intent(MainActivity.this, LoginChoiceActivity.class));
             finish();
         }

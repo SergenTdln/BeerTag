@@ -64,6 +64,10 @@ dependencies {
 
     implementation 'com.squareup.picasso:picasso:2.5.0'
     implementation 'com.android.support:mediarouter-v7:27.1.1'
+
+    implementation "com.android.support:support-compat:27.1.1"
+
+    implementation 'com.balysv:material-ripple:1.0.2'
 }
 //apply plugin: 'com.google.gms.google-services'
 

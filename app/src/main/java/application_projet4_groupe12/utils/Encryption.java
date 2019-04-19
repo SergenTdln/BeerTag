@@ -66,7 +66,6 @@ public class Encryption {
     }
 
 
-
     public static String decryptQrCode(String value, Activity activity) {
 //        String[] str = new Date[0];
         String decryptedValue = null;
@@ -87,17 +86,18 @@ public class Encryption {
             String createTimeStr = data[2];
 
             Long createTime = Long.valueOf(createTimeStr);
-            Log.v(Global.debug_text,"create time str"+createTimeStr);
-            Log.v(Global.debug_text,"create time int"+createTime);
-            if(validity_expired(createTime)){
-                Log.v(Global.debug_text,"activity expired");
+            Log.v(Global.debug_text, "create time str" + createTimeStr);
+            Log.v(Global.debug_text, "create time int" + createTime);
+            if (validity_expired(createTime)) {
+                Log.v(Global.debug_text, "activity expired");
                 ActivityUtils.getInstance().invokeActivity(activity, ExpiredActivity.class, true);
 
 
                 //TODO SOLUTION TEMPORAIRE POUR PASSER L'INFO VERS L'ACTI
                 SharedPreferences shared = getApplicationContext().getSharedPreferences("session", MODE_PRIVATE);
-                SharedPreferences.Editor editor = shared.edit();
-                editor.putBoolean("expired_qr", true); // Storing boolean - true/false
+//                SharedPreferences.Editor editor = shared.edit();
+//                editor.putBoolean("expired_qr", true); // Storing boolean - true/false
+                shared.edit().putBoolean("expired_qr", true).apply(); // Storing boolean - true/false
 //                getActivity().finish();
 
             }
@@ -136,15 +136,15 @@ public class Encryption {
     Checks the validity of a qr code according to its generation datetime
     If the qrcode has not expired (has to be used within 2 minutes) then its considered as valid
      */
-    private static Boolean validity_expired(long qrtime){
+    private static Boolean validity_expired(long qrtime) {
         Boolean expired = false;
         Long now_time = GetUnixTime();
 
-        Log.v(Global.debug_text,"qr time"+ qrtime);
-        Log.v(Global.debug_text,"now  time"+now_time);
+        Log.v(Global.debug_text, "qr time" + qrtime);
+        Log.v(Global.debug_text, "now  time" + now_time);
 
         Long diff = now_time - qrtime;
-        Log.v(Global.debug_text,"time diff "+diff);
+        Log.v(Global.debug_text, "time diff " + diff);
         if (diff >= 180000) {
             expired = true;
         }
@@ -155,8 +155,7 @@ public class Encryption {
     /*
     returns the UTC time in millisecs
      */
-    public static Long GetUnixTime()
-    {
+    public static Long GetUnixTime() {
         Calendar calendar = Calendar.getInstance();
         long now = calendar.getTimeInMillis();
 //        int utc = (int)(now / 1000);
@@ -164,8 +163,7 @@ public class Encryption {
 
     }
 
-    public static String GetUnixTimeStr()
-    {
+    public static String GetUnixTimeStr() {
         Calendar calendar = Calendar.getInstance();
         long now = calendar.getTimeInMillis();
 //        int utc = (int)(now / 1000);

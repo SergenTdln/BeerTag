@@ -1,9 +1,11 @@
 package application_projet4_groupe12.activities;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -18,6 +20,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import application_projet4_groupe12.BuildConfig;
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.activities.browse_points.BrowsePointsActivity;
 import application_projet4_groupe12.activities.settings.SettingsUserActivity;
@@ -31,6 +34,9 @@ import java.net.URL;
 import application_projet4_groupe12.utils.Global;
 
 import android.content.Context;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -68,6 +74,8 @@ public class MainActivity extends AppCompatActivity
         handleNavigationView();
 
         AdminChoiceCheck();
+
+        display_dialog_share_check();
 
     }
 
@@ -270,6 +278,55 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
+
+    private void display_dialog_share_check(){
+        SharedPreferences session = getSharedPreferences("session", MODE_PRIVATE);
+        boolean dialog_share = session.getBoolean("dialog_share", false);
+        session.edit().putBoolean("dialog_share", false).apply();
+        if(dialog_share){
+            display_dialog_share();
+        }
+    }
+
+
+    private void display_dialog_share(){
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+        dialog.setContentView(R.layout.dialog_share);
+        dialog.setCancelable(true);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        ((TextView) dialog.findViewById(R.id.tv_version)).setText("Version " + BuildConfig.VERSION_NAME);
+
+        dialog.findViewById(R.id.bt_getcode).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                SharedPreferences shared = getSharedPreferences("session", MODE_PRIVATE);
+//                shared.edit().putBoolean("expired_qr", false);
+//                shared.edit().apply();
+                startActivity(new Intent(MainActivity.this, ShareActivity.class));
+                finish();
+            }
+        });
+
+        ((ImageButton) dialog.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+
+        dialog.show();
+        dialog.getWindow().setAttributes(lp);
+
+    }
+
 
 
     private void AdminChoiceCheck() {

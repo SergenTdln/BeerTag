@@ -1,6 +1,7 @@
 package application_projet4_groupe12.activities;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -10,6 +11,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -22,11 +25,17 @@ import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
+import application_projet4_groupe12.BuildConfig;
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.data.preference.AppPreference;
@@ -58,7 +67,9 @@ public class QRResultActivity extends AppCompatActivity {
 
         //TODO : Pas bon, ca met le share meme si expiré, vérifier les valeurs en session
         if (!hasQrExpired()) {
-            loadShareActivity();
+            loadMainActivity();
+//            display_dialog_share();
+//            loadShareActivity();
         } else {
             loadExpiredActivity();
         }
@@ -130,18 +141,25 @@ public class QRResultActivity extends AppCompatActivity {
         }
     }
 
-    private void loadShareActivity() {
+
+    private void loadMainActivity() {
         SharedPreferences shared = getSharedPreferences("session", MODE_PRIVATE);
-        shared.edit().putBoolean("expired_qr", false);
-        shared.edit().apply();
-        ActivityUtils.getInstance().invokeActivity(this, ShareActivity.class, true);
+        shared.edit().putBoolean("dialog_share", true).apply();
+        ActivityUtils.getInstance().invokeActivity(this, MainActivity.class, true);
         finish();
     }
 
+//    private void loadShareActivity() {
+//        SharedPreferences shared = getSharedPreferences("session", MODE_PRIVATE);
+//        shared.edit().putBoolean("expired_qr", false);
+//        shared.edit().apply();
+//        ActivityUtils.getInstance().invokeActivity(this, ShareActivity.class, true);
+//        finish();
+//    }
+
     private void loadExpiredActivity() {
         SharedPreferences shared = getSharedPreferences("session", MODE_PRIVATE);
-        shared.edit().putBoolean("expired_qr", false);
-        shared.edit().apply();
+        shared.edit().putBoolean("expired_qr", false).apply();
         ActivityUtils.getInstance().invokeActivity(this, ExpiredActivity.class, true);
         finish();
     }
@@ -217,5 +235,42 @@ public class QRResultActivity extends AppCompatActivity {
             createWarningNotification();
         }
     }
+
+//    private void display_dialog_share(){
+//        final Dialog dialog = new Dialog(this);
+//        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+//        dialog.setContentView(R.layout.dialog_share);
+//        dialog.setCancelable(true);
+//        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+//
+//        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+//        lp.copyFrom(dialog.getWindow().getAttributes());
+//        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+//        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+//
+//        ((TextView) dialog.findViewById(R.id.tv_version)).setText("Version " + BuildConfig.VERSION_NAME);
+//
+//        dialog.findViewById(R.id.bt_getcode).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                SharedPreferences shared = getSharedPreferences("session", MODE_PRIVATE);
+//                shared.edit().putBoolean("expired_qr", false);
+//                shared.edit().apply();
+//                startActivity(new Intent(QRResultActivity.this, ShareActivity.class));
+//                finish();
+//            }
+//        });
+//
+//        ((ImageButton) dialog.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                dialog.dismiss();
+//            }
+//        });
+//
+//
+//        dialog.show();
+//        dialog.getWindow().setAttributes(lp);
+//    }
 }
 

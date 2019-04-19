@@ -83,7 +83,7 @@ public class ShareActivityResult extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("image/jpeg");
         intent.putExtra(Intent.EXTRA_STREAM, uri);
-        startActivity(Intent.createChooser(intent, "Share image on..."));
+        startActivity(Intent.createChooser(intent, getResources().getString(R.string.intent_share_text)));
     }
 
 

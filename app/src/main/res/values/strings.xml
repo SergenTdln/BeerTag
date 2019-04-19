@@ -70,6 +70,7 @@
     <string name="alcool_notification_text" translatable="false">Attention à votre consomation, vous enchainez les achats, buvez de manière responsable</string>
 
 
-    <string name="dialog_share_text" translatable="false">Super, votre achat a été comptabilisé ! Voulez-vous partager cela avec vos amis, avec une super photo personnalisée ? :D
-    </string>
+    <string name="dialog_share_text" translatable="false">Super, votre achat a été comptabilisé ! Voulez-vous partager cela avec vos amis, avec une super photo personnalisée ? :D</string>
+    <string name="intent_share_text" translatable="false">Partagez avec ...</string>
+    <string name="qr_expired_text" translatable="false">Le QR Code scanné est invalide ou a expiré...</string>
 </resources>

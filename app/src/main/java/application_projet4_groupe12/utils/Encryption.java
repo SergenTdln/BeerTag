@@ -95,8 +95,9 @@ public class Encryption {
 
                 //TODO SOLUTION TEMPORAIRE POUR PASSER L'INFO VERS L'ACTI
                 SharedPreferences shared = getApplicationContext().getSharedPreferences("session", MODE_PRIVATE);
-                SharedPreferences.Editor editor = shared.edit();
-                editor.putBoolean("expired_qr", true); // Storing boolean - true/false
+//                SharedPreferences.Editor editor = shared.edit();
+//                editor.putBoolean("expired_qr", true); // Storing boolean - true/false
+                shared.edit().putBoolean("expired_qr", true).apply(); // Storing boolean - true/false
 //                getActivity().finish();
 
             }

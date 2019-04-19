@@ -1721,9 +1721,9 @@ public class SQLHelper extends SQLiteOpenHelper {
                 });
     }
 
-    public boolean isUser_pointsExists(long id_promotion,long id_user, long used_on) {
+    public boolean isUser_promotionExists(long id_promotion,long id_user, String used_on) {
         Cursor cursor = null;
-        cursor = myDB.rawQuery("SELECT * FROM User_points WHERE id_promotion =" + id_promotion + " AND id_user =" + id_user + " AND used_on =" + used_on,null);
+        cursor = myDB.rawQuery("SELECT * FROM User_promotion WHERE id_promotion =" + id_promotion + " AND id_user =" + id_user + " AND used_on =" + used_on,null);
         if (cursor != null && cursor.getCount() > 0) {
             return true;
         }
@@ -1743,7 +1743,7 @@ public class SQLHelper extends SQLiteOpenHelper {
                                 Log.e("TAG", "id_user : " + id_user);
                                 String used_on = document.getString("used_on");
                                 Log.e("TAG", "used_on: " + used_on);
-                                if (!isUser_pointsExists(id_promotion, id_user, used_on)) {
+                                if (!isUser_promotionExists(id_promotion, id_user, used_on)) {
                                     ContentValues cv = new ContentValues();
                                     cv.put("\"id_user\"", id_user);
                                     cv.put("\"id_promotion\"", id_promotion);

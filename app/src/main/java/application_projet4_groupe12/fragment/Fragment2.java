@@ -1,6 +1,8 @@
 package application_projet4_groupe12.fragment;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -56,6 +58,8 @@ public class Fragment2 extends Fragment {
     private EditText lastName;
     private EditText birthDate;
 
+    SharedPreferences session;
+
     private int MIN_PASSWD_LENGTH = 6; //This is a Firebase limitation
 
     @Nullable
@@ -66,6 +70,8 @@ public class Fragment2 extends Fragment {
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
+
+        session = getActivity().getPreferences(Context.MODE_PRIVATE);
 
         fragment2_sign_up.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -235,6 +241,14 @@ public class Fragment2 extends Fragment {
 
                 User user = db.getUser(email);
                 User.connectUser(getContext(), user);
+
+                /* creation d'une sessions globale lors du login */
+                SharedPreferences.Editor editor = session.edit();
+                editor.putString("email", email); // Storing string value
+                editor.putBoolean("login_status", true);
+                editor.apply();
+                /* end */
+
             } else {
                 Toast.makeText(getActivity(),"not in database", Toast.LENGTH_SHORT).show();
             }

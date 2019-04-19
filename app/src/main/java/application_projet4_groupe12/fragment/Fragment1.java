@@ -63,7 +63,7 @@ public class Fragment1 extends Fragment {
 
         session = getApplicationContext().getSharedPreferences("session", MODE_PRIVATE);
 
-        if(session.getBoolean("login_status",true)) {
+        if(session.contains("login_status") && session.getBoolean("login_status",true)) {
             signIn(session.getString("email",""));
 
             Intent intent = new Intent(getActivity(), MainActivity.class);

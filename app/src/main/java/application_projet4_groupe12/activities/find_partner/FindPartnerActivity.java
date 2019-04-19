@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -24,6 +25,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -76,7 +78,10 @@ public class FindPartnerActivity extends FragmentActivity implements
             buildGoogleApiClient();
             mMap.setMyLocationEnabled(true);
         }
-
+/*
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        CameraPosition cameraPosition= new CameraPosition(latLng,15,0,0);
+*/
         // Add a marker to the Beer Bar in Louvain-la-Neuve
         LatLng beerbar = new LatLng(50.669198, 4.613770);
         mMap.addMarker(new MarkerOptions().position(beerbar).title("Beer Bar"));
@@ -85,14 +90,12 @@ public class FindPartnerActivity extends FragmentActivity implements
     public boolean checkUserLocationPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, Request_User_Location_Code);
-            }
-            else {
-                ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, Request_User_Location_Code);
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Request_User_Location_Code);
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Request_User_Location_Code);
             }
             return false;
-        }
-        else {
+        } else {
             return true;
         }
     }
@@ -105,8 +108,7 @@ public class FindPartnerActivity extends FragmentActivity implements
                     if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                         if (googleApiClient == null) {
                             buildGoogleApiClient();
-                        }
-                        else {
+                        } else {
                             Toast.makeText(this, "Permission Denied...", Toast.LENGTH_SHORT).show();
                         }
                         return;
@@ -127,8 +129,11 @@ public class FindPartnerActivity extends FragmentActivity implements
 
     @Override
     public void onLocationChanged(Location location) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+        }
+        lastLocation = location;
 
-//        lastLocation = location;
 /*
         if (currentUserLocationMarker != null) {
             currentUserLocationMarker.remove();
@@ -143,8 +148,9 @@ public class FindPartnerActivity extends FragmentActivity implements
 
         currentUserLocationMarker = mMap.addMarker(markerOptions);
 */
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomBy(15));
+        mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+//        mMap.animateCamera(CameraUpdateFactory.zoomBy(15));
+        CameraUpdateFactory.zoomBy(14);
 
         if (googleApiClient != null) {
             LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);

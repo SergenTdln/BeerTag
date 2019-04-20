@@ -69,6 +69,7 @@
                         android:layout_marginLeft="-4dp"
                         android:layout_marginRight="-4dp"
                         android:hint="Public Name"
+                        android:textSize="10dp"
                         android:maxLength="50"
                         android:maxLines="1"
                         android:singleLine="true"
@@ -95,6 +96,7 @@
                         android:layout_marginLeft="-4dp"
                         android:layout_marginRight="-4dp"
                         android:hint="Address"
+                        android:textSize="10dp"
                         android:maxLength="50"
                         android:maxLines="1"
                         android:singleLine="true"
@@ -122,6 +124,7 @@
                         android:layout_marginLeft="-4dp"
                         android:layout_marginRight="-4dp"
                         android:hint="BE0123456789"
+                        android:textSize="10dp"
                         android:maxLength="50"
                         android:maxLines="1"
                         android:singleLine="true"
@@ -144,14 +147,23 @@
                     <Spinner
                         android:id="@+id/sign_up_partner_input_spinner_admin"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
                         android:fontFamily="@font/roboto"
                         android:minWidth="160dp"
                         android:textColor="@color/login_text"
                         android:textAlignment="center"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/sign_up_partner_input_admin_title" />
+                        app:layout_constraintTop_toBottomOf="@+id/sign_up_partner_input_admin_title"
+                        android:layout_height="?attr/actionBarSize"
+                        android:ellipsize="marquee"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="@dimen/spacing_large"
+                        android:paddingRight="@dimen/spacing_large"
+                        android:singleLine="true"
+                        android:text="asdasdasd"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+
+                        />
 
                     <View
                         android:layout_width="0dp"

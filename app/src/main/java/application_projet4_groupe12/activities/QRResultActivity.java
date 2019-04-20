@@ -64,10 +64,9 @@ public class QRResultActivity extends AppCompatActivity {
         initViews();
         initFunctionality();
 
-
-        //TODO : Pas bon, ca met le share meme si expiré, vérifier les valeurs en session
         if (!hasQrExpired()) {
             loadMainActivity();
+            increaseCount();
 //            display_dialog_share();
 //            loadShareActivity();
         } else {
@@ -90,7 +89,6 @@ public class QRResultActivity extends AppCompatActivity {
     }
 
     private void initFunctionality() {
-        increaseCount();
         checkConsomation();
 
         getSupportActionBar().setTitle(getString(R.string.result));
@@ -211,27 +209,27 @@ public class QRResultActivity extends AppCompatActivity {
         notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
     }
 
-    private void increaseCount(){
+    private void increaseCount() {
         SharedPreferences session = getSharedPreferences("session", MODE_PRIVATE);
         SharedPreferences.Editor editor = session.edit();
 
         int prev_count = 0;
         prev_count = session.getInt("scan_count", prev_count);
         int new_count = prev_count + 1;
-        Log.v(Global.debug_text, "scan count updated "+new_count);
+        Log.v(Global.debug_text, "scan count updated " + new_count);
         editor.putInt("scan_count", new_count);
         editor.apply();
 
     }
 
 
-    private void checkConsomation(){
+    private void checkConsomation() {
         SharedPreferences shared = getSharedPreferences("session", MODE_PRIVATE);
         int scan_count = 0;
         scan_count = shared.getInt("scan_count", scan_count);
-        Log.v(Global.debug_text,"scan_count "+scan_count);
+        Log.v(Global.debug_text, "scan_count " + scan_count);
 
-        if(scan_count >= 3){
+        if (scan_count >= 3) {
             createWarningNotification();
         }
     }

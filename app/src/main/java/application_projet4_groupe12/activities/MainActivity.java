@@ -3,9 +3,12 @@ package application_projet4_groupe12.activities;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -199,32 +202,13 @@ public class MainActivity extends AppCompatActivity
                 finish();
                 break;
 
-            case R.id.nav_logout:
-                //reset la session globale fb ou standar
-                if (ActivityUtils.getInstance().isLoggedInFacebook()) {
-                    String session_id = new FacebookUtils().getFacebookId();
-                    SharedPreferences fb_login = getApplicationContext().getSharedPreferences("session", Context.MODE_PRIVATE);
-                    fb_login.edit().clear().apply();
-                } else {
-                    SharedPreferences standard_login = getApplicationContext().getSharedPreferences("session", Context.MODE_PRIVATE);
-                    //Déconnecter en local
-                    User.disconnectUser(this);
-                    standard_login.edit().clear().apply();
-                    finish();
-                }
-
-                SharedPreferences shared_login_choice = getSharedPreferences("session", Context.MODE_PRIVATE);
-                shared_login_choice.edit().clear().apply();
-
-                //couper la session firebase
-                FirebaseAuth.getInstance().signOut();
-                //couper la session facebook
-                LoginManager.getInstance().logOut();
-
-                Intent intent = new Intent(MainActivity.this, SignUp.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //Clears the Activity stack
-                startActivity(intent);
+            case R.id.go_to_instagram:
+                AppUtils.openInstagram(this);
                 finish();
+                break;
+
+            case R.id.nav_logout:
+                AppUtils.logout(this);
                 break;
 
         }
@@ -291,54 +275,14 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void display_dialog_share_check(){
+    private void display_dialog_share_check() {
         SharedPreferences session = getSharedPreferences("session", MODE_PRIVATE);
         boolean dialog_share = session.getBoolean("dialog_share", false);
         session.edit().putBoolean("dialog_share", false).apply();
-        if(dialog_share){
-            display_dialog_share();
+        if (dialog_share) {
+            AppUtils.display_dialog_share(this);
         }
     }
-
-
-    private void display_dialog_share(){
-        final Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
-        dialog.setContentView(R.layout.dialog_share);
-        dialog.setCancelable(true);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-
-        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-        lp.copyFrom(dialog.getWindow().getAttributes());
-        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-
-        ((TextView) dialog.findViewById(R.id.tv_version)).setText("Version " + BuildConfig.VERSION_NAME);
-
-        dialog.findViewById(R.id.bt_getcode).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                SharedPreferences shared = getSharedPreferences("session", MODE_PRIVATE);
-//                shared.edit().putBoolean("expired_qr", false);
-//                shared.edit().apply();
-                startActivity(new Intent(MainActivity.this, ShareActivity.class));
-                finish();
-            }
-        });
-
-        ((ImageButton) dialog.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-
-
-        dialog.show();
-        dialog.getWindow().setAttributes(lp);
-
-    }
-
 
 
     private void AdminChoiceCheck() {
@@ -358,6 +302,8 @@ public class MainActivity extends AppCompatActivity
                 .build();
         mAdView.loadAd(request);
     }
+
+
 
 
 }

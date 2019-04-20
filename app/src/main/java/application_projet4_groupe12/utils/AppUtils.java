@@ -1,6 +1,7 @@
 package application_projet4_groupe12.utils;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -8,8 +9,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -22,8 +31,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import application_projet4_groupe12.BuildConfig;
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.activities.MainActivity;
+import application_projet4_groupe12.activities.ShareActivity;
 import application_projet4_groupe12.activities.SignUp;
 import application_projet4_groupe12.entities.Partner;
 import application_projet4_groupe12.entities.User;
@@ -293,5 +304,86 @@ public class AppUtils {
     }
 
 
+    public static void openInstagram(Activity activity) {
+        Intent intentAiguilleur;
+        String scheme = "http://instagram.com/_u/beertag.ucl";
+        String path = "https://instagram.com/beertag.ucl";
+        String nomPackageInfo ="com.instagram.android";
+        try {
+            activity.getPackageManager().getPackageInfo(nomPackageInfo, 0);
+            intentAiguilleur = new Intent(Intent.ACTION_VIEW, Uri.parse(scheme));
+            Log.v(Global.debug_text," load 1");
+        } catch (Exception e) {
+            intentAiguilleur = new Intent(Intent.ACTION_VIEW, Uri.parse(path));
+            Log.v(Global.debug_text," load 2"+e);
+        }
+        activity.startActivity(intentAiguilleur);
+    }
 
+    public static void logout(Activity activity){
+
+        //reset la session globale fb ou standar
+        if (ActivityUtils.getInstance().isLoggedInFacebook()) {
+            String session_id = new FacebookUtils().getFacebookId();
+            SharedPreferences fb_login = getApplicationContext().getSharedPreferences("session", Context.MODE_PRIVATE);
+            fb_login.edit().clear().apply();
+        } else {
+            SharedPreferences standard_login = getApplicationContext().getSharedPreferences("session", Context.MODE_PRIVATE);
+            //Déconnecter en local
+            User.disconnectUser(activity);
+            standard_login.edit().clear().apply();
+            activity.finish();
+        }
+
+        SharedPreferences shared_login_choice = activity.getSharedPreferences("session", Context.MODE_PRIVATE);
+        shared_login_choice.edit().clear().apply();
+
+        //couper la session firebase
+        FirebaseAuth.getInstance().signOut();
+        //couper la session facebook
+        LoginManager.getInstance().logOut();
+
+        Intent intent = new Intent(activity, SignUp.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //Clears the Activity stack
+        activity.startActivity(intent);
+        activity.finish();
+    }
+
+    public static void display_dialog_share(Activity activity) {
+        final Dialog dialog = new Dialog(activity);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+        dialog.setContentView(R.layout.dialog_share);
+        dialog.setCancelable(true);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        ((TextView) dialog.findViewById(R.id.tv_version)).setText("Version " + BuildConfig.VERSION_NAME);
+
+        dialog.findViewById(R.id.bt_getcode).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                SharedPreferences shared = getSharedPreferences("session", MODE_PRIVATE);
+//                shared.edit().putBoolean("expired_qr", false);
+//                shared.edit().apply();
+                activity.startActivity(new Intent(activity, ShareActivity.class));
+                activity.finish();
+            }
+        });
+
+        ((ImageButton) dialog.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+
+        dialog.show();
+        dialog.getWindow().setAttributes(lp);
+
+    }
 }

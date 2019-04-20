@@ -162,31 +162,7 @@ public class AdminActivity extends AppCompatActivity
                 break;
 
             case R.id.nav_logout:
-                //reset la session globale fb ou standar
-                if (ActivityUtils.getInstance().isLoggedInFacebook()) {
-                    String session_id = new FacebookUtils().getFacebookId();
-                    SharedPreferences fb_login = getApplicationContext().getSharedPreferences(session_id, Context.MODE_PRIVATE);
-                    fb_login.edit().clear().apply();
-                } else {
-                    SharedPreferences standard_login = getApplicationContext().getSharedPreferences("session", Context.MODE_PRIVATE);
-                    //Déconnecter en local
-                    User.disconnectUser(this);
-                    standard_login.edit().clear().apply();
-                    finish();
-                }
-
-                SharedPreferences login_choice  =getSharedPreferences("login_choice",Context.MODE_PRIVATE);
-                login_choice.edit().clear().apply();
-
-                //couper la session firebase
-                FirebaseAuth.getInstance().signOut();
-                //couper la session facebook
-                LoginManager.getInstance().logOut();
-
-                Intent intent = new Intent(AdminActivity.this, SignUp.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //Clears the Activity stack
-                startActivity(intent);
-                finish();
+                AppUtils.logout(this);
                 break;
 
             case R.id.nav_admin_browse_clients:
@@ -203,6 +179,11 @@ public class AdminActivity extends AppCompatActivity
                 startActivity(new Intent(AdminActivity.this, SettingsPartnerActivity.class));
                 finish();
                 break;
+
+
+            case R.id.go_to_instagram:
+                AppUtils.openInstagram(this);
+                finish();
         }
 
         drawer.closeDrawer(GravityCompat.START);

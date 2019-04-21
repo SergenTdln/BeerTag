@@ -30,11 +30,13 @@ import application_projet4_groupe12.activities.browse_points.BrowsePointsActivit
 import application_projet4_groupe12.activities.find_partner.FindPartnerActivity;
 import application_projet4_groupe12.activities.settings.SettingsPartnerActivity;
 import application_projet4_groupe12.activities.settings.SettingsUserActivity;
+import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.utils.ActivityUtils;
 import application_projet4_groupe12.utils.AppUtils;
 import application_projet4_groupe12.utils.FacebookUtils;
 
+import java.io.IOException;
 import java.net.URL;
 
 import application_projet4_groupe12.utils.Global;
@@ -53,9 +55,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
 import com.google.android.gms.ads.MobileAds;
 
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    SQLHelper db;
     static boolean active = false;
     private AdView mAdView;
 
@@ -73,6 +77,77 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try {
+            db = new SQLHelper(this);
+            db.TransferUser();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.v(Global.debug_text, "" + e);
+        }
+
+        try {
+            db = new SQLHelper(this);
+            db.TransferAddress();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.v(Global.debug_text, "" + e);
+        }
+
+        try {
+            db = new SQLHelper(this);
+            db.TransferAdmin_user();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.v(Global.debug_text, "" + e);
+        }
+
+        try {
+            db = new SQLHelper(this);
+            db.TransferFavorite_shops();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.v(Global.debug_text, "" + e);
+        }
+
+        try {
+            db = new SQLHelper(this);
+            db.TransferPromotion();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.v(Global.debug_text, "" + e);
+        }
+
+        try {
+            db = new SQLHelper(this);
+            db.TransferShop_frames();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.v(Global.debug_text, "" + e);
+        }
+
+        try {
+            db = new SQLHelper(this);
+            db.TransferShop_location();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.v(Global.debug_text, "" + e);
+        }
+
+        try {
+            db = new SQLHelper(this);
+            db.TransferUser_points();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.v(Global.debug_text, "" + e);
+        }
+
+        try {
+            db = new SQLHelper(this);
+            db.TransferUser_promotion();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.v(Global.debug_text, "" + e);
+        }
         setContentView(R.layout.activity_main_user);
 
         loadAdMob();

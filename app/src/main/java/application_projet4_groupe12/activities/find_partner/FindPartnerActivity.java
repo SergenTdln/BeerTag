@@ -3,6 +3,7 @@ package application_projet4_groupe12.activities.find_partner;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
@@ -29,8 +30,19 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+//import com.google.firebase.database.collection.
+
+import java.io.IOException;
+import java.util.List;
 
 import application_projet4_groupe12.R;
+import application_projet4_groupe12.data.SQLHelper;
+import application_projet4_groupe12.entities.Address;
 
 public class FindPartnerActivity extends FragmentActivity implements
         OnMapReadyCallback,
@@ -44,6 +56,9 @@ public class FindPartnerActivity extends FragmentActivity implements
     private Location lastLocation;
     private Marker currentUserLocationMarker;
     private static final int Request_User_Location_Code = 99;
+    private SQLHelper db;
+    FirebaseDatabase database;
+    DatabaseReference myRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,9 +97,26 @@ public class FindPartnerActivity extends FragmentActivity implements
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         CameraPosition cameraPosition= new CameraPosition(latLng,15,0,0);
 */
-        // Add a marker to the Beer Bar in Louvain-la-Neuve
-        LatLng beerbar = new LatLng(50.669198, 4.613770);
-        mMap.addMarker(new MarkerOptions().position(beerbar).title("Beer Bar"));
+
+        try {
+            db = new SQLHelper((this));
+
+            Address address = db.getAddress(1);
+            for (int i=1; address!=null; i++) {
+                address = db.getAddress(i);
+                if (address!=null) {
+                    Toast.makeText(this, address.getStreet() + " " + address.getNumbers() + " " + address.getCity(), Toast.LENGTH_SHORT).show();
+                    String location = address.getStreet() + " " + address.getNumbers() + " " + address.getCity() +" " + address.getCountry();
+                    LatLng latlng = getLocationFromAddress(this, location);
+
+                    mMap.addMarker(new MarkerOptions().position(latlng).title(Long.toString(address.getId())));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            db.close();
+        }
     }
 
     public boolean checkUserLocationPermission() {
@@ -177,6 +209,33 @@ public class FindPartnerActivity extends FragmentActivity implements
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    public LatLng getLocationFromAddress(Context context, String strAddress)
+    {
+        Geocoder coder= new Geocoder(context);
+        List<android.location.Address> address;
+        LatLng latlng = null;
+
+        try
+        {
+            address = coder.getFromLocationName(strAddress, 5);
+            if(address==null)
+            {
+                return null;
+            }
+            android.location.Address location = address.get(0);
+            location.getLatitude();
+            location.getLongitude();
+
+            latlng = new LatLng(location.getLatitude(), location.getLongitude());
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return latlng;
 
     }
 }

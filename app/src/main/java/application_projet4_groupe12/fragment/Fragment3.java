@@ -1,5 +1,6 @@
 package application_projet4_groupe12.fragment;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -35,9 +36,11 @@ import application_projet4_groupe12.entities.Partner;
 import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.exceptions.UnknownUserException;
 import application_projet4_groupe12.exceptions.WrongDateFormatException;
+import application_projet4_groupe12.utils.AppUtils;
 import application_projet4_groupe12.utils.Global;
 
 import static android.content.ContentValues.TAG;
+import static android.content.Context.MODE_PRIVATE;
 
 public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedListener {
 
@@ -45,6 +48,8 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
     private Partner partner;
     private FirebaseFirestore dab = FirebaseFirestore.getInstance();
     private FirebaseAuth mAuth;
+
+    private String docuemnt_id;
 
     private EditText name;
     private EditText address;
@@ -202,6 +207,7 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
             try {
                 db.addAdmin(selectedUsername, partner.getId());
             } catch (UnknownUserException e) {
+                Log.v(Global.debug_text,"addAdmin "+e);
                 e.printStackTrace();
                 Toast.makeText(getActivity(), "Invalid User : \""+selectedUsername+"\"", Toast.LENGTH_SHORT).show();
                 return false;
@@ -211,6 +217,14 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
             dab.collection("Partner").add(partner);
             Toast.makeText(getActivity(), "Partner created", Toast.LENGTH_SHORT).show();
             //TODO add the first admin user to Firebase as well
+
+            try {
+                dab.collection("user").document( mAuth.getUid()).update("admin", true);
+                Log.v(Global.debug_text, "add admin no error"+mAuth.getUid());
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.v(Global.debug_text, "add admin error"+e);
+            }
             Log.d(Global.debug_text, "Firebase instance: " + mAuth);
             /**
              * Useless for Partner creation IMO
@@ -233,13 +247,23 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
                 }
             });
              **/
+            SharedPreferences session = getActivity().getSharedPreferences("session", MODE_PRIVATE);
+            session.edit().putBoolean("choice made", true).apply();
+            session.edit().putBoolean("loggin_chosed", true).apply();
+            session.edit().putBoolean("is admin", true).apply();
+
+            User user = db.getUser(selectedUsername);
+            User.connectUser(getContext(), user);
+            AppUtils.end_home_admin(getActivity());
 
 
         } catch (IOException e) {
             e.printStackTrace();
+            Log.v(Global.debug_text, "error fragment 3"+e);
         } finally {
             db.close();
         }
         return true;
     }
+
 }

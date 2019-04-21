@@ -1388,7 +1388,7 @@ public class SQLHelper extends SQLiteOpenHelper {
 
     public void TransferUser() {
         Log.e("TAG", "Hello");
-        dab.collection("Users")
+        dab.collection("User")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     public void onComplete(Task<QuerySnapshot> task) {

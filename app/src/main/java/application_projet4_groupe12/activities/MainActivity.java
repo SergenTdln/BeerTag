@@ -293,9 +293,11 @@ public class MainActivity extends AppCompatActivity
 
     private void loadAdMob() {
         AdView mAdView = (AdView) findViewById(R.id.adView);
+        AdView mAdView2 = (AdView) findViewById(R.id.adView2);
         AdRequest request = new AdRequest.Builder()
                 .build();
         mAdView.loadAd(request);
+        mAdView2.loadAd(request);
     }
 
 

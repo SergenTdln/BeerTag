@@ -230,11 +230,11 @@ public class AdminActivity extends AppCompatActivity
          */
         navigationView = findViewById(R.id.admin_nav_view);
         navigationView.inflateMenu(R.menu.activity_main_navigation_drawer_admin);
-        View headerLayout = navigationView.inflateHeaderView(R.layout.activity_main_navigation_header);
+        View headerLayout = navigationView.inflateHeaderView(R.layout.admin_main_navigation_header);
 
-        navHeaderImage = (ImageView) headerLayout.findViewById(R.id.activity_main_navigation_header_image);
-        navHeaderText1 = (TextView) headerLayout.findViewById(R.id.activity_main_navigation_header_text1);
-        navHeaderText2 = (TextView) headerLayout.findViewById(R.id.activity_main_navigation_header_text2);
+        navHeaderImage = (ImageView) headerLayout.findViewById(R.id.activity_main_admin_navigation_header_image);
+        navHeaderText1 = (TextView) headerLayout.findViewById(R.id.activity_main_admin_navigation_header_text1);
+        navHeaderText2 = (TextView) headerLayout.findViewById(R.id.activity_main_admin_navigation_header_text2);
 
         MenuItem adminTitle = navigationView.getMenu().findItem(R.id.nav_admin_title);
 

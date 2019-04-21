@@ -3,6 +3,7 @@ package application_projet4_groupe12.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -34,6 +35,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import application_projet4_groupe12.activities.MainActivity;
+import application_projet4_groupe12.activities.VerificationActivity;
 import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.exceptions.WrongDateFormatException;
@@ -259,4 +261,29 @@ public class Fragment2 extends Fragment {
             db.close();
         }
     }
+
+//    protected void sendEmail(String email) {
+//        Log.i(Global.debug_text,"Send email");
+//
+//        String[] TO = {email};
+//        String[] CC = {"fb.sergen.tasdelen@gmail.com"}; //rien que pour tester; à virer
+//        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+//        emailIntent.setData(Uri.parse("mailto:"));
+//        emailIntent.setType("text/plain");
+//
+//
+//        emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
+//        emailIntent.putExtra(Intent.EXTRA_CC, CC);
+//        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Your subject");
+//        emailIntent.putExtra(Intent.EXTRA_TEXT, "Email message goes here");
+//
+//        try {
+//            startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+//            getActivity().finish();
+//            Log.i("Finished sending email...", "");
+//        } catch (android.content.ActivityNotFoundException ex) {
+//            Toast.makeText(getActivity(),
+//                    "There is no email client installed.", Toast.LENGTH_SHORT).show();
+//        }
+//    }
 }

@@ -38,9 +38,16 @@
             <item android:title="Changer d'interface"
                 android:id="@+id/change_interface_user"
                 android:icon="@drawable/common_full_open_on_phone"
+                android:visible="true"/>
+
+            <item android:title="Instagram"
+                android:id="@+id/go_to_instagram"
+                android:icon="@drawable/ic_instagram_menu"
                 android:visibility="gone"/>
 
         </menu>
     </item>
+
+
 
 </menu>

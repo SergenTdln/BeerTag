@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.activities.browse_clients.BrowseClientsActivity;
 import application_projet4_groupe12.activities.settings.SettingsPartnerActivity;
+import application_projet4_groupe12.entities.Partner;
 import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.utils.ActivityUtils;
 import application_projet4_groupe12.utils.AppUtils;
@@ -43,7 +44,7 @@ public class AdminActivity extends AppCompatActivity
 
     static boolean active = false;
 
-    SharedPreferences shared_login_choice;
+    SharedPreferences session_share;
 
     Toolbar toolbar;
     FloatingActionButton fab_gen;
@@ -162,31 +163,7 @@ public class AdminActivity extends AppCompatActivity
                 break;
 
             case R.id.nav_logout:
-                //reset la session globale fb ou standar
-                if (ActivityUtils.getInstance().isLoggedInFacebook()) {
-                    String session_id = new FacebookUtils().getFacebookId();
-                    SharedPreferences fb_login = getApplicationContext().getSharedPreferences(session_id, Context.MODE_PRIVATE);
-                    fb_login.edit().clear().apply();
-                } else {
-                    SharedPreferences standard_login = getApplicationContext().getSharedPreferences("session", Context.MODE_PRIVATE);
-                    //Déconnecter en local
-                    User.disconnectUser(this);
-                    standard_login.edit().clear().apply();
-                    finish();
-                }
-
-                SharedPreferences login_choice  =getSharedPreferences("login_choice",Context.MODE_PRIVATE);
-                login_choice.edit().clear().apply();
-
-                //couper la session firebase
-                FirebaseAuth.getInstance().signOut();
-                //couper la session facebook
-                LoginManager.getInstance().logOut();
-
-                Intent intent = new Intent(AdminActivity.this, SignUp.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //Clears the Activity stack
-                startActivity(intent);
-                finish();
+                AppUtils.logout(this);
                 break;
 
             case R.id.nav_admin_browse_clients:
@@ -203,6 +180,11 @@ public class AdminActivity extends AppCompatActivity
                 startActivity(new Intent(AdminActivity.this, SettingsPartnerActivity.class));
                 finish();
                 break;
+
+
+            case R.id.go_to_instagram:
+                AppUtils.openInstagram(this);
+                finish();
         }
 
         drawer.closeDrawer(GravityCompat.START);
@@ -248,14 +230,22 @@ public class AdminActivity extends AppCompatActivity
          */
         navigationView = findViewById(R.id.admin_nav_view);
         navigationView.inflateMenu(R.menu.activity_main_navigation_drawer_admin);
-        View headerLayout = navigationView.inflateHeaderView(R.layout.activity_main_navigation_header);
+        View headerLayout = navigationView.inflateHeaderView(R.layout.admin_main_navigation_header);
 
-        navHeaderImage = (ImageView) headerLayout.findViewById(R.id.activity_main_navigation_header_image);
-        navHeaderText1 = (TextView) headerLayout.findViewById(R.id.activity_main_navigation_header_text1);
-        navHeaderText2 = (TextView) headerLayout.findViewById(R.id.activity_main_navigation_header_text2);
+        navHeaderImage = (ImageView) headerLayout.findViewById(R.id.activity_main_admin_navigation_header_image);
+        navHeaderText1 = (TextView) headerLayout.findViewById(R.id.activity_main_admin_navigation_header_text1);
+        navHeaderText2 = (TextView) headerLayout.findViewById(R.id.activity_main_admin_navigation_header_text2);
 
         MenuItem adminTitle = navigationView.getMenu().findItem(R.id.nav_admin_title);
-        adminTitle.setTitle("Account of " + User.connectedUser.getAdministratedPartner(this).getName());
+
+        Partner partner = User.connectedUser.getAdministratedPartner(this);
+        String partner_name = partner.getName();
+        if(partner_name.length() == 0){
+            adminTitle.setTitle("Account of ...");
+        } else {
+            adminTitle.setTitle("Account of " + User.connectedUser.getAdministratedPartner(this).getName());
+
+        }
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.bringToFront();
     }

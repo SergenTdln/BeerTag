@@ -55,7 +55,6 @@ public class QRResultActivity extends AppCompatActivity {
     private TextView result;
     private FloatingActionButton copyButton;
 
-    private int REQUEST_CODE = 477;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,12 +63,9 @@ public class QRResultActivity extends AppCompatActivity {
         initViews();
         initFunctionality();
 
-
-        //TODO : Pas bon, ca met le share meme si expiré, vérifier les valeurs en session
         if (!hasQrExpired()) {
             loadMainActivity();
-//            display_dialog_share();
-//            loadShareActivity();
+            increaseCount();
         } else {
             loadExpiredActivity();
         }
@@ -90,7 +86,6 @@ public class QRResultActivity extends AppCompatActivity {
     }
 
     private void initFunctionality() {
-        increaseCount();
         checkConsomation();
 
         getSupportActionBar().setTitle(getString(R.string.result));
@@ -106,25 +101,24 @@ public class QRResultActivity extends AppCompatActivity {
         int achat = Integer.parseInt(data[0]);
         Long partnerId = Long.valueOf(data[1]);
 
-        Log.v(Global.debug_text, "montant= " + achat + " partnerId= " + partnerId);
-
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        if(!hasQrExpired()){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 //            result.setText(Html.fromHtml(lastResult, Html.FROM_HTML_MODE_LEGACY));
-            result.setText(Html.fromHtml("qr code crypté= " + lastResult + "| qr code  décrypté= " + decryptedQrCode, Html.FROM_HTML_MODE_LEGACY));
-        } else {
-            result.setText(Html.fromHtml(lastResult));
-        }
-        result.setMovementMethod(LinkMovementMethod.getInstance());
-        try {
-            db = new SQLHelper(this);
-            db.addPoints(User.connectedUser.getUsername(), achat, partnerId);
+                result.setText(Html.fromHtml("qr code crypté= " + lastResult + "| qr code  décrypté= " + decryptedQrCode, Html.FROM_HTML_MODE_LEGACY));
+            } else {
+                result.setText(Html.fromHtml(lastResult));
+            }
+            result.setMovementMethod(LinkMovementMethod.getInstance());
+            try {
+                db = new SQLHelper(this);
+                db.addPoints(User.connectedUser.getUsername(), achat, partnerId);
 //            db.addPoints(User.connectedUser.getUsername(), Integer.parseInt(encryptedQrCode), 1); //TODO à terminer : il me faut accès à l'ID du shop qui a généré le qr code
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.v(Global.debug_text, "" + e);
-        } finally {
-            db.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.v(Global.debug_text, "" + e);
+            } finally {
+                db.close();
+            }
         }
     }
 
@@ -148,14 +142,6 @@ public class QRResultActivity extends AppCompatActivity {
         ActivityUtils.getInstance().invokeActivity(this, MainActivity.class, true);
         finish();
     }
-
-//    private void loadShareActivity() {
-//        SharedPreferences shared = getSharedPreferences("session", MODE_PRIVATE);
-//        shared.edit().putBoolean("expired_qr", false);
-//        shared.edit().apply();
-//        ActivityUtils.getInstance().invokeActivity(this, ShareActivity.class, true);
-//        finish();
-//    }
 
     private void loadExpiredActivity() {
         SharedPreferences shared = getSharedPreferences("session", MODE_PRIVATE);
@@ -201,8 +187,6 @@ public class QRResultActivity extends AppCompatActivity {
                 .setPriority(Notification.PRIORITY_MAX)
                 .setContentTitle(getResources().getString(R.string.alcool_notification_title))
                 .setContentText(getResources().getString(R.string.alcool_notification_text))
-//                .setStyle(new NotificationCompat.BigTextStyle()
-//                        .bigText(getResources().getString(R.string.alcool_notification_text)))
                 .setLargeIcon(bitmap)
                 .setStyle(new NotificationCompat.BigPictureStyle()
                         .bigPicture(bitmap)
@@ -211,66 +195,25 @@ public class QRResultActivity extends AppCompatActivity {
         notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
     }
 
-    private void increaseCount(){
+    private void increaseCount() {
         SharedPreferences session = getSharedPreferences("session", MODE_PRIVATE);
         SharedPreferences.Editor editor = session.edit();
-
         int prev_count = 0;
         prev_count = session.getInt("scan_count", prev_count);
         int new_count = prev_count + 1;
-        Log.v(Global.debug_text, "scan count updated "+new_count);
-        editor.putInt("scan_count", new_count);
-        editor.apply();
+        editor.putInt("scan_count", new_count).apply();
 
     }
 
-
-    private void checkConsomation(){
+    private void checkConsomation() {
         SharedPreferences shared = getSharedPreferences("session", MODE_PRIVATE);
         int scan_count = 0;
         scan_count = shared.getInt("scan_count", scan_count);
-        Log.v(Global.debug_text,"scan_count "+scan_count);
 
-        if(scan_count >= 3){
+        if (scan_count >= 3) {
             createWarningNotification();
         }
     }
 
-//    private void display_dialog_share(){
-//        final Dialog dialog = new Dialog(this);
-//        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
-//        dialog.setContentView(R.layout.dialog_share);
-//        dialog.setCancelable(true);
-//        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-//
-//        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-//        lp.copyFrom(dialog.getWindow().getAttributes());
-//        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-//        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-//
-//        ((TextView) dialog.findViewById(R.id.tv_version)).setText("Version " + BuildConfig.VERSION_NAME);
-//
-//        dialog.findViewById(R.id.bt_getcode).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                SharedPreferences shared = getSharedPreferences("session", MODE_PRIVATE);
-//                shared.edit().putBoolean("expired_qr", false);
-//                shared.edit().apply();
-//                startActivity(new Intent(QRResultActivity.this, ShareActivity.class));
-//                finish();
-//            }
-//        });
-//
-//        ((ImageButton) dialog.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                dialog.dismiss();
-//            }
-//        });
-//
-//
-//        dialog.show();
-//        dialog.getWindow().setAttributes(lp);
-//    }
 }
 

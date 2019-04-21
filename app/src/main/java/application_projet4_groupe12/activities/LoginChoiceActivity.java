@@ -29,8 +29,7 @@ public class LoginChoiceActivity extends AppCompatActivity {
             public void onClick(View view) {
                 SharedPreferences shared = getApplicationContext().getSharedPreferences("session", MODE_PRIVATE);
                 SharedPreferences.Editor editor = shared.edit();
-                editor.putBoolean("loggin_chosed", true); // Storing boolean - true/false
-                editor.commit();
+                editor.putBoolean("loggin_chosed", true).apply(); // Storing boolean - true/false
                 startActivity(new Intent(LoginChoiceActivity.this, AdminActivity.class));
                 finish();
             }
@@ -42,8 +41,7 @@ public class LoginChoiceActivity extends AppCompatActivity {
             public void onClick(View view) {
                 SharedPreferences shared = getApplicationContext().getSharedPreferences("session", MODE_PRIVATE);
                 SharedPreferences.Editor editor = shared.edit();
-                editor.putBoolean("loggin_chosed", true); // Storing boolean - true/false
-                editor.commit();
+                editor.putBoolean("loggin_chosed", true).apply(); // Storing boolean - true/false
                 startActivity(new Intent(LoginChoiceActivity.this, MainActivity.class));
                 finish();
             }

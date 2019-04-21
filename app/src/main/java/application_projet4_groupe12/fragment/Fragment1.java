@@ -80,8 +80,9 @@ public class Fragment1 extends Fragment {
                 username = getView().findViewById(R.id.sign_in_input_email);
                 password = getView().findViewById(R.id.sign_in_input_password);
 
-                String email = username.getText().toString();
-                String pass = password.getText().toString();
+                //trim pour virer les espaces blancs
+                String email = username.getText().toString().trim();
+                String pass = password.getText().toString().trim();
 
                 if (TextUtils.isEmpty(email) || TextUtils.isEmpty(pass)) {
                     Toast.makeText(getActivity(),R.string.login_fields, Toast.LENGTH_SHORT).show();

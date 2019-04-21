@@ -3,10 +3,14 @@ package application_projet4_groupe12.activities;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
@@ -26,11 +30,13 @@ import application_projet4_groupe12.activities.browse_points.BrowsePointsActivit
 import application_projet4_groupe12.activities.find_partner.FindPartnerActivity;
 import application_projet4_groupe12.activities.settings.SettingsPartnerActivity;
 import application_projet4_groupe12.activities.settings.SettingsUserActivity;
+import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.utils.ActivityUtils;
 import application_projet4_groupe12.utils.AppUtils;
 import application_projet4_groupe12.utils.FacebookUtils;
 
+import java.io.IOException;
 import java.net.URL;
 
 import application_projet4_groupe12.utils.Global;
@@ -43,13 +49,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.login.LoginManager;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
+import com.google.android.gms.ads.MobileAds;
+
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    SQLHelper db;
     static boolean active = false;
+    private AdView mAdView;
 
     SharedPreferences shared_login_choice;
 
@@ -65,7 +77,80 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try {
+            db = new SQLHelper(this);
+            db.TransferUser();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.v(Global.debug_text, "" + e);
+        }
+
+        try {
+            db = new SQLHelper(this);
+            db.TransferAddress();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.v(Global.debug_text, "" + e);
+        }
+
+        try {
+            db = new SQLHelper(this);
+            db.TransferAdmin_user();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.v(Global.debug_text, "" + e);
+        }
+
+        try {
+            db = new SQLHelper(this);
+            db.TransferFavorite_shops();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.v(Global.debug_text, "" + e);
+        }
+
+        try {
+            db = new SQLHelper(this);
+            db.TransferPromotion();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.v(Global.debug_text, "" + e);
+        }
+
+        try {
+            db = new SQLHelper(this);
+            db.TransferShop_frames();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.v(Global.debug_text, "" + e);
+        }
+
+        try {
+            db = new SQLHelper(this);
+            db.TransferShop_location();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.v(Global.debug_text, "" + e);
+        }
+
+        try {
+            db = new SQLHelper(this);
+            db.TransferUser_points();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.v(Global.debug_text, "" + e);
+        }
+
+        try {
+            db = new SQLHelper(this);
+            db.TransferUser_promotion();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.v(Global.debug_text, "" + e);
+        }
         setContentView(R.layout.activity_main_user);
+
+        loadAdMob();
 
         handleToolBar();
 
@@ -128,24 +213,19 @@ public class MainActivity extends AppCompatActivity
 
         if (ActivityUtils.getInstance().isLoggedInFacebook()) {
             /* Remplacer les données par celles du profil fb*/
-            Log.i(Global.debug_text, "nav" + navigationView);
-            String id = new FacebookUtils().getFacebookId();
             shared_login_choice = getSharedPreferences("session", MODE_PRIVATE);
             String session_name = shared_login_choice.getString("name", "");
             String session_email = shared_login_choice.getString("email", "");
             URL image_url = new FacebookUtils().getFacebookProfilePic();
-            Log.i(Global.debug_text, "session img url / name / email " + image_url + session_name + session_email);
             Picasso.with(this).load(String.valueOf(image_url)).into(navHeaderImage);
             navHeaderText1.setText(session_name);
             navHeaderText2.setText(session_email);
         } else {
             /* Remplacer les données par celles de la db locale*/
             String userFullName = User.connectedUser.getFullName();
-            Log.i(Global.debug_text, "userFullName" + userFullName);
             navHeaderText1.setText(userFullName);
 
             String userUsername = User.connectedUser.getUsername();
-            Log.i(Global.debug_text, "getUsername" + userUsername);
             navHeaderText2.setText(userUsername);
 
             System.err.println("Loading profile picture in Navigation View");
@@ -167,7 +247,6 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        handleInterfaceButton();
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -192,32 +271,13 @@ public class MainActivity extends AppCompatActivity
                 finish();
                 break;
 
-            case R.id.nav_logout:
-                //reset la session globale fb ou standar
-                if (ActivityUtils.getInstance().isLoggedInFacebook()) {
-                    String session_id = new FacebookUtils().getFacebookId();
-                    SharedPreferences fb_login = getApplicationContext().getSharedPreferences("session", Context.MODE_PRIVATE);
-                    fb_login.edit().clear().apply();
-                } else {
-                    SharedPreferences standard_login = getApplicationContext().getSharedPreferences("session", Context.MODE_PRIVATE);
-                    //Déconnecter en local
-                    User.disconnectUser(this);
-                    standard_login.edit().clear().apply();
-                    finish();
-                }
-
-                SharedPreferences shared_login_choice = getSharedPreferences("session", Context.MODE_PRIVATE);
-                shared_login_choice.edit().clear().apply();
-
-                //couper la session firebase
-                FirebaseAuth.getInstance().signOut();
-                //couper la session facebook
-                LoginManager.getInstance().logOut();
-
-                Intent intent = new Intent(MainActivity.this, SignUp.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //Clears the Activity stack
-                startActivity(intent);
+            case R.id.go_to_instagram:
+                AppUtils.openInstagram(this);
                 finish();
+                break;
+
+            case R.id.nav_logout:
+                AppUtils.logout(this);
                 break;
 
         }
@@ -265,6 +325,8 @@ public class MainActivity extends AppCompatActivity
          */
         navigationView = findViewById(R.id.user_nav_view);
         navigationView.inflateMenu(R.menu.activity_main_navigation_drawer_user);
+        MenuItem interface_change_button = navigationView.findViewById(R.id.change_interface_user);
+        handleInterfaceButton();
         View headerLayout = navigationView.inflateHeaderView(R.layout.activity_main_navigation_header);
 
         navHeaderImage = headerLayout.findViewById(R.id.activity_main_navigation_header_image);
@@ -276,62 +338,21 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void handleInterfaceButton() {
-        if (User.connectedUser.isAdmin()) {
-            MenuItem item_change_interface = findViewById(R.id.change_interface_user);
-            if (item_change_interface != null) {
-                item_change_interface.setVisible(true);
-            }
+        if (!User.connectedUser.isAdmin()) {
+            Menu navMenuLogIn = navigationView.getMenu();
+            navMenuLogIn.findItem(R.id.change_interface_user).setVisible(false);
         }
     }
 
-    private void display_dialog_share_check(){
+
+    private void display_dialog_share_check() {
         SharedPreferences session = getSharedPreferences("session", MODE_PRIVATE);
         boolean dialog_share = session.getBoolean("dialog_share", false);
         session.edit().putBoolean("dialog_share", false).apply();
-        if(dialog_share){
-            display_dialog_share();
+        if (dialog_share) {
+            AppUtils.display_dialog_share(this);
         }
     }
-
-
-    private void display_dialog_share(){
-        final Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
-        dialog.setContentView(R.layout.dialog_share);
-        dialog.setCancelable(true);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-
-        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-        lp.copyFrom(dialog.getWindow().getAttributes());
-        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-
-        ((TextView) dialog.findViewById(R.id.tv_version)).setText("Version " + BuildConfig.VERSION_NAME);
-
-        dialog.findViewById(R.id.bt_getcode).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                SharedPreferences shared = getSharedPreferences("session", MODE_PRIVATE);
-//                shared.edit().putBoolean("expired_qr", false);
-//                shared.edit().apply();
-                startActivity(new Intent(MainActivity.this, ShareActivity.class));
-                finish();
-            }
-        });
-
-        ((ImageButton) dialog.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-
-
-        dialog.show();
-        dialog.getWindow().setAttributes(lp);
-
-    }
-
 
 
     private void AdminChoiceCheck() {
@@ -344,4 +365,15 @@ public class MainActivity extends AppCompatActivity
             finish();
         }
     }
+
+    private void loadAdMob() {
+        AdView mAdView = (AdView) findViewById(R.id.adView);
+        AdView mAdView2 = (AdView) findViewById(R.id.adView2);
+        AdRequest request = new AdRequest.Builder()
+                .build();
+        mAdView.loadAd(request);
+        mAdView2.loadAd(request);
+    }
+
+
 }

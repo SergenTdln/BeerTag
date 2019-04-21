@@ -7,7 +7,14 @@ import android.database.sqlite.SQLiteCantOpenDatabaseException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -43,6 +50,7 @@ import static application_projet4_groupe12.utils.AppUtils.occurrences;
 
 public class SQLHelper extends SQLiteOpenHelper {
 
+    private FirebaseFirestore dab = FirebaseFirestore.getInstance();
     /**
      * Our database
      */
@@ -1368,5 +1376,380 @@ public class SQLHelper extends SQLiteOpenHelper {
             candidate = genID();
         }
         return candidate;
+    }
+    public boolean isUserExists(long id) {
+        Cursor cursor = null;
+        cursor = myDB.rawQuery("SELECT * FROM User WHERE _id =" + id,null);
+        if (cursor != null && cursor.getCount() > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public void TransferUser() {
+        Log.e("TAG", "Hello");
+        dab.collection("Users")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    public void onComplete(Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                long id = (document.getLong("id"));
+                                Log.e("TAG", "id : " + id);
+                                if (!isUserExists(id)) {
+                                    String lastName = document.getString("lastName");
+                                    Log.e("TAG", "lastName: " + lastName);
+                                    String firstName = document.getString("firstName");
+                                    Log.e("TAG", "firstName: " + firstName);
+                                    String username = document.getString("username");
+                                    Log.e("TAG", "username: " + username);
+                                    String password = document.getString("passwordHashed");
+                                    Log.e("TAG", "password: " + password);
+                                    String created_on = document.getString("creationDate");
+                                    Log.e("TAG", "created_on: " + created_on);
+                                    String birthday = document.getString("birthday");
+                                    Log.e("TAG", "birthday: " + birthday);
+                                    String image_path = document.getString("imagePath");
+                                    Log.e("TAG", "image_path: " + image_path);
+                                    boolean admin = document.getBoolean("admin");
+                                    Log.e("TAG", "admin: " + admin);
+                                    ContentValues cv = new ContentValues();
+                                    cv.put("\"_id\"", id);
+                                    cv.put("\"username\"", username);
+                                    cv.put("\"password\"", password);
+                                    cv.put("\"created_on\"", created_on);
+                                    cv.put("\"first_name\"", firstName);
+                                    cv.put("\"last_name\"", lastName);
+                                    cv.put("\"birthday\"", birthday);
+                                    cv.put("\"image_path\"", image_path);
+                                    Log.e("TAG","Réussi");
+                                    myDB.insert("User", null, cv);
+                                }
+                            }
+                        } else {
+                            Log.e("TAG", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+    }
+
+    public boolean isAddressExists(long id) {
+        Cursor cursor = null;
+        cursor = myDB.rawQuery("SELECT * FROM Address WHERE _id =" + id,null);
+        if (cursor != null && cursor.getCount() > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public void TransferAddress() {
+        dab.collection("Address")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    public void onComplete(Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                long id = (document.getLong("id"));
+                                Log.e("TAG", "id : " + id);
+                                if (!isAddressExists(id)) {
+                                    String city = document.getString("city");
+                                    Log.e("TAG", "city: " + city);
+                                    String country = document.getString("country");
+                                    Log.e("TAG", "country: " + country);
+                                    String numbers = document.getString("numbers");
+                                    Log.e("TAG", "numbers: " + numbers);
+                                    String street = document.getString("street");
+                                    Log.e("TAG", "street: " + street);
+                                    ContentValues cv = new ContentValues();
+                                    cv.put("\"city\"", city);
+                                    cv.put("\"country\"", country);
+                                    cv.put("\"_id\"", id);
+                                    cv.put("\"numbers\"", numbers);
+                                    cv.put("\"street\"", street);
+                                    myDB.insert("Address", null, cv);
+                                }
+                            }
+                        } else {
+                            Log.e("TAG", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+    }
+
+    public boolean isAdmin_userExists(long id_partner,long id_user) {
+        Cursor cursor = null;
+        cursor = myDB.rawQuery("SELECT * FROM Admin_user WHERE id_partner =" + id_partner + " AND id_user =" + id_user,null);
+        if (cursor != null && cursor.getCount() > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public void TransferAdmin_user() {
+        dab.collection("Admin_user")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    public void onComplete(Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                long id_partner = (document.getLong("id_partner"));
+                                Log.e("TAG", "id_partner : " + id_partner);
+                                long id_user = (document.getLong("id_user"));
+                                Log.e("TAG", "id_user: " + id_user);
+                                if (!isAdmin_userExists(id_partner, id_user)){
+                                    ContentValues cv = new ContentValues();
+                                    cv.put("\"id_partner\"", id_partner);
+                                    cv.put("\"id_user\"", id_user);
+                                    myDB.insert("Admin_user", null, cv);
+                                }
+                            }
+                        } else {
+                            Log.e("TAG", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+    }
+
+    public boolean isFavorite_shopsExists(long id_shop,long id_user) {
+        Cursor cursor = null;
+        cursor = myDB.rawQuery("SELECT * FROM Favorite_shops WHERE id_shop =" + id_shop + " AND id_user =" + id_user,null);
+        if (cursor != null && cursor.getCount() > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public void TransferFavorite_shops() {
+        dab.collection("Favorite_shops")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    public void onComplete(Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                long id_shop = (document.getLong("id_shop"));
+                                Log.e("TAG", "id : " + id_shop);
+                                long id_user = (document.getLong("id_user"));
+                                Log.e("TAG", "id : " + id_user);
+                                if (!isFavorite_shopsExists(id_shop, id_user)) {
+                                    ContentValues cv = new ContentValues();
+                                    cv.put("\"id_shop\"", id_shop);
+                                    cv.put("\"id_user\"", id_user);
+                                    myDB.insert("Favorite_shops", null, cv);
+                                }
+                            }
+                        } else {
+                            Log.e("TAG", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+    }
+
+    public boolean isPromotionExists(long id) {
+        Cursor cursor = null;
+        cursor = myDB.rawQuery("SELECT * FROM Promotion WHERE _id =" + id,null);
+        if (cursor != null && cursor.getCount() > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public void TransferPromotion() {
+        dab.collection("Promotion")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    public void onComplete(Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                long id = (document.getLong("id"));
+                                Log.e("TAG", "id : " + id);
+                                if (!isPromotionExists(id)) {
+                                    boolean active = document.getBoolean("active");
+                                    Log.e("TAG", "active: " + active);
+                                    String description = document.getString("description");
+                                    Log.e("TAG", "description: " + description);
+                                    long id_partner = (document.getLong("id_partner"));
+                                    Log.e("TAG", "id : " + id_partner);
+                                    long id_shop = (document.getLong("id_shop"));
+                                    Log.e("TAG", "id : " + id_shop);
+                                    String end_date = document.getString("end_date");
+                                    Log.e("TAG", "end_date: " + end_date);
+                                    String image_path = document.getString("image_path");
+                                    Log.e("TAG", "image_path: " + image_path);
+                                    boolean is_reusable = document.getBoolean("is_reusable");
+                                    Log.e("TAG", "is_reusable: " + is_reusable);
+                                    int points_required = (document.getLong("points_required")).intValue();
+                                    Log.e("TAG", "points_required : " + points_required);
+                                    ContentValues cv = new ContentValues();
+                                    cv.put("\"_id\"", id);
+                                    cv.put("\"id_partner\"", id_partner);
+                                    cv.put("\"id_shop\"", id_shop);
+                                    cv.put("\"points_required\"", points_required);
+                                    cv.put("\"is_reusable\"", is_reusable);
+                                    cv.put("\"description\"", description);
+                                    cv.put("\"image_path\"", image_path);
+                                    cv.put("\"active\"", active);
+                                    cv.put("\"end_date\"", end_date);
+                                    myDB.insert("Promotion", null, cv);
+                                }
+                            }
+                        } else {
+                            Log.e("TAG", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+    }
+
+    public boolean isShop_framesExists(long id) {
+        Cursor cursor = null;
+        cursor = myDB.rawQuery("SELECT * FROM Shop_frames WHERE _id =" + id,null);
+        if (cursor != null && cursor.getCount() > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public void TransferShop_frames() {
+        dab.collection("Shop_frames")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    public void onComplete(Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                long id = (document.getLong("id"));
+                                Log.e("TAG", "_id : " + id);
+                                if (!isShop_framesExists(id)) {
+                                    long id_shop = (document.getLong("id_shop"));
+                                    Log.e("TAG", "id_shop : " + id_shop);
+                                    String image_path = document.getString("image_path");
+                                    Log.e("TAG", "image_path: " + image_path);
+                                    ContentValues cv = new ContentValues();
+                                    cv.put("\"_id\"", id);
+                                    cv.put("\"id_shop\"", id_shop);
+                                    cv.put("\"image_path\"", image_path);
+                                    myDB.insert("Shop_frames", null, cv);
+                                }
+                            }
+                        } else {
+                            Log.e("TAG", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+    }
+
+    public boolean isShop_locationExists(long id) {
+        Cursor cursor = null;
+        cursor = myDB.rawQuery("SELECT * FROM Shop_location WHERE _id =" + id,null);
+        if (cursor != null && cursor.getCount() > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public void TransferShop_location() {
+        dab.collection("Shop_location")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    public void onComplete(Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                long id = (document.getLong("id"));
+                                Log.e("TAG", "id : " + id);
+                                if (!isShop_locationExists(id)) {
+                                    String description = document.getString("description");
+                                    Log.e("TAG", "description: " + description);
+                                    long id_partner = (document.getLong("id_partner"));
+                                    Log.e("TAG", "id : " + id_partner);
+                                    long id_address = (document.getLong("id_address"));
+                                    Log.e("TAG", "id : " + id_address);
+                                    String created_on = document.getString("created_on");
+                                    Log.e("TAG", "created_on: " + created_on);
+                                    ContentValues cv = new ContentValues();
+                                    cv.put("\"_id\"", id);
+                                    cv.put("\"id_partner\"", id_partner);
+                                    cv.put("\"id_address\"", id_address);
+                                    cv.put("\"description\"", description);
+                                    cv.put("\"created_on\"", created_on);
+                                    myDB.insert("Shop_location", null, cv);
+                                }
+                            }
+                        } else {
+                            Log.e("TAG", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+    }
+
+    public boolean isUser_pointsExists(long id_shop,long id_user, long points) {
+        Cursor cursor = null;
+        cursor = myDB.rawQuery("SELECT * FROM User_points WHERE id_shop =" + id_shop + " AND id_user =" + id_user + " AND points =" + points,null);
+        if (cursor != null && cursor.getCount() > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public void TransferUser_points() {
+        dab.collection("User_points")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    public void onComplete(Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                long id_shop = (document.getLong("id_shop"));
+                                Log.e("TAG", "id_shop : " + id_shop);
+                                long id_user = (document.getLong("id_user"));
+                                Log.e("TAG", "id_user : " + id_user);
+                                int points = (document.getLong("points")).intValue();
+                                Log.e("TAG", "points : " + points);
+                                if (!isUser_pointsExists(id_shop, id_user, points)) {
+                                    ContentValues cv = new ContentValues();
+                                    cv.put("\"id_user\"", id_user);
+                                    cv.put("\"id_shop\"", id_shop);
+                                    cv.put("\"points\"", points);
+                                    myDB.insert("User_points", null, cv);
+                                }
+                            }
+                        } else {
+                            Log.e("TAG", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+    }
+
+    public boolean isUser_promotionExists(long id_promotion,long id_user, String used_on) {
+        Cursor cursor = null;
+        cursor = myDB.rawQuery("SELECT * FROM User_promotion WHERE id_promotion =" + id_promotion + " AND id_user =" + id_user + " AND used_on =" + used_on,null);
+        if (cursor != null && cursor.getCount() > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public void TransferUser_promotion() {
+        dab.collection("User_promotion")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    public void onComplete(Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                long id_promotion = (document.getLong("id_promotion"));
+                                Log.e("TAG", "id_promotion : " + id_promotion);
+                                long id_user = (document.getLong("id_user"));
+                                Log.e("TAG", "id_user : " + id_user);
+                                String used_on = document.getString("used_on");
+                                Log.e("TAG", "used_on: " + used_on);
+                                if (!isUser_promotionExists(id_promotion, id_user, used_on)) {
+                                    ContentValues cv = new ContentValues();
+                                    cv.put("\"id_user\"", id_user);
+                                    cv.put("\"id_promotion\"", id_promotion);
+                                    cv.put("\"used_on\"", used_on);
+                                    myDB.insert("User_promotion", null, cv);
+                                }
+                            }
+                        } else {
+                            Log.e("TAG", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
     }
 }

@@ -36,7 +36,7 @@ public class GenerateFragment extends Fragment {
     private ImageView outputBitmap;
     private ImageButton switcher;
 
-    private static final int TYPE_QR = 0, TYPE_BAR = 1;
+    private static final int TYPE_QR = 0;
     private static int TYPE = TYPE_QR;
 
     private Bitmap output;
@@ -82,7 +82,8 @@ public class GenerateFragment extends Fragment {
         inputText.addTextChangedListener(new TextWatcher() {
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
 
             @Override
             public void beforeTextChanged(CharSequence s, int start,
@@ -92,21 +93,15 @@ public class GenerateFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start,
                                       int before, int count) {
-                if(s.length() != 0) {
-                    //todo : rajouter les informations (id, date de création + regex avant d'encrypter)
+                if (s.length() != 0) {
                     Long create_time = Encryption.GetUnixTime();
-                    String qr_content = s.toString()+"_5%/"+getPartnerId()+"_5%/"+create_time;
-                    Log.v(Global.debug_text,"create tule at generate"+qr_content);
+                    String qr_content = s.toString() + "_5%/" + getPartnerId() + "_5%/" + create_time;
+                    Log.v(Global.debug_text, "create tule at generate" + qr_content);
                     String encryptedQrCode = Encryption.encryptQrCode(qr_content);
 
-                    //pour tester
-//                    String decryptedQRCode = Encryption.decryptQrCode(encryptedQrCode);
-//                    Log.v(Global.debug_text,"qr content"+qr_content);
-//                    Log.v(Global.debug_text,"encrypted content"+encryptedQrCode);
-//                    Log.v(Global.debug_text,"decrypted content"+decryptedQRCode);
                     generateCode(encryptedQrCode);
                 } else {
-                    if(TYPE == TYPE_QR) {
+                    if (TYPE == TYPE_QR) {
                         outputBitmap.setImageResource(R.drawable.qr_placeholder);
                     } else {
                         outputBitmap.setImageResource(R.drawable.ic_bar_placeholder);
@@ -119,20 +114,15 @@ public class GenerateFragment extends Fragment {
     private void generateCode(final String input) {
         CodeGenerator codeGenerator = new CodeGenerator();
         codeGenerator.generateQRFor(input);
-        codeGenerator.setResultListener(new CodeGenerator.ResultListener() {
-            @Override
-            public void onResult(Bitmap bitmap) {
-                //((BitmapDrawable)outputBitmap.getDrawable()).getBitmap().recycle();
-                output = bitmap;
-                inputStr = input;
-                outputBitmap.setImageBitmap(bitmap);
-
-            }
+        codeGenerator.setResultListener(bitmap -> {
+            output = bitmap;
+            inputStr = input;
+            outputBitmap.setImageBitmap(bitmap);
         });
         codeGenerator.execute();
     }
 
-    private Long getPartnerId(){
+    private Long getPartnerId() {
         SQLHelper db = null;
         Long partnerId = null;
         Long shopId = null;
@@ -142,9 +132,9 @@ public class GenerateFragment extends Fragment {
             partnerId = db.getPartnerIDFromUser(User.connectedUser.getId());
 
         } catch (IOException e) {
-            Log.i(Global.debug_text, "GenerateFragment : getPartnerId "+e);
+            Log.i(Global.debug_text, "GenerateFragment : getPartnerId " + e);
         } finally {
-            if(db != null) {
+            if (db != null) {
                 db.close();
             }
         }

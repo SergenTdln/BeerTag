@@ -45,7 +45,6 @@ public class QRScanActivity extends AppCompatActivity {
 
         mViewPager = findViewById(R.id.viewpager);
 
-
         initQrFunctionality();
 
         setupViewPager(mViewPager);

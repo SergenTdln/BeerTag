@@ -1,16 +1,14 @@
 package application_projet4_groupe12.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
 import application_projet4_groupe12.R;
+import application_projet4_groupe12.utils.AppUtils;
 
 public class ExpiredActivity extends AppCompatActivity {
     @Override
@@ -25,8 +23,9 @@ public class ExpiredActivity extends AppCompatActivity {
 
         AppCompatButton exit_button = findViewById(R.id.exit_button);
         exit_button.setOnClickListener(view -> {
-            startActivity(new Intent(ExpiredActivity.this, MainActivity.class));
-            finish();
+//            startActivity(new Intent(ExpiredActivity.this, MainActivity.class));
+//            finish();
+            AppUtils.end_home(this);
         });
     }
 }

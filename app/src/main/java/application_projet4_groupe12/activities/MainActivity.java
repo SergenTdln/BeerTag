@@ -138,24 +138,19 @@ public class MainActivity extends AppCompatActivity
 
         if (ActivityUtils.getInstance().isLoggedInFacebook()) {
             /* Remplacer les données par celles du profil fb*/
-            Log.i(Global.debug_text, "nav" + navigationView);
-            String id = new FacebookUtils().getFacebookId();
             shared_login_choice = getSharedPreferences("session", MODE_PRIVATE);
             String session_name = shared_login_choice.getString("name", "");
             String session_email = shared_login_choice.getString("email", "");
             URL image_url = new FacebookUtils().getFacebookProfilePic();
-            Log.i(Global.debug_text, "session img url / name / email " + image_url + session_name + session_email);
             Picasso.with(this).load(String.valueOf(image_url)).into(navHeaderImage);
             navHeaderText1.setText(session_name);
             navHeaderText2.setText(session_email);
         } else {
             /* Remplacer les données par celles de la db locale*/
             String userFullName = User.connectedUser.getFullName();
-            Log.i(Global.debug_text, "userFullName" + userFullName);
             navHeaderText1.setText(userFullName);
 
             String userUsername = User.connectedUser.getUsername();
-            Log.i(Global.debug_text, "getUsername" + userUsername);
             navHeaderText2.setText(userUsername);
 
             System.err.println("Loading profile picture in Navigation View");
@@ -177,7 +172,6 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        handleInterfaceButton();
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -256,6 +250,8 @@ public class MainActivity extends AppCompatActivity
          */
         navigationView = findViewById(R.id.user_nav_view);
         navigationView.inflateMenu(R.menu.activity_main_navigation_drawer_user);
+        MenuItem interface_change_button = navigationView.findViewById(R.id.change_interface_user);
+        handleInterfaceButton();
         View headerLayout = navigationView.inflateHeaderView(R.layout.activity_main_navigation_header);
 
         navHeaderImage = headerLayout.findViewById(R.id.activity_main_navigation_header_image);
@@ -267,13 +263,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void handleInterfaceButton() {
-        if (User.connectedUser.isAdmin()) {
-            MenuItem item_change_interface = findViewById(R.id.change_interface_user);
-            if (item_change_interface != null) {
-                item_change_interface.setVisible(true);
-            }
+        if (!User.connectedUser.isAdmin()) {
+            Menu navMenuLogIn = navigationView.getMenu();
+            navMenuLogIn.findItem(R.id.change_interface_user).setVisible(false);
         }
     }
+
 
     private void display_dialog_share_check() {
         SharedPreferences session = getSharedPreferences("session", MODE_PRIVATE);
@@ -302,8 +297,6 @@ public class MainActivity extends AppCompatActivity
                 .build();
         mAdView.loadAd(request);
     }
-
-
 
 
 }

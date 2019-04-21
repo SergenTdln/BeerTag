@@ -3,18 +3,15 @@ package application_projet4_groupe12.activities;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -24,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 
 import application_projet4_groupe12.R;
+import application_projet4_groupe12.utils.AppUtils;
 
 public class ShareActivityResult extends AppCompatActivity {
 
@@ -54,28 +52,29 @@ public class ShareActivityResult extends AppCompatActivity {
 
         final Bitmap bitmap_final = bitmap;
         share_button = findViewById(R.id.share_pic_button);
-        share_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                progressDialog = new ProgressDialog(ShareActivityResult.this);
-                progressDialog.setTitle(R.string.app_name);
-                progressDialog.setMessage("Traitement de votre belle photo");
-                progressDialog.setIndeterminate(false);
-                progressDialog.setIcon(R.drawable.ic_launcher);
-                progressDialog.show();
+        share_button.setOnClickListener(view -> {
+            progressDialog = new ProgressDialog(ShareActivityResult.this);
+            progressDialog.setTitle(R.string.app_name);
+            progressDialog.setMessage("Traitement de votre belle photo");
+            progressDialog.setIndeterminate(false);
+            progressDialog.setIcon(R.drawable.ic_launcher);
+            progressDialog.show();
 
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Bitmap bitmap_final_logo = drawBeerTagLogo(bitmap_final);
-                        shareImage(bitmap_final_logo);
-                    }
-                }, 3000);
+            final Handler handler = new Handler();
+            handler.postDelayed(() -> {
+                Bitmap bitmap_final_logo = drawBeerTagLogo(bitmap_final);
+                shareImage(bitmap_final_logo);
+            }, 3000);
 
-            }
         });
     }
+
+    @Override
+    public void onBackPressed(){
+        AppUtils.end_home(this);
+    }
+
+
 
     public void shareImage(Bitmap bitmap) {
         progressDialog.dismiss();
@@ -108,39 +107,6 @@ public class ShareActivityResult extends AppCompatActivity {
         return bitmap_with_logo;
     }
 
-
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem menuItem) {
-//        switch (menuItem.getItemId()) {
-//            // DEFAULT BACK BUTTON
-//            case android.R.id.home:
-//                this.finish();
-//                return true;
-//
-//
-//            // SHARE BUTTON
-//            case R.id.share_button:
-//                // Init a ProgressDialog
-//                progressDialog = new ProgressDialog(this);
-//                progressDialog.setTitle(R.string.app_name);
-//                progressDialog.setMessage("Preparing image for sharing...");
-//                progressDialog.setIndeterminate(false);
-//                progressDialog.setIcon(R.drawable.ic_launcher);
-//                progressDialog.show();
-//
-//
-////                cropView.postDelayed(new Runnable() {
-////                    @Override
-////                    public void run() {
-////                        takeScreenshotOfCropView();
-////                    }
-////                }, 1000);
-//
-//
-//                return true;
-//        }
-//        return (super.onOptionsItemSelected(menuItem));
-//    }
 
 
 }

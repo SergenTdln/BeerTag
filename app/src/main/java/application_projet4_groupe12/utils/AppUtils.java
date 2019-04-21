@@ -33,6 +33,8 @@ import java.io.IOException;
 
 import application_projet4_groupe12.BuildConfig;
 import application_projet4_groupe12.R;
+import application_projet4_groupe12.activities.AdminActivity;
+import application_projet4_groupe12.activities.AlcoolSensiActivity;
 import application_projet4_groupe12.activities.MainActivity;
 import application_projet4_groupe12.activities.ShareActivity;
 import application_projet4_groupe12.activities.SignUp;
@@ -48,20 +50,16 @@ public class AppUtils {
 
     public static void tapToExit(Activity activity) {
         backPressed = System.currentTimeMillis();
-        if (backPressed + 3000 > System.currentTimeMillis()){
+        if (backPressed + 1000 > System.currentTimeMillis()){
             if(activity.isTaskRoot()){
                 SharedPreferences session = getApplicationContext().getSharedPreferences("session", MODE_PRIVATE);
-                session.edit()
-                        .putBoolean("logged_in", true)
-                        .apply();
-                // TODO sauve l'email, puis recup et recheck apd de l'email pour recup l'user et faire connect user
-                //FirebaseAuth.getInstance().signOut();
-                //LoginManager.getInstance().logOut();
-                ActivityUtils.getInstance().invokeActivity(activity, MainActivity.class, true);
-                //Intent intent = new Intent(activity, MainActivity.class);
-                //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK |Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                session.edit().putBoolean("logged_in", true).apply();
 
-
+                if (User.connectedUser.isAdmin()) {
+                    ActivityUtils.getInstance().invokeActivity(activity, AdminActivity.class, true);
+                } else {
+                    ActivityUtils.getInstance().invokeActivity(activity, MainActivity.class, true);
+                }
             }
             activity.finish();
         } else {
@@ -385,5 +383,17 @@ public class AppUtils {
         dialog.show();
         dialog.getWindow().setAttributes(lp);
 
+    }
+
+    public static void end_home(Activity activity){
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        activity.startActivity(intent);
+    }
+
+    public static void end_home_admin(Activity activity){
+        Intent intent = new Intent(getApplicationContext(), AdminActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        activity.startActivity(intent);
     }
 }

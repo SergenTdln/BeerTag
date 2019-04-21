@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.activities.browse_clients.BrowseClientsActivity;
 import application_projet4_groupe12.activities.settings.SettingsPartnerActivity;
+import application_projet4_groupe12.entities.Partner;
 import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.utils.ActivityUtils;
 import application_projet4_groupe12.utils.AppUtils;
@@ -43,7 +44,7 @@ public class AdminActivity extends AppCompatActivity
 
     static boolean active = false;
 
-    SharedPreferences shared_login_choice;
+    SharedPreferences session_share;
 
     Toolbar toolbar;
     FloatingActionButton fab_gen;
@@ -236,7 +237,15 @@ public class AdminActivity extends AppCompatActivity
         navHeaderText2 = (TextView) headerLayout.findViewById(R.id.activity_main_navigation_header_text2);
 
         MenuItem adminTitle = navigationView.getMenu().findItem(R.id.nav_admin_title);
-        adminTitle.setTitle("Account of " + User.connectedUser.getAdministratedPartner(this).getName());
+
+        Partner partner = User.connectedUser.getAdministratedPartner(this);
+        String partner_name = partner.getName();
+        if(partner_name.length() == 0){
+            adminTitle.setTitle("Account of ...");
+        } else {
+            adminTitle.setTitle("Account of " + User.connectedUser.getAdministratedPartner(this).getName());
+
+        }
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.bringToFront();
     }

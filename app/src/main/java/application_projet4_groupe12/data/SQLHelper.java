@@ -1781,7 +1781,7 @@ public class SQLHelper extends SQLiteOpenHelper {
                                 String image_path = document.getString("imagePath");
                                 Log.e("TAG", "image_path: " + image_path);
                                 String tva = document.getString("tvaNumber");
-                                Log.e("TAG", "tva: " + tva);
+                                Log.e("TAG", "tvaNumber: " + tva);
                                 ContentValues cv = new ContentValues();
                                 cv.put("\"_id\"", id);
                                 cv.put("\"name\"", name);

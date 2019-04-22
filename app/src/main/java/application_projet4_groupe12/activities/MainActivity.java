@@ -179,6 +179,17 @@ public class MainActivity extends AppCompatActivity
 //            db.close();
 //        }
 
+        try {
+            db = new SQLHelper(this);
+            db.TransferPartner();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.v(Global.debug_text, "TransferPartner" + e);
+        }
+//        finally {
+//            db.close();
+//        }
+
         setContentView(R.layout.activity_main_user);
 
         loadAdMob();

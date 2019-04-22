@@ -1752,4 +1752,50 @@ public class SQLHelper extends SQLiteOpenHelper {
                     }
                 });
     }
+
+    public boolean isPartnerExists(long id) {
+        Cursor cursor = null;
+        cursor = myDB.rawQuery("SELECT * FROM Partner WHERE _id =" + id,null);
+        if (cursor != null && cursor.getCount() > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public void TransferPartner(){
+        dab.collection("Partner")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    public void onComplete(Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                long id = (document.getLong("id"));
+                                Log.e("TAG", "id : " + id);
+                                if (!isPartnerExists(id)) {
+                                String name = document.getString("name");
+                                Log.e("TAG", "name: " + name);
+                                String address = document.getString("address");
+                                Log.e("TAG", "address: " + address);
+                                String created_on = document.getString("creationDate");
+                                Log.e("TAG", "created_on: " + created_on);
+                                String image_path = document.getString("imagePath");
+                                Log.e("TAG", "image_path: " + image_path);
+                                String tva = document.getString("tvaNumber");
+                                Log.e("TAG", "tva: " + tva);
+                                ContentValues cv = new ContentValues();
+                                cv.put("\"_id\"", id);
+                                cv.put("\"name\"", name);
+                                cv.put("\"address\"", address);
+                                cv.put("\"created_on\"", created_on);
+                                cv.put("\"image_path\"", image_path);
+                                cv.put("\"tva\"", tva);
+                                myDB.insert("Partner", null, cv);
+                                }
+                            }
+                        } else {
+                            Log.e("TAG", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+    }
 }

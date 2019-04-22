@@ -148,6 +148,15 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
             Log.v(Global.debug_text, "" + e);
         }
+
+        try {
+            db = new SQLHelper(this);
+            db.TransferPartner();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.v(Global.debug_text, "" + e);
+        }
+
         setContentView(R.layout.activity_main_user);
 
         loadAdMob();

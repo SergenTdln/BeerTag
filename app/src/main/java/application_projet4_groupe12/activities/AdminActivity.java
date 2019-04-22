@@ -172,7 +172,10 @@ public class AdminActivity extends AppCompatActivity
                 break;
 
             case R.id.change_interface_admin:
-                startActivity(new Intent(AdminActivity.this, MainActivity.class));
+                Intent intent = new Intent(AdminActivity.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
                 finish();
                 break;
 

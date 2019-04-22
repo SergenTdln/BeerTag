@@ -259,6 +259,17 @@ public class SignUp extends AppCompatActivity {
                                     DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                                     String today = formatter.format(date);
 
+//                                    User user = new User(
+//                                            db_id,
+//                                            session_email,
+//                                            Hash.hash(Password.GetPassword(6)),
+//                                            today,
+//                                            firstname,
+//                                            lastname,
+//                                            today, //TODO remplacer par la date de naissance à récupérer via fb
+//                                            imagepath.toString(),
+//                                            false
+
                                     User user = new User(
                                             db_id,
                                             session_email,
@@ -279,8 +290,14 @@ public class SignUp extends AppCompatActivity {
                                         e.printStackTrace();
                                     }
 
-                                    User.connectUser(ct, user);
-                                    db_firebase.collection("Users").add(user);
+
+                                    try {
+                                        db_firebase.collection("User").add(user);
+                                        User.connectUser(ct, user);
+                                    } catch (Exception e) {
+                                        Log.v(Global.debug_text, " erreur ajout firebase: "+e);
+                                    }
+
                                 }
 
                             } catch (IOException e) {
@@ -288,6 +305,8 @@ public class SignUp extends AppCompatActivity {
                                 Log.v(Global.debug_text, "fb login db error" + e);
                             }
 
+                            User user_fb = db.getUser(session_email);
+                            User.connectUser(ct, user_fb);
                             startActivity(new Intent(SignUp.this, MainActivity.class));
                             finish();
                         } else {

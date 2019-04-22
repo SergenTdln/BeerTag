@@ -3,8 +3,8 @@ package application_projet4_groupe12.activities.find_partner;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,18 +19,22 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+//import com.google.firebase.database.DatabaseReference;
+//import com.google.firebase.database.FirebaseDatabase;
+
+import java.io.IOException;
+import java.util.List;
 
 import application_projet4_groupe12.R;
+import application_projet4_groupe12.data.SQLHelper;
+import application_projet4_groupe12.entities.Address;
 
 public class FindPartnerActivity extends FragmentActivity implements
         OnMapReadyCallback,
@@ -42,8 +46,8 @@ public class FindPartnerActivity extends FragmentActivity implements
     private GoogleApiClient googleApiClient;
     private LocationRequest locationRequest;
     private Location lastLocation;
-    private Marker currentUserLocationMarker;
     private static final int Request_User_Location_Code = 99;
+    private SQLHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,13 +82,28 @@ public class FindPartnerActivity extends FragmentActivity implements
             buildGoogleApiClient();
             mMap.setMyLocationEnabled(true);
         }
-/*
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        CameraPosition cameraPosition= new CameraPosition(latLng,15,0,0);
-*/
-        // Add a marker to the Beer Bar in Louvain-la-Neuve
-        LatLng beerbar = new LatLng(50.669198, 4.613770);
-        mMap.addMarker(new MarkerOptions().position(beerbar).title("Beer Bar"));
+
+// Affichage des shops partenaires
+        try {
+            db = new SQLHelper((this));
+
+            Address address = db.getAddress(1);
+            for (int i=1; address!=null; i++) {
+                address = db.getAddress(i);
+                if (address!=null) {
+                    String location = address.getStreet() + " " + address.getNumbers() + " " + address.getCity() +" " + address.getCountry();
+                    LatLng latlng = getLocationFromAddress(this, location);
+                    if (latlng!=null) {
+                        mMap.addMarker(new MarkerOptions().position(latlng).title(""));
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            db.close();
+        }
+
     }
 
     public boolean checkUserLocationPermission() {
@@ -134,20 +153,9 @@ public class FindPartnerActivity extends FragmentActivity implements
         }
         lastLocation = location;
 
-/*
-        if (currentUserLocationMarker != null) {
-            currentUserLocationMarker.remove();
-        }
-*/
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-/*
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
-        markerOptions.title("You are here!");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
 
-        currentUserLocationMarker = mMap.addMarker(markerOptions);
-*/
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+
         mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 //        mMap.animateCamera(CameraUpdateFactory.zoomBy(15));
         CameraUpdateFactory.zoomBy(14);
@@ -177,6 +185,33 @@ public class FindPartnerActivity extends FragmentActivity implements
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    public LatLng getLocationFromAddress(Context context, String strAddress)
+    {
+        Geocoder coder= new Geocoder(context);
+        List<android.location.Address> address;
+        LatLng latlng = null;
+
+        try
+        {
+            address = coder.getFromLocationName(strAddress, 5);
+            if(address==null)
+            {
+                return null;
+            }
+            android.location.Address location = address.get(0);
+            location.getLatitude();
+            location.getLongitude();
+
+            latlng = new LatLng(location.getLatitude(), location.getLongitude());
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return latlng;
 
     }
 }

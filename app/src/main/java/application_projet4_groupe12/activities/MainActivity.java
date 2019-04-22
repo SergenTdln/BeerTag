@@ -298,7 +298,11 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.change_interface_user:
-                startActivity(new Intent(MainActivity.this, AdminActivity.class));
+                Intent intent = new Intent(MainActivity.this, AdminActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+
                 finish();
                 break;
 

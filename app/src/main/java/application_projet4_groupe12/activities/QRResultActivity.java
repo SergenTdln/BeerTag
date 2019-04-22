@@ -45,6 +45,8 @@ import application_projet4_groupe12.utils.ActivityUtils;
 import application_projet4_groupe12.utils.Encryption;
 import application_projet4_groupe12.utils.Global;
 
+import static com.facebook.FacebookSdk.getApplicationContext;
+
 
 public class QRResultActivity extends AppCompatActivity {
 
@@ -55,6 +57,8 @@ public class QRResultActivity extends AppCompatActivity {
     private TextView result;
     private FloatingActionButton copyButton;
 
+    private Boolean valid_qr_code;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,9 +67,12 @@ public class QRResultActivity extends AppCompatActivity {
         initViews();
         initFunctionality();
 
-        if (!hasQrExpired()) {
+
+        if ( (!hasQrExpired()) && (valid_qr_code)) {
             loadMainActivity();
             increaseCount();
+        } else if (!valid_qr_code){
+            loadExpiredActivity();
         } else {
             loadExpiredActivity();
         }
@@ -97,29 +104,37 @@ public class QRResultActivity extends AppCompatActivity {
         String decryptedQrCode = Encryption.decryptQrCode(lastResult, this);
 
         /* recup des infos via qr code */
-        String[] data = decryptedQrCode.split("_5%/");
-        int achat = Integer.parseInt(data[0]);
-        Long partnerId = Long.valueOf(data[1]);
+        if(decryptedQrCode == null){
+            Log.v(Global.debug_text,"invalid qr code decrpted");
+            valid_qr_code = false;
+        } else {
+            String[] data = decryptedQrCode.split("_5%/");
+            int achat = Integer.parseInt(data[0]);
+            Long partnerId = Long.valueOf(data[1]);
 
-        if(!hasQrExpired()){
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            if(!hasQrExpired()){
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 //            result.setText(Html.fromHtml(lastResult, Html.FROM_HTML_MODE_LEGACY));
-                result.setText(Html.fromHtml("qr code crypté= " + lastResult + "| qr code  décrypté= " + decryptedQrCode, Html.FROM_HTML_MODE_LEGACY));
-            } else {
-                result.setText(Html.fromHtml(lastResult));
-            }
-            result.setMovementMethod(LinkMovementMethod.getInstance());
-            try {
-                db = new SQLHelper(this);
-                db.addPoints(User.connectedUser.getUsername(), achat, partnerId);
+                    result.setText(Html.fromHtml("qr code crypté= " + lastResult + "| qr code  décrypté= " + decryptedQrCode, Html.FROM_HTML_MODE_LEGACY));
+                } else {
+                    result.setText(Html.fromHtml(lastResult));
+                }
+                result.setMovementMethod(LinkMovementMethod.getInstance());
+                try {
+                    db = new SQLHelper(this);
+                    db.addPoints(User.connectedUser.getUsername(), achat, partnerId);
 //            db.addPoints(User.connectedUser.getUsername(), Integer.parseInt(encryptedQrCode), 1); //TODO à terminer : il me faut accès à l'ID du shop qui a généré le qr code
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.v(Global.debug_text, "" + e);
-            } finally {
-                db.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.v(Global.debug_text, "" + e);
+                } finally {
+                    db.close();
+                }
             }
         }
+
+
+
     }
 
 

@@ -48,14 +48,14 @@ public class AppUtils {
 
     private static long backPressed = 0;
 
-    public static void tapToExit(Activity activity) {
+    public static void tapToExit(Activity activity, int interface_number) {
         backPressed = System.currentTimeMillis();
         if (backPressed + 1000 > System.currentTimeMillis()){
             if(activity.isTaskRoot()){
                 SharedPreferences session = getApplicationContext().getSharedPreferences("session", MODE_PRIVATE);
                 session.edit().putBoolean("logged_in", true).apply();
 
-                if (User.connectedUser.isAdmin()) {
+                if (User.connectedUser.isAdmin() && interface_number == 1) {
                     ActivityUtils.getInstance().invokeActivity(activity, AdminActivity.class, true);
                 } else {
                     ActivityUtils.getInstance().invokeActivity(activity, MainActivity.class, true);

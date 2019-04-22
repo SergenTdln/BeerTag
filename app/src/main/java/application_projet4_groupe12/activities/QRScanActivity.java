@@ -66,18 +66,8 @@ public class QRScanActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout_user);
-        if (drawer == null) {
-            startActivity(new Intent(QRScanActivity.this, MainActivity.class));
-            finish();
-        } else {
-            if (drawer.isDrawerOpen(GravityCompat.START)) {
-                drawer.closeDrawer(GravityCompat.START);
-            } else {
-                super.onBackPressed();
-            }
-        }
+    public void onBackPressed(){
+        AppUtils.end_home(this);
     }
 
     private void initQrFunctionality() {

@@ -76,7 +76,7 @@ public class AdminActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
         if(active){
-            AppUtils.tapToExit(this);
+            AppUtils.tapToExit(this,1);
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout_admin);
         if (drawer == null) {
@@ -176,7 +176,6 @@ public class AdminActivity extends AppCompatActivity
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
-                finish();
                 break;
 
             case R.id.nav_admin_settings:

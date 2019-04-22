@@ -2,6 +2,7 @@ package application_projet4_groupe12.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Base64;
 import android.util.Log;
@@ -73,8 +74,12 @@ public class Encryption {
             DESKeySpec keySpec = new DESKeySpec(cryptoPass.getBytes("UTF8"));
             SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
             SecretKey key = keyFactory.generateSecret(keySpec);
-
-            byte[] encrypedPwdBytes = Base64.decode(value, Base64.DEFAULT);
+            byte[] encrypedPwdBytes = new byte[0];
+            try {
+                encrypedPwdBytes = Base64.decode(value, Base64.DEFAULT);
+            } catch (Exception e) {
+                Log.v(Global.debug_text, "QR CODE NOT FROM BEERTAG APP"+e);
+            }
             // cipher is not thread safe
             Cipher cipher = Cipher.getInstance("DES");
             cipher.init(Cipher.DECRYPT_MODE, key);

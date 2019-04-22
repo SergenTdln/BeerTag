@@ -38,19 +38,8 @@ public class QRGenerateActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout_admin);
-        if (drawer == null) {
-//            startActivity(new Intent(QRGenerateActivity.this, AdminActivity.class));
-//            finish();
-            AppUtils.end_home_admin(this);
-        } else {
-            if (drawer.isDrawerOpen(GravityCompat.START)) {
-                drawer.closeDrawer(GravityCompat.START);
-            } else {
-                super.onBackPressed();
-            }
-        }
+    public void onBackPressed(){
+        AppUtils.end_home_admin(this);
     }
 
 

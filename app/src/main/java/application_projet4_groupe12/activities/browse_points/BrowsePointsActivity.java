@@ -14,6 +14,7 @@ import java.util.List;
 
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.data.SQLHelper;
+import application_projet4_groupe12.utils.AppUtils;
 import application_projet4_groupe12.utils.Global;
 
 public class BrowsePointsActivity extends AppCompatActivity {
@@ -54,5 +55,10 @@ public class BrowsePointsActivity extends AppCompatActivity {
 
         BrowsePointsResultsRowAdapter bprra = new BrowsePointsResultsRowAdapter(this, elements);
         listView.setAdapter(bprra);
+    }
+
+    @Override
+    public void onBackPressed(){
+        AppUtils.end_home(this);
     }
 }

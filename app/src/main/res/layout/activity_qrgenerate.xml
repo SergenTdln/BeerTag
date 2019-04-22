@@ -16,10 +16,9 @@ tools:context=".activities.QRGenerateActivity">
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:background="@color/admin_colorPrimary"
         app:popupTheme="@style/AppTheme.PopupOverlay"
         app:titleTextAppearance="@style/Widget.BottomNavigationView"
-        android:backgroundTint="@color/admin_colorPrimary"
         app:titleTextColor="@color/white"/>
 
 

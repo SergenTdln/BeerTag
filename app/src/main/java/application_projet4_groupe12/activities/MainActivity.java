@@ -214,12 +214,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
         if (active) {
-            AppUtils.tapToExit(this);
+            AppUtils.tapToExit(this, 0);
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout_user);
         if (drawer == null) {
             Intent intent = new Intent(MainActivity.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();
         } else {
@@ -311,10 +312,8 @@ public class MainActivity extends AppCompatActivity
             case R.id.change_interface_user:
                 Intent intent = new Intent(MainActivity.this, AdminActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
-
-                finish();
                 break;
 
             case R.id.go_to_instagram:

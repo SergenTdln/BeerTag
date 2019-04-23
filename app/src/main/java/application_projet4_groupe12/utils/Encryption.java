@@ -150,7 +150,7 @@ public class Encryption {
 
         Long diff = now_time - qrtime;
         Log.v(Global.debug_text, "time diff " + diff);
-        if (diff >= 300000) {
+        if (diff >= 600000) {
             expired = true;
         }
 

@@ -67,15 +67,21 @@ public class QRResultActivity extends AppCompatActivity {
         initViews();
         initFunctionality();
 
-
-        if ( (!hasQrExpired()) && (valid_qr_code)) {
+        if(!hasQrExpired()){
+            loadMainActivity();
+            increaseCount();
+        } else {
+            loadExpiredActivity();
+        }
+        //invalid ok mais ko valid TODO
+        /*if ( (!hasQrExpired()) && (valid_qr_code)) {
             loadMainActivity();
             increaseCount();
         } else if (!valid_qr_code){
             loadExpiredActivity();
         } else {
             loadExpiredActivity();
-        }
+        }*/
     }
 
     private void initVars() {

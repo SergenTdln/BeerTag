@@ -68,33 +68,43 @@
         </activity>
 
         <activity android:name="application_projet4_groupe12.activities.SignUp"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity android:name="application_projet4_groupe12.activities.MainActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/UserTheme"/>
 
         <activity android:name="application_projet4_groupe12.activities.LoginChoiceActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity android:name="application_projet4_groupe12.activities.AdminActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/AdminTheme"/>
 
         <activity
             android:name="application_projet4_groupe12.activities.QRResultActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".activities.MainActivity" />
+            android:parentActivityName=".activities.MainActivity"
+            />
 
         <activity android:name="application_projet4_groupe12.activities.QRGenerateActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/AdminTheme"
+            />
 
         <activity android:name="application_projet4_groupe12.activities.QRScanActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/UserTheme"/>
 
         <activity android:name=".activities.browse_points.BrowsePointsActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/UserTheme"/>
 
       <activity android:name=".activities.ShareActivityResult"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+          android:theme="@style/UserTheme"/>
 
         <activity
             android:name=".activities.AlcoolSensiActivity"
@@ -105,22 +115,28 @@
         </activity>
 
         <activity android:name=".activities.browse_clients.BrowseClientsActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AdminTheme"/>
 
         <activity android:name=".activities.settings.SettingsUserActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/UserTheme"/>
 
         <activity android:name=".activities.settings.SettingsPartnerActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AdminTheme"/>
 
         <activity android:name=".activities.browse_points.UsePromotionsActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/UserTheme"/>
 
         <activity android:name=".activities.ExpiredActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/UserTheme"/>
 
         <activity android:name=".activities.ShareActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/UserTheme"/>
 
 
         <meta-data

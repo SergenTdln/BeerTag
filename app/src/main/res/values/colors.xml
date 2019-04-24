@@ -14,6 +14,7 @@
     <color name="placeholder">#d9aeaeae</color>
     <color name="viewfinder_laser">#F4F2FA</color>
     <color name="viewfinder_border">@color/colorPrimaryDark</color>
+    <color name="black">#000000</color>
 
     <!-- -->
     <color name="login_text">#FFFFFF</color>
@@ -26,4 +27,6 @@
     <!-- admin colors -->
     <color name="admin_colorPrimary">#DF781E</color>
     <color name="admin_fab_generate">#DF781E</color>
+
+    <color name="transparent"></color>
 </resources>

@@ -76,5 +76,8 @@
     <string name="dialog_share_text" translatable="false">Super, votre achat a été comptabilisé ! Voulez-vous partager cela avec vos amis, avec une super photo personnalisée ? :D</string>
     <string name="intent_share_text" translatable="false">Partagez avec ...</string>
     <string name="qr_expired_text" translatable="false">Le QR Code scanné est invalide ou a expiré...</string>
+    <string name="qr_amount_text" translatable="false">Veuillez entrer le montant de l\'achat</string>
+    <string name="qr_scan_text" translatable="false">Veuillez scanner le QR code.</string>
+    <string name="qr_validity_time_text" translatable="false">Le QR code généré est valable pendant 3 minutes.</string>
     <string name="sign_up_verification_text" translatable="false">fdzdzdzdzd</string>
 </resources>

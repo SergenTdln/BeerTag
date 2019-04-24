@@ -43,7 +43,7 @@ public class SettingsPartnerActivity extends AppCompatActivity {
     private Spinner dropDownUsers;
     private Button addAdmin;
 
-    private ImageButton buttonOut;
+    private FloatingActionButton buttonOut;
 
     private Partner currentPartner;
 
@@ -122,7 +122,7 @@ public class SettingsPartnerActivity extends AppCompatActivity {
             }
         });
 
-        buttonOut = (ImageButton) findViewById(R.id.settings_partner_save_button);
+        buttonOut =  findViewById(R.id.settings_partner_save_button);
         buttonOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

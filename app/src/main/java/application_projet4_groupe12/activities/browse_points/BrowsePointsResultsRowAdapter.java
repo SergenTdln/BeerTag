@@ -42,7 +42,6 @@ public class BrowsePointsResultsRowAdapter extends ArrayAdapter<BrowsePointsAsso
             viewHolder = new ViewHolder();
             viewHolder.partnerName = convertView.findViewById(R.id.browse_row_adapter_partner_name);
             viewHolder.shopAddress = convertView.findViewById(R.id.browse_row_adapter_shop_address);
-            viewHolder.partnerPic = convertView.findViewById(R.id.browser_row_adapter_partner_pic);
             //viewHolder.shopDescr = (TextView) convertView.findViewById(R.id.);
             viewHolder.pointsAmount = convertView.findViewById(R.id.browse_row_adapter_points_amount);
             viewHolder.arrowButton = convertView.findViewById(R.id.browse_row_adapter_arrow_button);
@@ -52,11 +51,11 @@ public class BrowsePointsResultsRowAdapter extends ArrayAdapter<BrowsePointsAsso
 
         BrowsePointsAssociation assoc = getItem(position);
         if(assoc!=null) {
-            viewHolder.partnerName.setText(assoc.getPartnerName());
+            System.out.println("Browse Points Row Adapter : partnerName is : "+assoc.getPartnerName());
+            viewHolder.partnerName.setText(assoc.getShopDescr());
             viewHolder.shopAddress.setText(assoc.getShopAddress().stringRepresentation());
             //viewHolder.shopDescr.setText(assoc.getShopDescr());
             viewHolder.pointsAmount.setText(String.valueOf(assoc.getPoints()));
-            viewHolder.partnerPic.setImageBitmap(BitmapFactory.decodeFile(convertView.getContext().getFilesDir() + "/" + assoc.getPartnerImagePath()));
 
 
             ArrayList<Promotion> availablePromos = getPromotions(getContext(), assoc);
@@ -69,6 +68,7 @@ public class BrowsePointsResultsRowAdapter extends ArrayAdapter<BrowsePointsAsso
                         // New Activity with available Promos and a way to "consume" them
                         Intent intent = new Intent(getContext(), UsePromotionsActivity.class);
                         intent.putParcelableArrayListExtra("Promotions", availablePromos);
+                        intent.putExtra("Points", assoc.getPoints());
                         getContext().startActivity(intent);
                     }
                 });
@@ -79,7 +79,6 @@ public class BrowsePointsResultsRowAdapter extends ArrayAdapter<BrowsePointsAsso
 
     private class ViewHolder {
         TextView partnerName;
-        ImageView partnerPic;
         TextView shopAddress;
         //TextView shopDescr;
         TextView pointsAmount;

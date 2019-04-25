@@ -1,6 +1,7 @@
 package application_projet4_groupe12.activities.browse_points;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -35,19 +36,40 @@ public class UsePromotionsActivity extends AppCompatActivity {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        promotions = getIntent().getParcelableArrayListExtra("Promotions");
+        Intent in = getIntent();
+        promotions = in.getParcelableArrayListExtra("Promotions");
         setContentView(R.layout.activity_use_promotions);
 
         listView = (ListView) findViewById(R.id.use_promotions_listview);
         fillListView(listView, promotions);
         registerForContextMenu(listView);
+
+        subTitle2 = (TextView) findViewById(R.id.use_promotions_textview_subtitle_2);
+        subTitle2.setText(String.valueOf(in.getIntExtra("Points", 0)));
+        //TODO some of this go in onStart() ? Also, retrieve from DB instead to stay up-to-date ? @Martin
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        SQLHelper db = null;
+        try{
+            db = new SQLHelper(this);
+            //TODO aller chercher en DB pour que le refresh de page update les infos @Martin
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error while accessing the DB. Please try again", Toast.LENGTH_SHORT).show();
+        } finally {
+            if(db!=null){
+                db.close();
+            }
+        }
     }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         getMenuInflater().inflate(R.menu.use_promotion_context, menu);
-        //menu.setHeaderIcon(R.drawable.ic_launcher_foreground); //TODO change this icon
         menu.setHeaderTitle("Activate the promotion"); //TODO use string resources @Martin
 
     }
@@ -62,6 +84,8 @@ public class UsePromotionsActivity extends AppCompatActivity {
                     Toast.makeText(this, "Promotion successfully used", Toast.LENGTH_SHORT).show();
                     fillListView(listView, promotions); //Refreshing the displayed list
                     registerForContextMenu(listView);
+
+                    onStart(); // restart this Activity (to update displayed data)
                     return true;
                 } else {
                     Toast.makeText(this, "Could not activate this Promotion. Please try again.", Toast.LENGTH_SHORT).show();

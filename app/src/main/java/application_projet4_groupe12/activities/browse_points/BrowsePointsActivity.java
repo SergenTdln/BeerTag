@@ -40,7 +40,9 @@ public class BrowsePointsActivity extends AppCompatActivity {
             
             //elements = db.getAllPoints(User.connectedUser.getUsername());
             if(elements.isEmpty()){
-                Toast.makeText(getApplicationContext(), "Empty list", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Empty list", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "List contains "+elements.size()+" elements", Toast.LENGTH_SHORT).show();
             }
 
         } catch (IOException e) {

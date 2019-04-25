@@ -248,7 +248,6 @@
                                     android:layout_height="300dp"
                                     android:layout_marginTop="8dp"
                                     app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintHorizontal_bias="1.0"
                                     app:layout_constraintStart_toStartOf="parent"
                                     app:layout_constraintTop_toBottomOf="@+id/settings_partner_manage_admins" />
 
@@ -317,6 +316,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/spacing_smlarge"
         android:clickable="true"
+        android:focusable="true"
         android:tint="@android:color/white"
         app:backgroundTint="@color/admin_colorPrimary"
         app:fabSize="normal"

@@ -7,7 +7,6 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -23,21 +22,10 @@ import application_projet4_groupe12.activities.browse_clients.BrowseClientsActiv
 import application_projet4_groupe12.activities.settings.SettingsPartnerActivity;
 import application_projet4_groupe12.entities.Partner;
 import application_projet4_groupe12.entities.User;
-import application_projet4_groupe12.utils.ActivityUtils;
 import application_projet4_groupe12.utils.AppUtils;
-import application_projet4_groupe12.utils.FacebookUtils;
 
-import java.net.URL;
-
-import application_projet4_groupe12.utils.Global;
-
-import android.content.Context;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.facebook.login.LoginManager;
-import com.google.firebase.auth.FirebaseAuth;
-import com.squareup.picasso.Picasso;
 
 public class AdminActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -54,6 +42,7 @@ public class AdminActivity extends AppCompatActivity
     ImageView navHeaderImage;
     TextView navHeaderText1;
     TextView navHeaderText2;
+    TextView navHeaderText3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +56,6 @@ public class AdminActivity extends AppCompatActivity
         handleDrawer();
 
         handleNavigationView();
-
     }
 
     /*
@@ -114,31 +102,22 @@ public class AdminActivity extends AppCompatActivity
     @Override
     public void onStart() {
         super.onStart();
+        Partner currentPartner = User.connectedUser.getAdministratedPartner(this);
 
-        if (ActivityUtils.getInstance().isLoggedInFacebook()) {
-            /* Remplacer les données par celles du profil fb*/
-            String id = new FacebookUtils().getFacebookId();
-            SharedPreferences shared = getSharedPreferences("session", MODE_PRIVATE);
-            String session_name = shared.getString("name", "");
-            String session_email = shared.getString("email", "");
-            URL image_url = new FacebookUtils().getFacebookProfilePic();
-            Log.i(Global.debug_text, "session img url / name / email " + image_url + session_name + session_email);
-            Picasso.with(this).load(String.valueOf(image_url)).into(navHeaderImage);
-            navHeaderText1.setText(session_name);
-            navHeaderText2.setText(session_email);
-        } else {
-            /* Remplacer les données par celles de la db locale*/
-            String userFullName = User.connectedUser.getFullName();
-            navHeaderText1.setText(userFullName);
+        /* Remplir les données avec celles de la db locale*/
+        String name = currentPartner.getName();
+        navHeaderText1.setText(name);
+        String userFullname = User.connectedUser.getFullName();
+        navHeaderText2.setText(userFullname);
+        String userEMail = User.connectedUser.getUsername();
+        navHeaderText3.setText(userEMail);
 
-            String userUsername = User.connectedUser.getUsername();
-            navHeaderText2.setText(userUsername);
-
-            Bitmap bitmap = BitmapFactory.decodeFile(this.getFilesDir()+"/"+User.connectedUser.getImagePath());
-            if(bitmap!=null) {
-                navHeaderImage.setImageBitmap(bitmap);
-            }
+        Bitmap bitmap = BitmapFactory.decodeFile(this.getFilesDir()+"/"+currentPartner.getImagePath());
+        if(bitmap!=null) {
+            navHeaderImage.setImageBitmap(bitmap);
         }
+
+        //TODO anything else ? @Martin
 
         active = true;
     }
@@ -149,7 +128,6 @@ public class AdminActivity extends AppCompatActivity
         active = false;
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         handleInterfaceButton();
@@ -232,11 +210,12 @@ public class AdminActivity extends AppCompatActivity
          */
         navigationView = findViewById(R.id.admin_nav_view);
         navigationView.inflateMenu(R.menu.activity_main_navigation_drawer_admin);
-        View headerLayout = navigationView.inflateHeaderView(R.layout.admin_main_navigation_header);
+        View headerLayout = navigationView.inflateHeaderView(R.layout.activity_main_admin_navigation_header);
 
         navHeaderImage = (ImageView) headerLayout.findViewById(R.id.activity_main_admin_navigation_header_image);
         navHeaderText1 = (TextView) headerLayout.findViewById(R.id.activity_main_admin_navigation_header_text1);
         navHeaderText2 = (TextView) headerLayout.findViewById(R.id.activity_main_admin_navigation_header_text2);
+        navHeaderText3 = (TextView) headerLayout.findViewById(R.id.activity_main_admin_navigation_header_text3);
 
         MenuItem adminTitle = navigationView.getMenu().findItem(R.id.nav_admin_title);
 

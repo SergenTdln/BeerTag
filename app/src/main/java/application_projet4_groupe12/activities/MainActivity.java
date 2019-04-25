@@ -1,16 +1,10 @@
 package application_projet4_groupe12.activities;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
@@ -24,11 +18,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import application_projet4_groupe12.BuildConfig;
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.activities.browse_points.BrowsePointsActivity;
 import application_projet4_groupe12.activities.find_partner.FindPartnerActivity;
-import application_projet4_groupe12.activities.settings.SettingsPartnerActivity;
 import application_projet4_groupe12.activities.settings.SettingsUserActivity;
 import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.entities.User;
@@ -39,22 +31,14 @@ import application_projet4_groupe12.utils.FacebookUtils;
 import java.io.IOException;
 import java.net.URL;
 
-import application_projet4_groupe12.utils.FirebaseUtils;
 import application_projet4_groupe12.utils.Global;
 
-import android.content.Context;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.login.LoginManager;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
-import com.google.android.gms.ads.MobileAds;
 
 
 public class MainActivity extends AppCompatActivity
@@ -372,7 +356,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.inflateMenu(R.menu.activity_main_navigation_drawer_user);
         MenuItem interface_change_button = navigationView.findViewById(R.id.change_interface_user);
         handleInterfaceButton();
-        View headerLayout = navigationView.inflateHeaderView(R.layout.activity_main_navigation_header);
+        View headerLayout = navigationView.inflateHeaderView(R.layout.activity_main_user_navigation_header);
 
         navHeaderImage = headerLayout.findViewById(R.id.activity_main_navigation_header_image);
         navHeaderText1 = headerLayout.findViewById(R.id.activity_main_navigation_header_text1);

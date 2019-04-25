@@ -49,6 +49,16 @@
     <string name="settings_partner_spinner_default">Veuillez selectionner un utilisateur</string>
     <string name="nav_find_partner">Trouver des partenaires</string>
     <string name="title_activity_find_partner">TrouverDesPartenairesActivity</string>
+    <string name="dialog_share_text">Super, votre achat a été comptabilisé ! Voulez-vous partager cela avec vos amis, avec une super photo personnalisée ? :D</string>
+    <string name="alcool_notification_text">Attention à votre consomation, vous enchaînez les achats, buvez de manière responsable</string>
+    <string name="alcool_notification_title">Attention à votre consomation !</string>
+    <string name="alcool_sensi_text">Nous constatons que vous venez de scanner plusieurs fois à la suite. Nous vous invitons donc à faire attention à votre consomation. Beer Tag est juste un outil pour vous faciliter la vie; nous conseillons à nos utilisateurs d\'être responsables.</string>
+    <string name="intent_share_text">Partagez avec&#8230;</string>
+    <string name="nav_switch_menu">Changer d\'interface</string>
+    <string name="qr_amount_text">Veuillez entrer le montant de l\'achat</string>
+    <string name="qr_expired_text">Le code QR scanné est invalide ou a expiré&#8230;</string>
+    <string name="qr_scan_text">Veuillez scanner un QR code</string>
+    <string name="qr_validity_time_text">Le QR code généré est valable pendant 3 minutes</string>
 
     <!--<string name="login_fields">Veuillez completer tous les champs</string>-->
     <!--<string name="login_success">Connection</string>-->

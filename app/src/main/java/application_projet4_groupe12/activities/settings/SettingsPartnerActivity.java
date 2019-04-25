@@ -1,8 +1,12 @@
 package application_projet4_groupe12.activities.settings;
 
 import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputEditText;
@@ -22,6 +26,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -73,19 +80,8 @@ public class SettingsPartnerActivity extends AppCompatActivity {
         selectFileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {//TODO @Martin see UserSettings
-                //Prompts the user to select a file from local storage and COPY it into the app's internal storage
-
-                if(AppUtils.changeProfilePicture(v.getContext(), currentPartner)){
-                    //Image changed
-                    String imagePath = null;
-                    currentPartner.setImagePath(v.getContext(), imagePath);
-                    //Show new pic in this Activity
-                    picture.setImageBitmap(BitmapFactory.decodeFile(v.getContext().getFilesDir()+"/"+currentPartner.getImagePath()));
-                } else {
-                    //An error occurred
-                    //Image  was not changed
-                    System.err.println("Partner logo was not changed");
-                }
+                //Initializes imagePath (thepath of the new image selected by the user)
+                onBtnPickGallery();
             }
         });
 
@@ -137,6 +133,60 @@ public class SettingsPartnerActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    /**
+     * Code found on StackOverflow
+     * @author Shankar Agarwal
+     */
+    private void onBtnPickGallery() {
+        Intent pickPhoto = new Intent(Intent.ACTION_PICK,
+            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(pickPhoto , 123);//one can be replaced with any action code
+    }
+
+    /**
+     * Code found on StackOverflow
+     * @author Shankar Agarwal
+     */
+    protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
+        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+
+        switch(requestCode) {
+            case 123:
+                if(resultCode == RESULT_OK){
+                    Uri selectedImage = imageReturnedIntent.getData();
+                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+                    Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+                    cursor.moveToFirst();
+
+                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                    String imagePath = cursor.getString(columnIndex);
+                    cursor.close();
+
+
+                    //New pic's name
+                    String outputFilePath = currentPartner.getId() + "_pic.png";
+                    FileInputStream streamIn = AppUtils.getStreamIn(new File(imagePath));
+                    FileOutputStream streamOut = AppUtils.getStreamOut(this, outputFilePath);
+                    if (streamIn != null && streamOut != null && AppUtils.copyFile(streamIn, streamOut)) {
+                        //Image successfully coped
+                        currentPartner.setImagePath(this, outputFilePath);
+                        //Show new pic in this Activity
+                        System.out.println("Profile pic was changed");
+                        picture.setImageBitmap(BitmapFactory.decodeFile(this.getFilesDir() + "/" + outputFilePath));
+                    } else {
+                        //An error occurred
+                        //Image  was not changed
+                        System.err.println("Profile pic was not changed");
+                    }
+
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     @Override

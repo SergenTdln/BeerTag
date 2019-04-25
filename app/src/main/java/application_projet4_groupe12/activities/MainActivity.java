@@ -1,5 +1,6 @@
 package application_projet4_groupe12.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity
 
 //        FirebaseUtils.FirebaseSync(this);
         try {
-            db = new SQLHelper(this);
+            db = new SQLHelper(getApplicationContext());
             db.TransferUser();
         } catch (IOException e) {
             e.printStackTrace();
@@ -76,7 +77,7 @@ public class MainActivity extends AppCompatActivity
 //        }
 
         try {
-            db = new SQLHelper(this);
+            db = new SQLHelper(getApplicationContext());
             db.TransferAddress();
         } catch (IOException e) {
             e.printStackTrace();
@@ -87,92 +88,92 @@ public class MainActivity extends AppCompatActivity
 //        }
 
         try {
-            db = new SQLHelper(this);
+            db = new SQLHelper(getApplicationContext());
             db.TransferAdmin_user();
         } catch (IOException e) {
             e.printStackTrace();
             Log.v(Global.debug_text, "TransferAdmin_user" + e);
         }
-//        finally {
-//            db.close();
-//        }
+        //finally {
+          //  db.close();
+        //}
 
         try {
-            db = new SQLHelper(this);
+            db = new SQLHelper(getApplicationContext());
             db.TransferFavorite_shops();
         } catch (IOException e) {
             e.printStackTrace();
             Log.v(Global.debug_text, "TransferFavorite_shops" + e);
         }
-//        finally {
-//            db.close();
-//        }
+        //finally {
+          //  db.close();
+        //}
 
-        try {
-            db = new SQLHelper(this);
+            try {
+            db = new SQLHelper(getApplicationContext());
             db.TransferPromotion();
         } catch (IOException e) {
             e.printStackTrace();
             Log.v(Global.debug_text, "TransferPromotion" + e);
         }
-//        finally {
-//            db.close();
-//        }
+        //finally {
+          //  db.close();
+        //}
 
         try {
-            db = new SQLHelper(this);
+            db = new SQLHelper(getApplicationContext());
             db.TransferShop_frames();
         } catch (IOException e) {
             e.printStackTrace();
             Log.v(Global.debug_text, "TransferShop_frames" + e);
         }
-//        finally {
-//            db.close();
-//        }
+        //finally {
+          //  db.close();
+        //}
 
         try {
-            db = new SQLHelper(this);
+            db = new SQLHelper(getApplicationContext());
             db.TransferShop_location();
         } catch (IOException e) {
             e.printStackTrace();
             Log.v(Global.debug_text, "TransferShop_location" + e);
         }
-//        finally {
-//            db.close();
-//        }
+        //finally {
+          //  db.close();
+        //}
 
         try {
-            db = new SQLHelper(this);
+            db = new SQLHelper(getApplicationContext());
             db.TransferUser_points();
         } catch (IOException e) {
             e.printStackTrace();
             Log.v(Global.debug_text, "TransferUser_points" + e);
         }
-//        finally {
-//            db.close();
-//        }
+        //finally {
+          //  db.close();
+        //}
 
         try {
-            db = new SQLHelper(this);
+            db = new SQLHelper(getApplicationContext());
             db.TransferUser_promotion();
         } catch (IOException e) {
             e.printStackTrace();
             Log.v(Global.debug_text, "TransferUser_promotion" + e);
         }
-//        finally {
-//            db.close();
-//        }
+        //finally {
+          //  db.close();
+        //}
 
         try {
-            db = new SQLHelper(this);
+            db = new SQLHelper(getApplicationContext());
             db.TransferPartner();
         } catch (IOException e) {
             e.printStackTrace();
             Log.v(Global.debug_text, "TransferPartner" + e);
         }
-//        finally {
-//            db.close();
-//        }
+        //finally {
+          //  db.close();
+        //}
 
         setContentView(R.layout.activity_main_user);
 

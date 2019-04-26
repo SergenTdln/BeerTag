@@ -185,7 +185,7 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
             db = new SQLHelper(getContext());
 
              if (db.doesPartnerExist(mTVA))  {
-                 Toast.makeText(getActivity(),  "This Partner already exists", Toast.LENGTH_SHORT).show();
+                 Toast.makeText(getActivity(),  "This TVA number is already used", Toast.LENGTH_SHORT).show();
                  return false;
              }
             long id = db.getFreeIDPartner();

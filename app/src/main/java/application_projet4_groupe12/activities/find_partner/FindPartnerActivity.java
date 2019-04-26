@@ -47,7 +47,8 @@ public class FindPartnerActivity extends FragmentActivity implements
     private Location lastLocation;
     private static final int Request_User_Location_Code = 99;
     private SQLHelper db;
-    private  int firstTime = 0;
+    private  boolean located = false;
+    private boolean locationUpadte = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,8 +108,16 @@ public class FindPartnerActivity extends FragmentActivity implements
         mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
             @Override
             public boolean onMyLocationButtonClick() {
-                firstTime = 0;
+                locationUpadte = true;
+                located = false;
                 return true;
+            }
+        });
+
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                locationUpadte = false;
             }
         });
 
@@ -162,28 +171,25 @@ public class FindPartnerActivity extends FragmentActivity implements
 
     @Override
     public void onLocationChanged(Location location) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+        if (locationUpadte) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+            }
+
+            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+
+            mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+
+            if (located == false) {
+                CameraPosition cameraPosition = new CameraPosition.Builder()
+                        .target(latLng).zoom(14).build();
+                mMap.animateCamera(CameraUpdateFactory
+                        .newCameraPosition(cameraPosition));
+                located = true;
+            }
+
+            lastLocation = location;
         }
-
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-
-        mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-
-        if (firstTime == 0) {
-            CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(latLng).zoom(14).build();
-            mMap.animateCamera(CameraUpdateFactory
-                    .newCameraPosition(cameraPosition));
-            firstTime = 1;
-        }
-
-
-        /*if (googleApiClient != null) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
-        }*/
-        lastLocation = location;
-
     }
 
 

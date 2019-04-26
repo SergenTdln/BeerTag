@@ -49,14 +49,16 @@ public class UsePromotionsRowAdapter extends ArrayAdapter<Promotion> {
             viewHolder.promoID = promotion.getId();
             viewHolder.shopID = promotion.getIdShop();
             viewHolder.pointsRequired.setText(String.valueOf(promotion.getPointsRequired()));
-            viewHolder.pointsRequiredTitle.setText("Points required");
+            viewHolder.pointsRequiredTitle.setText(R.string.points_required);
             viewHolder.descr.setText(promotion.getDescription());
             viewHolder.endDate.setText(promotion.getEndDate());
-            viewHolder.endDateTitle.setText("Valid until :");
-            String isReusable; if(promotion.isReusable()){isReusable="this promotion is reusable";}else{isReusable="This promotion is NOT reusable";}
-            viewHolder.reusability.setText(isReusable);
+            viewHolder.endDateTitle.setText(R.string.valid_until);
+            if(promotion.isReusable()) {
+                viewHolder.reusability.setText(R.string.promo_is_reusable);
+            } else {
+                viewHolder.reusability.setText(R.string.promo_is_not_reusable);
+            }
             viewHolder.promotionPic.setImageBitmap(BitmapFactory.decodeFile(convertView.getContext().getFilesDir() + "/" + promotion.getImagePath()));
-            //TODO Use string resources instead @Martin
         }
         return convertView;
     }

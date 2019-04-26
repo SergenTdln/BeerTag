@@ -59,6 +59,9 @@
     <string name="qr_expired_text">Le code QR scanné est invalide ou a expiré&#8230;</string>
     <string name="qr_scan_text">Veuillez scanner un QR code</string>
     <string name="qr_validity_time_text">Le QR code généré est valable pendant 3 minutes</string>
+    <string name="activate_promotion">Activer cette promotion</string>
+    <string name="points_required">Points requis</string>
+    <string name="valid_until">Valid jusqu\'au :</string>
 
     <!--<string name="login_fields">Veuillez completer tous les champs</string>-->
     <!--<string name="login_success">Connection</string>-->

@@ -1077,7 +1077,7 @@ public class SQLHelper extends SQLiteOpenHelper {
         if( !isValidDate(user.getBirthday()) ){
             throw new WrongDateFormatException(user.getBirthday() + " is not a valid date format.");
         }
-        if(doesUserExist(user.getUsername())){
+        if(doesUserExist(user.getUsername()) || doesUserExist(user.getId())){
             return false;
         }
 

@@ -74,8 +74,7 @@ public class UsePromotionsActivity extends AppCompatActivity {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         getMenuInflater().inflate(R.menu.use_promotion_context, menu);
-        menu.setHeaderTitle("Activate the promotion"); //TODO use string resources @Martin
-
+        menu.setHeaderTitle(R.string.activate_promotion);
     }
 
     @Override

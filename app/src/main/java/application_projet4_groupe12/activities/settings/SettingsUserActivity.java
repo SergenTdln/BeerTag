@@ -71,7 +71,7 @@ public class SettingsUserActivity extends AppCompatActivity {
             Picasso.with(this).load(String.valueOf(image_url)).into(picture);
             selectFileButton.setText("Disabled for accounts created from Facebook");
             selectFileButton.setTextColor(getResources().getColor(R.color.red, null)); //TODO j'ai un cannot resolve avec grey, wtf
-            selectFileButton.setClickable(false);
+            selectFileButton.setEnabled(false);
         } else {
             picture.setImageBitmap(BitmapFactory.decodeFile(this.getFilesDir() + "/" + User.connectedUser.getImagePath()));
         }
@@ -203,5 +203,11 @@ public class SettingsUserActivity extends AppCompatActivity {
             default:
                 break;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        AppUtils.end_home(this);
     }
 }

@@ -235,6 +235,12 @@ public class SettingsPartnerActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        AppUtils.end_home_admin(this);
+    }
+
     private User getUser(Context c, String email){
         SQLHelper db = null;
         try{

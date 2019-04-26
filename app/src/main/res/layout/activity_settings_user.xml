@@ -143,14 +143,6 @@
                                     app:layout_constraintStart_toStartOf="parent"
                                     tools:layout_editor_absoluteY="10dp" />
 
-                                <ImageButton
-                                    android:id="@+id/settings_user_save_button"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="576dp"
-                                    android:src="@android:drawable/ic_menu_save"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintTop_toTopOf="parent" />
 
                                 <TextView
                                     android:id="@+id/settings_user_change_name_title"
@@ -315,5 +307,20 @@
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/settings_user_save_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/spacing_smlarge"
+        android:clickable="true"
+        android:focusable="true"
+        android:tint="@android:color/white"
+        app:backgroundTint="@color/colorPrimary"
+        app:fabSize="normal"
+        app:layout_anchor="@id/nested_content"
+        app:layout_anchorGravity="top|end|right"
+        app:rippleColor="@android:color/white"
+        app:srcCompat="@android:drawable/ic_menu_save" />
 
 </android.support.design.widget.CoordinatorLayout>

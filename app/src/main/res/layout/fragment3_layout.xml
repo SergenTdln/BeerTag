@@ -56,7 +56,7 @@
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="@dimen/spacing_middle"
                         android:layout_marginBottom="@dimen/spacing_xlarge"
-                        android:text="DEVENIR PARTENAIRE"
+                        android:text="@string/become_partner"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
                         android:textColor="@color/colorPrimary"
                         android:textStyle="bold" />
@@ -65,23 +65,21 @@
                         android:id="@+id/sign_up_partner_input_name_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="This is the name to be displayed to users in the app"
+                        android:text="@string/your_name"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
                         android:textColor="@color/colorPrimary" />
-
-                    <android.support.design.widget.TextInputEditText
+                    <EditText
                         android:id="@+id/sign_up_partner_input_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="-4dp"
                         android:layout_marginRight="-4dp"
-                        android:hint="Public Name"
-                        android:textSize="10dp"
+                        android:hint="@string/your_name_default"
+                        android:textSize="12sp"
                         android:maxLength="50"
                         android:maxLines="1"
-                        android:singleLine="true"
+                        android:inputType="textPersonName"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-                        android:textColor="@color/colorPrimary"
                         android:textStyle="bold" />
 
                     <View
@@ -92,49 +90,46 @@
                         android:id="@+id/sign_up_partner_input_address_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="This is the address of your headquarters.\nIt will not be displayed to users"
+                        android:text="@string/your_address"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
                         android:textColor="@color/colorPrimary" />
-
-
-                    <!-- autocomplete-->
-
                     <EditText
                         android:id="@+id/sign_up_partner_input_address"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:hint="votre adresse"
-                        android:layout_below="@+id/select"/>
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="-4dp"
+                        android:layout_marginRight="-4dp"
+                        android:hint="@string/your_address_default"
+                        android:textSize="12sp"
+                        android:maxLength="50"
+                        android:maxLines="1"
+                        android:inputType="textPostalAddress"
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+                        android:textStyle="bold" />
 
                     <View
                         android:layout_width="0dp"
                         android:layout_height="@dimen/spacing_mlarge" />
 
-
-
                     <TextView
                         android:id="@+id/sign_up_partner_input_tva_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Enter your company's TVA number"
+                        android:text="@string/your_tva_number"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
                         android:textColor="@color/colorPrimary" />
-
-                    <android.support.design.widget.TextInputEditText
+                    <EditText
                         android:id="@+id/sign_up_partner_input_tva"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="-4dp"
                         android:layout_marginRight="-4dp"
-                        android:hint="BE0123456789"
-                        android:textSize="10dp"
+                        android:hint="@string/your_tva_number_default"
+                        android:textSize="12sp"
                         android:maxLength="50"
                         android:maxLines="1"
-                        android:singleLine="true"
+                        android:inputType="text"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-                        android:textColor="@color/colorPrimary"
                         android:textStyle="bold" />
 
                     <View
@@ -145,14 +140,12 @@
                         android:id="@+id/sign_up_partner_input_admin_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Select in the drop-down list an User that will be administrator for this Partner. You can add more after account creation"
+                        android:text="@string/fragment3_spinner_title"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
                         android:textColor="@color/colorPrimary" />
-
                     <Spinner
                         android:id="@+id/sign_up_partner_input_spinner_admin"
                         android:layout_width="match_parent"
-                        android:fontFamily="@font/roboto"
                         android:minWidth="160dp"
                         android:textColor="@color/login_text"
                         android:textAlignment="center"
@@ -165,10 +158,7 @@
                         android:paddingLeft="@dimen/spacing_large"
                         android:paddingRight="@dimen/spacing_large"
                         android:singleLine="true"
-                        android:text="asdasdasd"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-
-                        />
+                        android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
 
                     <View
                         android:layout_width="0dp"
@@ -178,7 +168,7 @@
                         android:id="@+id/sign_up_partner_text_details"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="More personalisation, such as adding your logo and your physical shops will be available after account creation"
+                        android:text="@string/fragment3_conclusion"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
                         android:textColor="@color/colorPrimary" />
 
@@ -193,7 +183,7 @@
                         android:layout_marginLeft="-4dp"
                         android:layout_marginRight="-4dp"
                         android:background="@drawable/btn_rounded_primary"
-                        android:text="Devenir partenaire"
+                        android:text="@string/become_partner"
                         android:textAllCaps="false"
                         android:textColor="@android:color/white"
                         android:textStyle="bold" />
@@ -201,9 +191,6 @@
                     <View
                         android:layout_width="0dp"
                         android:layout_height="@dimen/spacing_mlarge" />
-
-
-
 
                 </LinearLayout>
             </ScrollView>

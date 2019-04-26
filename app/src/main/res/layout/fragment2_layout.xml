@@ -53,7 +53,7 @@
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="@dimen/spacing_middle"
                         android:layout_marginBottom="@dimen/spacing_xlarge"
-                        android:text="ENREGISTREMENT"
+                        android:text="@string/sign_up"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
                         android:textColor="@color/colorPrimary"
                         android:textStyle="bold" />
@@ -63,23 +63,20 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Nom d'utilisateur (votre email)"
-                        android:textAlignment="center"
+                        android:text="@string/your_username"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
                         android:textColor="@color/colorPrimary" />
-
-                    <android.support.design.widget.TextInputEditText
+                    <EditText
                         android:id="@+id/sign_up_user_input_email"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="-4dp"
                         android:layout_marginRight="-4dp"
-                        android:inputType="textEmailAddress"
+                        android:textSize="12sp"
                         android:maxLength="50"
                         android:maxLines="1"
-                        android:singleLine="true"
+                        android:inputType="textEmailAddress"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-                        android:textColor="@color/colorPrimary"
                         android:textStyle="bold" />
                     <!---->
 
@@ -91,127 +88,120 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Mot de passe"
-                        android:textAlignment="center"
+                        android:text="@string/your_password"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
                         android:textColor="@color/colorPrimary" />
-
-                    <android.support.design.widget.TextInputEditText
+                    <EditText
                         android:id="@+id/sign_up_user_input_password"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="-4dp"
                         android:layout_marginRight="-4dp"
-
-                        android:inputType="textPassword"
+                        android:textSize="12sp"
                         android:maxLength="50"
                         android:maxLines="1"
-                        android:singleLine="true"
+                        android:inputType="textPassword"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-                        android:textColor="@color/colorPrimary"
                         android:textStyle="bold" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/spacing_mlarge" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Mot de passe (confirmer)"
-                        android:textAlignment="center"
+                        android:text="@string/your_password_confirm"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
                         android:textColor="@color/colorPrimary" />
-
-                    <android.support.design.widget.TextInputEditText
+                    <EditText
                         android:id="@+id/sign_up_user_input_password_confirm"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="-4dp"
                         android:layout_marginRight="-4dp"
-
-                        android:inputType="textPassword"
+                        android:textSize="12sp"
                         android:maxLength="50"
                         android:maxLines="1"
-                        android:singleLine="true"
+                        android:inputType="textPassword"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-                        android:textColor="@color/colorPrimary"
                         android:textStyle="bold" />
-
                     <!---->
 
                     <View
                         android:layout_width="0dp"
                         android:layout_height="@dimen/spacing_mlarge" />
 
-
                     <!-- Prenom-->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Prénom"
-                        android:textAlignment="center"
+                        android:text="@string/first_name"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
                         android:textColor="@color/colorPrimary" />
-
-                    <android.support.design.widget.TextInputEditText
+                    <EditText
                         android:id="@+id/sign_up_user_input_first_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="-4dp"
                         android:layout_marginRight="-4dp"
+                        android:textSize="12sp"
                         android:maxLength="50"
                         android:maxLines="1"
-                        android:singleLine="true"
+                        android:inputType="textPersonName"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-                        android:textColor="@color/colorPrimary"
                         android:textStyle="bold" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/spacing_mlarge" />
 
                     <!-- Nom -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Nom"
-                        android:textAlignment="center"
+                        android:text="@string/last_name"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
                         android:textColor="@color/colorPrimary" />
-
-                    <android.support.design.widget.TextInputEditText
+                    <EditText
                         android:id="@+id/sign_up_user_input_last_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="-4dp"
                         android:layout_marginRight="-4dp"
+                        android:textSize="12sp"
                         android:maxLength="50"
                         android:maxLines="1"
-                        android:singleLine="true"
+                        android:inputType="textPersonName"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-                        android:textColor="@color/colorPrimary"
                         android:textStyle="bold" />
 
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/spacing_mlarge" />
 
                     <!--Date de naissance-->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Date de naissance"
-                        android:textAlignment="center"
+                        android:text="@string/birth_date"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
                         android:textColor="@color/colorPrimary" />
-
-                    <android.support.design.widget.TextInputEditText
+                    <EditText
                         android:id="@+id/sign_up_user_input_birthday"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="-4dp"
                         android:layout_marginRight="-4dp"
-                        android:hint="(JJ/MM/AAAA)"
-                        android:inputType="date"
+                        android:hint="@string/birth_date_default"
+                        android:textSize="12sp"
                         android:maxLength="50"
                         android:maxLines="1"
-                        android:singleLine="true"
+                        android:inputType="date"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-                        android:textColor="@color/colorPrimary"
                         android:textStyle="bold" />
 
                     <!--Créer compte-->
-
                     <Button
                         android:id="@+id/sign_up_user_button_out"
                         android:layout_width="match_parent"
@@ -219,7 +209,7 @@
                         android:layout_marginLeft="-4dp"
                         android:layout_marginRight="-4dp"
                         android:background="@drawable/btn_rounded_primary"
-                        android:text="Créer et se connecter"
+                        android:text="@string/fragment2_confirm"
                         android:textAllCaps="false"
                         android:textColor="@color/white"
                         android:textStyle="bold" />
@@ -235,22 +225,16 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Créer compte partenaire? "
+                            android:text="@string/fragment2_suggest_partner"
                             android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
                             android:textColor="#000000" />
-
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:clickable="false"
-                            android:text="Swipez à droite"
+                            android:text="@string/swipe_right"
                             android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
                             android:textColor="#000000"
                             android:textStyle="bold" />
-
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="@dimen/spacing_mlarge" />
 
                     </LinearLayout>
 

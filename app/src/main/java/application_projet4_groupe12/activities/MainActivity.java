@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity
 
 //        FirebaseUtils.FirebaseSync(this);
         try {
-            db = new SQLHelper(getApplicationContext());
+            db = new SQLHelper(this);
             db.TransferUser();
         } catch (IOException e) {
             e.printStackTrace();
@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity
 //        }
 
         try {
-            db = new SQLHelper(getApplicationContext());
+            db = new SQLHelper(this);
             db.TransferAddress();
         } catch (IOException e) {
             e.printStackTrace();
@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity
 //        }
 
         try {
-            db = new SQLHelper(getApplicationContext());
+            db = new SQLHelper(this);
             db.TransferAdmin_user();
         } catch (IOException e) {
             e.printStackTrace();
@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity
         //}
 
         try {
-            db = new SQLHelper(getApplicationContext());
+            db = new SQLHelper(this);
             db.TransferFavorite_shops();
         } catch (IOException e) {
             e.printStackTrace();
@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity
         //}
 
             try {
-            db = new SQLHelper(getApplicationContext());
+            db = new SQLHelper(this);
             db.TransferPromotion();
         } catch (IOException e) {
             e.printStackTrace();
@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity
         //}
 
         try {
-            db = new SQLHelper(getApplicationContext());
+            db = new SQLHelper(this);
             db.TransferShop_frames();
         } catch (IOException e) {
             e.printStackTrace();
@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity
         //}
 
         try {
-            db = new SQLHelper(getApplicationContext());
+            db = new SQLHelper(this);
             db.TransferShop_location();
         } catch (IOException e) {
             e.printStackTrace();
@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity
         //}
 
         try {
-            db = new SQLHelper(getApplicationContext());
+            db = new SQLHelper(this);
             db.TransferUser_points();
         } catch (IOException e) {
             e.printStackTrace();
@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity
         //}
 
         try {
-            db = new SQLHelper(getApplicationContext());
+            db = new SQLHelper(this);
             db.TransferUser_promotion();
         } catch (IOException e) {
             e.printStackTrace();
@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity
         //}
 
         try {
-            db = new SQLHelper(getApplicationContext());
+            db = new SQLHelper(this);
             db.TransferPartner();
         } catch (IOException e) {
             e.printStackTrace();

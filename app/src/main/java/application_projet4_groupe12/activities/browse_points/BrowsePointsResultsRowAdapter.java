@@ -21,9 +21,11 @@ import java.util.List;
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.entities.Promotion;
+import application_projet4_groupe12.entities.Shop;
 import application_projet4_groupe12.entities.User;
 
 public class BrowsePointsResultsRowAdapter extends ArrayAdapter<BrowsePointsAssociation> {
+
 
     public BrowsePointsResultsRowAdapter(Context context, @NonNull List<BrowsePointsAssociation> elements){
         super(context, 0, elements);
@@ -51,7 +53,6 @@ public class BrowsePointsResultsRowAdapter extends ArrayAdapter<BrowsePointsAsso
 
         BrowsePointsAssociation assoc = getItem(position);
         if(assoc!=null) {
-            System.out.println("Browse Points Row Adapter : partnerName is : "+assoc.getPartnerName());
             viewHolder.partnerName.setText(assoc.getShopDescr());
             viewHolder.shopAddress.setText(assoc.getShopAddress().stringRepresentation());
             //viewHolder.shopDescr.setText(assoc.getShopDescr());
@@ -59,16 +60,14 @@ public class BrowsePointsResultsRowAdapter extends ArrayAdapter<BrowsePointsAsso
 
 
             ArrayList<Promotion> availablePromos = getPromotions(getContext(), assoc);
-            if(availablePromos.isEmpty()){
-                viewHolder.arrowButton.setBackgroundResource(R.drawable.border_error);
-            } else {
+            if(! availablePromos.isEmpty()) {
+                viewHolder.arrowButton.setBackgroundResource(R.drawable.ic_media_play_light);
                 viewHolder.arrowButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         // New Activity with available Promos and a way to "consume" them
                         Intent intent = new Intent(getContext(), UsePromotionsActivity.class);
-                        intent.putParcelableArrayListExtra("Promotions", availablePromos);
-                        intent.putExtra("Points", assoc.getPoints());
+                        intent.putExtra("ShopID", assoc.getShopID());
                         getContext().startActivity(intent);
                     }
                 });

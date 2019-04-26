@@ -24,6 +24,7 @@ import java.util.List;
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.entities.Promotion;
+import application_projet4_groupe12.entities.Shop;
 import application_projet4_groupe12.entities.User;
 
 public class UsePromotionsActivity extends AppCompatActivity {
@@ -31,31 +32,34 @@ public class UsePromotionsActivity extends AppCompatActivity {
     ListView listView;
     TextView subTitle2;
 
-    ArrayList<Promotion> promotions;
+    List<Promotion> promotions;
+    long currentShopID;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent in = getIntent();
-        promotions = in.getParcelableArrayListExtra("Promotions");
+        currentShopID = in.getLongExtra("ShopID", -1);
         setContentView(R.layout.activity_use_promotions);
 
         listView = (ListView) findViewById(R.id.use_promotions_listview);
-        fillListView(listView, promotions);
-        registerForContextMenu(listView);
 
         subTitle2 = (TextView) findViewById(R.id.use_promotions_textview_subtitle_2);
-        subTitle2.setText(String.valueOf(in.getIntExtra("Points", 0)));
-        //TODO some of this go in onStart() ? Also, retrieve from DB instead to stay up-to-date ? @Martin
     }
 
     @Override
+    // Refreshes this at each Activity display
     protected void onStart() {
         super.onStart();
         SQLHelper db = null;
         try{
             db = new SQLHelper(this);
-            //TODO aller chercher en DB pour que le refresh de page update les infos @Martin
+
+            promotions = db.getAllAvailablePromotions(User.connectedUser, currentShopID);
+            fillListView(listView, promotions);
+            registerForContextMenu(listView);
+
+            subTitle2.setText(String.valueOf(db.getPoints(User.connectedUser.getId(), currentShopID)));
         } catch (IOException e) {
             e.printStackTrace();
             Toast.makeText(this, "Error while accessing the DB. Please try again", Toast.LENGTH_SHORT).show();

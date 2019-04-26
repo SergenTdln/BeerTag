@@ -19,6 +19,7 @@ import application_projet4_groupe12.utils.Global;
 
 public class BrowsePointsActivity extends AppCompatActivity {
 
+    String sessionEmail;
     ListView listView;
 
     @Override
@@ -27,23 +28,22 @@ public class BrowsePointsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_browse_points);
         listView = findViewById(R.id.browse_points_listview);
 
+        SharedPreferences shared = getSharedPreferences("session", MODE_PRIVATE);
+        sessionEmail = shared.getString("email", "");
+        Log.i(Global.debug_text, "login session email "+sessionEmail);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
         //Obtain list of "Associations"
         List<BrowsePointsAssociation> elements = new ArrayList<>();
         SQLHelper db = null;
         try{
             db = new SQLHelper(this);
 
-            SharedPreferences shared = getSharedPreferences("session", MODE_PRIVATE);
-            String session_email = shared.getString("email", "");
-            Log.i(Global.debug_text, "login session email "+session_email);
-            elements = db.getAllPoints(session_email);
-            
-            //elements = db.getAllPoints(User.connectedUser.getUsername());
-            if(elements.isEmpty()){
-                Toast.makeText(this, "Empty list", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "List contains "+elements.size()+" elements", Toast.LENGTH_SHORT).show();
-            }
+            elements = db.getAllPoints(sessionEmail);
 
         } catch (IOException e) {
             Toast.makeText(this, "Error while initializing the database. Cannot display results.", Toast.LENGTH_SHORT).show();

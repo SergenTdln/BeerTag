@@ -740,6 +740,18 @@ public class SQLHelper extends SQLiteOpenHelper {
         return ret;
     }
 
+    public ArrayList<Promotion> getAllAvailablePromotions(User user, long shopID){
+        ArrayList<Promotion> out = new ArrayList<>();
+        List<Promotion> allPromotions = getAllActivePromotions(shopID);
+        int userPoints = getPoints(user.getId(), shopID);
+        for (Promotion p : allPromotions) {
+            if(p.getPointsRequired() <= userPoints){
+                out.add(p);
+            }
+        }
+        return out;
+    }
+
     /**
      * Returns a list of BrowsePointsAssociation instances representing all the points the User has earned from all the Partners/Shops.
      * @param username the username (email) to look for
@@ -920,7 +932,7 @@ public class SQLHelper extends SQLiteOpenHelper {
 
     /**
      * Returns whether this user is already present in the database
-     * @param userID the longernal ID of the User to look for
+     * @param userID the internal ID of the User to look for
      * @return True if this user already exists, False otherwise
      */
     public boolean doesUserExist(long userID){
@@ -929,6 +941,58 @@ public class SQLHelper extends SQLiteOpenHelper {
                 new String[]{"_id"},
                 "_id = \""+userID+"\"",
                 null);
+        out = (c.moveToFirst());
+        c.close();
+        return out;
+    }
+
+    /**
+     * Returns whether the passed User is an administrator of the passed Partner in the database.
+     * @param partnerID the internal ID of the Partner to look for
+     * @param userID the internal ID of the User to look for
+     * @return True if such a pair exists in the database, False otherwise
+     */
+    public boolean doesUserAdminExist(long partnerID, long userID){
+        boolean out;
+        Cursor c = getEntriesFromDB("Admin_User",
+                new String[]{"id_user"},
+                "id_user = \""+userID+"\" AND id_partner = \""+partnerID+"\"",
+                null);
+        out = (c.moveToFirst());
+        c.close();
+        return out;
+    }
+
+    /**
+     * Returns whether the passed User has marked the passed SHop as a favorite.
+     * @param shopID the internal ID of the Shop to look for
+     * @param userID the internal ID of the User to look for
+     * @return True if such a pair exists in the database, False otherwise
+     */
+    public boolean doesFavoriteShopExist(long shopID, long userID){
+        boolean out;
+        Cursor c = getEntriesFromDB("Favorite_shops",
+                new String[]{"id_user"},
+                "id_user = \""+userID+"\" AND id_shop = \""+shopID+"\"",
+                null);
+        out = (c.moveToFirst());
+        c.close();
+        return out;
+    }
+
+    /**
+     * Returns whether the passed User has already used the passed Promotion at the passed date, according to the database
+     * @param promotionID the internal ID of the Promotion to look for
+     * @param userID the internal ID of the User to look for
+     * @param dateUsed the date to look for
+     * @return True if such an association exists in the database, False otherwise
+     */
+    public boolean promotionUsed(long promotionID, long userID, String dateUsed){
+        boolean out;
+        Cursor c = getEntriesFromDB("User_promotion",
+                    new String[]{"id_user"},
+                    "id_user = \""+userID+"\" AND id_promotion = \""+promotionID+"\" AND used_on = \""+dateUsed+"\"",
+                    null);
         out = (c.moveToFirst());
         c.close();
         return out;
@@ -1377,14 +1441,11 @@ public class SQLHelper extends SQLiteOpenHelper {
         }
         return candidate;
     }
-    public boolean isUserExists(long id) {
-        Cursor cursor = null;
-        cursor = myDB.rawQuery("SELECT * FROM User WHERE _id =" + id,null);
-        if (cursor != null && cursor.getCount() > 0) {
-            return true;
-        }
-        return false;
-    }
+
+
+    //*****
+    //FIREBASE SYNC METHODS
+    //*****
 
     public void TransferUser() {
         Log.e("TAG", "Hello");
@@ -1396,7 +1457,7 @@ public class SQLHelper extends SQLiteOpenHelper {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 long id = (document.getLong("id"));
                                 Log.e("TAG", "id : " + id);
-                                if (!isUserExists(id)) {
+                                if (!doesUserExist(id)) {
                                     String lastName = document.getString("lastName");
                                     Log.e("TAG", "lastName: " + lastName);
                                     String firstName = document.getString("firstName");
@@ -1433,15 +1494,6 @@ public class SQLHelper extends SQLiteOpenHelper {
                 });
     }
 
-    public boolean isAddressExists(long id) {
-        Cursor cursor = null;
-        cursor = myDB.rawQuery("SELECT * FROM Address WHERE _id =" + id,null);
-        if (cursor != null && cursor.getCount() > 0) {
-            return true;
-        }
-        return false;
-    }
-
     public void TransferAddress() {
         dab.collection("Address")
                 .get()
@@ -1451,7 +1503,7 @@ public class SQLHelper extends SQLiteOpenHelper {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 long id = (document.getLong("id"));
                                 Log.e("TAG", "id : " + id);
-                                if (!isAddressExists(id)) {
+                                if (!doesAddressExist(id)) {
                                     String city = document.getString("city");
                                     Log.e("TAG", "city: " + city);
                                     String country = document.getString("country");
@@ -1476,15 +1528,6 @@ public class SQLHelper extends SQLiteOpenHelper {
                 });
     }
 
-    public boolean isAdmin_userExists(long id_partner,long id_user) {
-        Cursor cursor = null;
-        cursor = myDB.rawQuery("SELECT * FROM Admin_user WHERE id_partner =" + id_partner + " AND id_user =" + id_user,null);
-        if (cursor != null && cursor.getCount() > 0) {
-            return true;
-        }
-        return false;
-    }
-
     public void TransferAdmin_user() {
         dab.collection("Admin_user")
                 .get()
@@ -1496,7 +1539,7 @@ public class SQLHelper extends SQLiteOpenHelper {
                                 Log.e("TAG", "id_partner : " + id_partner);
                                 long id_user = (document.getLong("id_user"));
                                 Log.e("TAG", "id_user: " + id_user);
-                                if (!isAdmin_userExists(id_partner, id_user)){
+                                if (!doesUserAdminExist(id_partner, id_user)){
                                     ContentValues cv = new ContentValues();
                                     cv.put("\"id_partner\"", id_partner);
                                     cv.put("\"id_user\"", id_user);
@@ -1510,15 +1553,6 @@ public class SQLHelper extends SQLiteOpenHelper {
                 });
     }
 
-    public boolean isFavorite_shopsExists(long id_shop,long id_user) {
-        Cursor cursor = null;
-        cursor = myDB.rawQuery("SELECT * FROM Favorite_shops WHERE id_shop =" + id_shop + " AND id_user =" + id_user,null);
-        if (cursor != null && cursor.getCount() > 0) {
-            return true;
-        }
-        return false;
-    }
-
     public void TransferFavorite_shops() {
         dab.collection("Favorite_shops")
                 .get()
@@ -1530,7 +1564,7 @@ public class SQLHelper extends SQLiteOpenHelper {
                                 Log.e("TAG", "id : " + id_shop);
                                 long id_user = (document.getLong("id_user"));
                                 Log.e("TAG", "id : " + id_user);
-                                if (!isFavorite_shopsExists(id_shop, id_user)) {
+                                if (!doesFavoriteShopExist(id_shop, id_user)) {
                                     ContentValues cv = new ContentValues();
                                     cv.put("\"id_shop\"", id_shop);
                                     cv.put("\"id_user\"", id_user);
@@ -1544,15 +1578,6 @@ public class SQLHelper extends SQLiteOpenHelper {
                 });
     }
 
-    public boolean isPromotionExists(long id) {
-        Cursor cursor = null;
-        cursor = myDB.rawQuery("SELECT * FROM Promotion WHERE _id =" + id,null);
-        if (cursor != null && cursor.getCount() > 0) {
-            return true;
-        }
-        return false;
-    }
-
     public void TransferPromotion() {
         dab.collection("Promotion")
                 .get()
@@ -1562,7 +1587,7 @@ public class SQLHelper extends SQLiteOpenHelper {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 long id = (document.getLong("id"));
                                 Log.e("TAG", "id : " + id);
-                                if (!isPromotionExists(id)) {
+                                if (!doesPromotionExist(id)) {
                                     boolean active = document.getBoolean("active");
                                     Log.e("TAG", "active: " + active);
                                     String description = document.getString("description");
@@ -1599,15 +1624,6 @@ public class SQLHelper extends SQLiteOpenHelper {
                 });
     }
 
-    public boolean isShop_framesExists(long id) {
-        Cursor cursor = null;
-        cursor = myDB.rawQuery("SELECT * FROM Shop_frames WHERE _id =" + id,null);
-        if (cursor != null && cursor.getCount() > 0) {
-            return true;
-        }
-        return false;
-    }
-
     public void TransferShop_frames() {
         dab.collection("Shop_frames")
                 .get()
@@ -1617,7 +1633,7 @@ public class SQLHelper extends SQLiteOpenHelper {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 long id = (document.getLong("id"));
                                 Log.e("TAG", "_id : " + id);
-                                if (!isShop_framesExists(id)) {
+                                if (!doesFrameExist(id)) {
                                     long id_shop = (document.getLong("id_shop"));
                                     Log.e("TAG", "id_shop : " + id_shop);
                                     String image_path = document.getString("image_path");
@@ -1636,15 +1652,6 @@ public class SQLHelper extends SQLiteOpenHelper {
                 });
     }
 
-    public boolean isShop_locationExists(long id) {
-        Cursor cursor = null;
-        cursor = myDB.rawQuery("SELECT * FROM Shop_location WHERE _id =" + id,null);
-        if (cursor != null && cursor.getCount() > 0) {
-            return true;
-        }
-        return false;
-    }
-
     public void TransferShop_location() {
         dab.collection("Shop_location")
                 .get()
@@ -1654,7 +1661,7 @@ public class SQLHelper extends SQLiteOpenHelper {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 long id = (document.getLong("id"));
                                 Log.e("TAG", "id : " + id);
-                                if (!isShop_locationExists(id)) {
+                                if (!doesShopExist(id)) {
                                     String description = document.getString("description");
                                     Log.e("TAG", "description: " + description);
                                     long id_partner = (document.getLong("id_partner"));
@@ -1679,15 +1686,6 @@ public class SQLHelper extends SQLiteOpenHelper {
                 });
     }
 
-    public boolean isUser_pointsExists(long id_shop,long id_user, long points) {
-        Cursor cursor = null;
-        cursor = myDB.rawQuery("SELECT * FROM User_points WHERE id_shop =" + id_shop + " AND id_user =" + id_user + " AND points =" + points,null);
-        if (cursor != null && cursor.getCount() > 0) {
-            return true;
-        }
-        return false;
-    }
-
     public void TransferUser_points() {
         dab.collection("User_points")
                 .get()
@@ -1701,7 +1699,7 @@ public class SQLHelper extends SQLiteOpenHelper {
                                 Log.e("TAG", "id_user : " + id_user);
                                 int points = (document.getLong("points")).intValue();
                                 Log.e("TAG", "points : " + points);
-                                if (!isUser_pointsExists(id_shop, id_user, points)) {
+                                if (getPoints(id_shop, id_user) != points) {
                                     ContentValues cv = new ContentValues();
                                     cv.put("\"id_user\"", id_user);
                                     cv.put("\"id_shop\"", id_shop);
@@ -1714,15 +1712,6 @@ public class SQLHelper extends SQLiteOpenHelper {
                         }
                     }
                 });
-    }
-
-    public boolean isUser_promotionExists(long id_promotion,long id_user, String used_on) {
-        Cursor cursor = null;
-        cursor = myDB.rawQuery("SELECT * FROM User_promotion WHERE id_promotion =" + id_promotion + " AND id_user =" + id_user + " AND used_on =" + used_on,null);
-        if (cursor != null && cursor.getCount() > 0) {
-            return true;
-        }
-        return false;
     }
 
     public void TransferUser_promotion() {
@@ -1738,7 +1727,7 @@ public class SQLHelper extends SQLiteOpenHelper {
                                 Log.e("TAG", "id_user : " + id_user);
                                 String used_on = document.getString("used_on");
                                 Log.e("TAG", "used_on: " + used_on);
-                                if (!isUser_promotionExists(id_promotion, id_user, used_on)) {
+                                if (!promotionUsed(id_promotion, id_user, used_on)) {
                                     ContentValues cv = new ContentValues();
                                     cv.put("\"id_user\"", id_user);
                                     cv.put("\"id_promotion\"", id_promotion);
@@ -1753,15 +1742,6 @@ public class SQLHelper extends SQLiteOpenHelper {
                 });
     }
 
-    public boolean isPartnerExists(long id) {
-        Cursor cursor = null;
-        cursor = myDB.rawQuery("SELECT * FROM Partner WHERE _id =" + id,null);
-        if (cursor != null && cursor.getCount() > 0) {
-            return true;
-        }
-        return false;
-    }
-
     public void TransferPartner(){
         dab.collection("Partner")
                 .get()
@@ -1771,7 +1751,7 @@ public class SQLHelper extends SQLiteOpenHelper {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 long id = (document.getLong("id"));
                                 Log.e("TAG", "id : " + id);
-                                if (!isPartnerExists(id)) {
+                                if (!doesPartnerExist(id)) {
                                 String name = document.getString("name");
                                 Log.e("TAG", "name: " + name);
                                 String address = document.getString("address");

@@ -17,10 +17,10 @@
             android:id="@+id/nav_find_partner"
             android:icon="@drawable/ic_menu_slideshow"
             android:title="@string/nav_find_partner" />
-        <!--<item-->
-            <!--android:id="@+id/nav_manage"-->
-            <!--android:icon="@drawable/ic_menu_manage"-->
-            <!--android:title="Tools" />-->
+        <item
+            android:title="@string/instagram"
+            android:id="@+id/go_to_instagram"
+            android:icon="@drawable/ic_instagram_menu" />
     </group>
 
     <item
@@ -30,20 +30,16 @@
                 android:id="@+id/nav_settings"
                 android:icon="@drawable/ic_menu_share"
                 android:title="@string/nav_settings" />
+
+            <item
+                android:title="@string/nav_switch_menu"
+                android:id="@+id/change_interface_user"
+                android:icon="@drawable/common_full_open_on_phone" />
+
             <item
                 android:id="@+id/nav_logout"
                 android:icon="@drawable/ic_menu_send"
                 android:title="@string/nav_logout" />
-
-            <item android:title="Changer d'interface"
-                android:id="@+id/change_interface_user"
-                android:icon="@drawable/common_full_open_on_phone"
-                android:visible="true"/>
-
-            <item android:title="Instagram"
-                android:id="@+id/go_to_instagram"
-                android:icon="@drawable/ic_instagram_menu"
-                android:visibility="gone"/>
 
         </menu>
     </item>

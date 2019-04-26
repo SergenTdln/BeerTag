@@ -1,9 +1,24 @@
 <resources>
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">#80000000</item>
+        <item name="colorPrimaryDark">#80000000</item>
+        <item name="colorAccent">@color/admin_colorPrimary</item>
     </style>
+
+
+    <style name="UserTheme"  parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimary</item>
+        <item name="colorAccent">@color/colorPrimary</item>
+    </style>
+
+    <style name="AdminTheme"  parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">#DF781E</item>
+        <item name="colorPrimaryDark">#DF781E</item>
+        <item name="colorAccent">#DF781E</item>
+    </style>
+
+
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>

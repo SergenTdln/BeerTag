@@ -14,6 +14,7 @@ import java.util.List;
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.entities.User;
+import application_projet4_groupe12.utils.AppUtils;
 import application_projet4_groupe12.utils.Global;
 
 public class BrowseClientsActivity extends AppCompatActivity {
@@ -49,5 +50,10 @@ public class BrowseClientsActivity extends AppCompatActivity {
 
         BrowseClientsShopDataRowAdapter bcrra = new BrowseClientsShopDataRowAdapter(this, elements);
         listView.setAdapter(bcrra);
+    }
+
+    @Override
+    public void onBackPressed(){
+        AppUtils.end_home_admin(this);
     }
 }

@@ -373,7 +373,7 @@ public class SQLHelper extends SQLiteOpenHelper {
             }
             Shop out = new Shop(c.getLong(c.getColumnIndex("_id")),
                     c.getLong(c.getColumnIndex("id_partner")),
-                    c.getLong(c.getColumnIndex("address")),
+                    c.getLong(c.getColumnIndex("id_address")),
                     c.getString(c.getColumnIndex("description")),
                     c.getString(c.getColumnIndex("created_on"))
             );
@@ -1253,7 +1253,7 @@ public class SQLHelper extends SQLiteOpenHelper {
             removePromotion(promoID);
         }
         int pointsCost = getPointsRequired(promoID);
-        addPoints(user.getUsername(), pointsCost, shopID);
+        addPoints(user.getUsername(), (-1)*pointsCost, shopID); // Remove points from User's account
         return addUserPromotion(user.getId(), promoID, date);
     }
 

@@ -14,6 +14,7 @@ import java.util.List;
 
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.data.SQLHelper;
+import application_projet4_groupe12.utils.AppUtils;
 import application_projet4_groupe12.utils.Global;
 
 public class BrowsePointsActivity extends AppCompatActivity {
@@ -39,7 +40,9 @@ public class BrowsePointsActivity extends AppCompatActivity {
             
             //elements = db.getAllPoints(User.connectedUser.getUsername());
             if(elements.isEmpty()){
-                Toast.makeText(getApplicationContext(), "Empty list", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Empty list", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "List contains "+elements.size()+" elements", Toast.LENGTH_SHORT).show();
             }
 
         } catch (IOException e) {
@@ -54,5 +57,10 @@ public class BrowsePointsActivity extends AppCompatActivity {
 
         BrowsePointsResultsRowAdapter bprra = new BrowsePointsResultsRowAdapter(this, elements);
         listView.setAdapter(bprra);
+    }
+
+    @Override
+    public void onBackPressed(){
+        AppUtils.end_home(this);
     }
 }

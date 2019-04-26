@@ -39,6 +39,7 @@
     <string name="nav_admin_settings">Settings</string>
     <string name="nav_admin_browse_clients">Look up my clients\' points</string>
     <string name="nav_find_partner">Find partner</string>
+    <string name="nav_switch_menu">Switch the User Interface</string>
 
     <string name="browse_points_title">Browse my points</string>
     <string name="browse_points_default_partner_name">Default Partner Name</string>
@@ -59,22 +60,22 @@
 
     <string name="space" translatable="false"> </string>
     <string name="hashtag" translatable="false">#</string>
+    <string name="instagram" translatable="false">Instagram</string>
 
     <string name="facebook_app_id" translatable="false">586274028466486</string>
     <string name="fb_login_protocol_scheme" translatable="false">fb586274028466486</string>
 
 
-    <string name="alcool_sensi_text" translatable="false">
-        Nous avons constaté que vous venez de scanner plusieurs fois à la suite. Nous vous invitons donc à faire attention à votre consomation.
-        Beer Tag est juste un outil pour vous faciliter la vie, Beer Tag conseille à ses utilisateurs d\'être responsables.
-    </string>
-    <string name="alcool_notification_title" translatable="false">Attention à votre consomation !</string>
-    <string name="alcool_notification_text" translatable="false">Attention à votre consomation, vous enchainez les achats, buvez de manière responsable</string>
+    <string name="alcool_notification_title">Watch out for you alcohol consumption !</string>
+    <string name="alcool_notification_text">Watch out for your alcohol consumption. Drink responsibly !</string>
     <string name="title_activity_find_partner">FindPartnerActivity</string>
 
-
-    <string name="dialog_share_text" translatable="false">Super, votre achat a été comptabilisé ! Voulez-vous partager cela avec vos amis, avec une super photo personnalisée ? :D</string>
-    <string name="intent_share_text" translatable="false">Partagez avec ...</string>
-    <string name="qr_expired_text" translatable="false">Le QR Code scanné est invalide ou a expiré...</string>
     <string name="sign_up_verification_text" translatable="false">fdzdzdzdzd</string>
+    <string name="dialog_share_text">Great, your purchase has been registered ! Would you like to share it with your friends, using a personalized picture ? :D</string>
+    <string name="intent_share_text">Share with&#8230;</string>
+    <string name="qr_validity_time_text">The generated QR code will be valid for 3 minutes</string>
+    <string name="alcool_sensi_text">We noticed you just scanned mutliple times in a row. We remind you to be careful about your consumption. Beer Tag is just a tool designed to make your life easier; we ask you to be remain responsible in all circumstances</string>
+    <string name="qr_amount_text">Please enter your purchase\'s cost</string>
+    <string name="qr_expired_text">The scanned QR code is invalid or has expired&#8230;</string>
+    <string name="qr_scan_text">Please scan a QR code</string>
 </resources>

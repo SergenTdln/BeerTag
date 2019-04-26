@@ -19,7 +19,6 @@ public class ExpiredActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_qr_invalid);
-        RelativeLayout relativeLayout = findViewById(R.id.invalid_body);
 
         AppCompatButton exit_button = findViewById(R.id.exit_button);
         exit_button.setOnClickListener(view -> {

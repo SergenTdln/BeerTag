@@ -1,16 +1,11 @@
 package application_projet4_groupe12.activities;
 
-import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
@@ -24,11 +19,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import application_projet4_groupe12.BuildConfig;
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.activities.browse_points.BrowsePointsActivity;
 import application_projet4_groupe12.activities.find_partner.FindPartnerActivity;
-import application_projet4_groupe12.activities.settings.SettingsPartnerActivity;
 import application_projet4_groupe12.activities.settings.SettingsUserActivity;
 import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.entities.User;
@@ -39,22 +32,14 @@ import application_projet4_groupe12.utils.FacebookUtils;
 import java.io.IOException;
 import java.net.URL;
 
-import application_projet4_groupe12.utils.FirebaseUtils;
 import application_projet4_groupe12.utils.Global;
 
-import android.content.Context;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.login.LoginManager;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
-import com.google.android.gms.ads.MobileAds;
 
 
 public class MainActivity extends AppCompatActivity
@@ -81,7 +66,7 @@ public class MainActivity extends AppCompatActivity
 
 //        FirebaseUtils.FirebaseSync(this);
         try {
-            db = new SQLHelper(this);
+            db = new SQLHelper(getApplicationContext());
             db.TransferUser();
         } catch (IOException e) {
             e.printStackTrace();
@@ -92,7 +77,7 @@ public class MainActivity extends AppCompatActivity
 //        }
 
         try {
-            db = new SQLHelper(this);
+            db = new SQLHelper(getApplicationContext());
             db.TransferAddress();
         } catch (IOException e) {
             e.printStackTrace();
@@ -103,92 +88,92 @@ public class MainActivity extends AppCompatActivity
 //        }
 
         try {
-            db = new SQLHelper(this);
+            db = new SQLHelper(getApplicationContext());
             db.TransferAdmin_user();
         } catch (IOException e) {
             e.printStackTrace();
             Log.v(Global.debug_text, "TransferAdmin_user" + e);
         }
-//        finally {
-//            db.close();
-//        }
+        //finally {
+          //  db.close();
+        //}
 
         try {
-            db = new SQLHelper(this);
+            db = new SQLHelper(getApplicationContext());
             db.TransferFavorite_shops();
         } catch (IOException e) {
             e.printStackTrace();
             Log.v(Global.debug_text, "TransferFavorite_shops" + e);
         }
-//        finally {
-//            db.close();
-//        }
+        //finally {
+          //  db.close();
+        //}
 
-        try {
-            db = new SQLHelper(this);
+            try {
+            db = new SQLHelper(getApplicationContext());
             db.TransferPromotion();
         } catch (IOException e) {
             e.printStackTrace();
             Log.v(Global.debug_text, "TransferPromotion" + e);
         }
-//        finally {
-//            db.close();
-//        }
+        //finally {
+          //  db.close();
+        //}
 
         try {
-            db = new SQLHelper(this);
+            db = new SQLHelper(getApplicationContext());
             db.TransferShop_frames();
         } catch (IOException e) {
             e.printStackTrace();
             Log.v(Global.debug_text, "TransferShop_frames" + e);
         }
-//        finally {
-//            db.close();
-//        }
+        //finally {
+          //  db.close();
+        //}
 
         try {
-            db = new SQLHelper(this);
+            db = new SQLHelper(getApplicationContext());
             db.TransferShop_location();
         } catch (IOException e) {
             e.printStackTrace();
             Log.v(Global.debug_text, "TransferShop_location" + e);
         }
-//        finally {
-//            db.close();
-//        }
+        //finally {
+          //  db.close();
+        //}
 
         try {
-            db = new SQLHelper(this);
+            db = new SQLHelper(getApplicationContext());
             db.TransferUser_points();
         } catch (IOException e) {
             e.printStackTrace();
             Log.v(Global.debug_text, "TransferUser_points" + e);
         }
-//        finally {
-//            db.close();
-//        }
+        //finally {
+          //  db.close();
+        //}
 
         try {
-            db = new SQLHelper(this);
+            db = new SQLHelper(getApplicationContext());
             db.TransferUser_promotion();
         } catch (IOException e) {
             e.printStackTrace();
             Log.v(Global.debug_text, "TransferUser_promotion" + e);
         }
-//        finally {
-//            db.close();
-//        }
+        //finally {
+          //  db.close();
+        //}
 
         try {
-            db = new SQLHelper(this);
+            db = new SQLHelper(getApplicationContext());
             db.TransferPartner();
         } catch (IOException e) {
             e.printStackTrace();
             Log.v(Global.debug_text, "TransferPartner" + e);
         }
-//        finally {
-//            db.close();
-//        }
+        //finally {
+          //  db.close();
+        //}
 
         setContentView(R.layout.activity_main_user);
 
@@ -214,12 +199,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
         if (active) {
-            AppUtils.tapToExit(this);
+            AppUtils.tapToExit(this, 0);
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout_user);
         if (drawer == null) {
             Intent intent = new Intent(MainActivity.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();
         } else {
@@ -311,10 +297,8 @@ public class MainActivity extends AppCompatActivity
             case R.id.change_interface_user:
                 Intent intent = new Intent(MainActivity.this, AdminActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
-
-                finish();
                 break;
 
             case R.id.go_to_instagram:
@@ -373,7 +357,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.inflateMenu(R.menu.activity_main_navigation_drawer_user);
         MenuItem interface_change_button = navigationView.findViewById(R.id.change_interface_user);
         handleInterfaceButton();
-        View headerLayout = navigationView.inflateHeaderView(R.layout.activity_main_navigation_header);
+        View headerLayout = navigationView.inflateHeaderView(R.layout.activity_main_user_navigation_header);
 
         navHeaderImage = headerLayout.findViewById(R.id.activity_main_navigation_header_image);
         navHeaderText1 = headerLayout.findViewById(R.id.activity_main_navigation_header_text1);

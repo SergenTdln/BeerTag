@@ -149,6 +149,7 @@ public class SettingsUserActivity extends AppCompatActivity {
                 }
             }
         });
+        //TODO en faire un floating button comme pour les settings Partner @Sergen
     }
 
     /**
@@ -157,7 +158,7 @@ public class SettingsUserActivity extends AppCompatActivity {
      */
     private void onBtnPickGallery() {
         Intent pickPhoto = new Intent(Intent.ACTION_PICK,
-        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(pickPhoto , 123);//one can be replaced with any action code
     }
 
@@ -190,7 +191,7 @@ public class SettingsUserActivity extends AppCompatActivity {
                         //Image successfully coped
                         User.connectedUser.setImagePath(this, outputFilePath);
                         //Show new pic in this Activity
-                        System.out.println("Reached this point");
+                        System.out.println("Profile pic was changed");
                         picture.setImageBitmap(BitmapFactory.decodeFile(this.getFilesDir()+"/"+outputFilePath));
                     } else {
                         //An error occurred

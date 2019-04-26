@@ -23,11 +23,10 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-//import com.google.firebase.database.DatabaseReference;
-//import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.util.List;
@@ -48,6 +47,7 @@ public class FindPartnerActivity extends FragmentActivity implements
     private Location lastLocation;
     private static final int Request_User_Location_Code = 99;
     private SQLHelper db;
+    private  int firstTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +104,20 @@ public class FindPartnerActivity extends FragmentActivity implements
             db.close();
         }
 
+        mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+            @Override
+            public boolean onMyLocationButtonClick() {
+                firstTime = 0;
+                return true;
+            }
+        });
+
+/*        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+            }
+        });*/
+
     }
 
     public boolean checkUserLocationPermission() {
@@ -151,26 +165,35 @@ public class FindPartnerActivity extends FragmentActivity implements
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
         }
-        lastLocation = location;
-
 
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
         mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-//        mMap.animateCamera(CameraUpdateFactory.zoomBy(15));
-        CameraUpdateFactory.zoomBy(14);
 
-        if (googleApiClient != null) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
+        if (firstTime == 0) {
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .target(latLng).zoom(14).build();
+            mMap.animateCamera(CameraUpdateFactory
+                    .newCameraPosition(cameraPosition));
+            firstTime = 1;
         }
+
+
+        /*if (googleApiClient != null) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
+        }*/
+        lastLocation = location;
+
     }
+
+
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
 
         locationRequest = new LocationRequest();
-        locationRequest.setInterval(500);
-        locationRequest.setFastestInterval(500);
+        locationRequest.setInterval(1000);
+        locationRequest.setFastestInterval(1000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {

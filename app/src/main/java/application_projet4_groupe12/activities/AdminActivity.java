@@ -117,8 +117,6 @@ public class AdminActivity extends AppCompatActivity
             navHeaderImage.setImageBitmap(bitmap);
         }
 
-        //TODO anything else ? @Martin
-
         active = true;
     }
 

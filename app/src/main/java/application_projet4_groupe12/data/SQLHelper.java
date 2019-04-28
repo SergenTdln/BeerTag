@@ -1141,8 +1141,6 @@ public class SQLHelper extends SQLiteOpenHelper {
         cv.put("\"end_date\"", promotion.getEndDate());
 
         return (myDB.insert("Promotion", null, cv) != -1);
-
-        //TODO Si des utilisateurs ont souscrit aux notifs pour ce bar, cette méthode leur envoie tous une notif
     }
 
     /**

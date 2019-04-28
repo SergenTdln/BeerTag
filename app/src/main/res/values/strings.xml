@@ -20,6 +20,8 @@
     <string name="account_done">Account successfully created</string>
     <string name="password_no_match">Passwords don\'t match</string>
     <string name="default_username">Default Username</string>
+    <string name="generate_fragment_spinner_default">Please select the ID of your shop</string>
+    <string name="disabled_for_facebook">Disabled for Facebook accounts</string>
 
     <!--FRAGMENT 1-->
     <string name="sign_in">SIGN IN</string>
@@ -37,7 +39,7 @@
     <string name="birth_date_default">(DD/MM/YYYY)</string>
     <string name="fragment2_confirm">CREATE ACCOUNT AND SIGN IN</string>
     <string name="fragment2_suggest_partner">Create a Partner account ?</string>
-    <string name="swipe_right">Swipe to the right</string>
+    <string name="swipe_right">Swipe from the right</string>
 
     <!--FRAGMENT 3-->
     <string name="become_partner">DEVENIR PARTENAIRE</string>
@@ -46,9 +48,9 @@
     <string name="your_address">This is the address of your headquarters.\nIt will not be displayed to users</string>
     <string name="your_address_default">Your address</string>
     <string name="your_tva_number">Enter your company\'s TVA number</string>
-    <string name="your_tva_number_default">BE0123456789</string>
-    <string name="fragment3_spinner_title">Select in the drop-down list an User that will be administrator for this Partner. You can add more after account creation</string>
-    <string name="fragment3_conclusion">More personalization, such as adding your logo will be available after account creation</string>
+    <string name="your_tva_number_default" translatable="false">BE0123456789</string>
+    <string name="fragment3_spinner_title">Select in the drop-down list an existing User that will be administrator for this Partner. You can add more after account creation</string>
+    <string name="fragment3_conclusion">More personalization, such as adding your logo, will be available after account creation</string>
 
     <string name="login_fields">Please complete all fields</string>
     <string name="email_field">Please complete email field</string>
@@ -77,8 +79,13 @@
     <string name="activate_promotion">Activate this promotion</string>
     <string name="points_required">Points required</string>
     <string name="valid_until">Valid until :</string>
+    <string name="default_descr">Default description</string>
+    <string name="default_reusability">Default reusability</string>
+    <string name="default_date">Default date</string>
     <string name="promo_is_reusable">This promotion is reusable</string>
     <string name="promo_is_not_reusable">This promotion is NOT reusable</string>
+    <string name="use_promotions_title">Use promotions</string>
+    <string name="use_promotions_points_collected">Points collected :</string>
 
     <!--Browse clients-->
     <string name="browse_clients_title">Browse my clients\' points</string>
@@ -96,6 +103,7 @@
     <string name="space" translatable="false"> </string>
     <string name="hashtag" translatable="false">#</string>
     <string name="instagram" translatable="false">Instagram</string>
+    <string name="default_value" translatable="false">default</string>
 
     <string name="facebook_app_id" translatable="false">586274028466486</string>
     <string name="fb_login_protocol_scheme" translatable="false">fb586274028466486</string>

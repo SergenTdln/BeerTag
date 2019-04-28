@@ -178,7 +178,7 @@ public class Fragment2 extends Fragment {
                         DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                         String today = formatter.format(date);
 
-                        user = new User(id, email, Hash.hash(pass), today, firstName.getText().toString(), lastName.getText().toString(), birthDate.getText().toString(), Long.toString(id)+"_pic.png", false); //TODO file format ?
+                        user = new User(id, email, Hash.hash(pass), today, firstName.getText().toString(), lastName.getText().toString(), birthDate.getText().toString(), Long.toString(id)+"_pic.png", false);
                         try {
                             System.out.println("Utilisateur inséré : " + db.addUser(user));
                         } catch (WrongEmailFormatException e){

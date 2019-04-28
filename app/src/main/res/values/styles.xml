@@ -5,7 +5,6 @@
         <item name="colorAccent">@color/admin_colorPrimary</item>
     </style>
 
-
     <style name="UserTheme"  parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimary</item>

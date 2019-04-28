@@ -75,7 +75,7 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
             List<String> allUsernamesList = db.getAllUsernames();
             allUsernamesList.add(0, "Please select an User");
 
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.fragment3_spinner_adapter, allUsernamesList);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_adapter_plain_text, allUsernamesList);
             dropDownUsers.setAdapter(adapter);
         } catch (IOException e) {
             e.printStackTrace();

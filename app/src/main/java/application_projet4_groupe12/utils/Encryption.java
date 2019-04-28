@@ -90,7 +90,7 @@ public class Encryption {
             String[] data = decryptedValue.split("_5%/");
             String createTimeStr = data[2];
 
-            Long createTime = Long.valueOf(createTimeStr);
+            long createTime = Long.valueOf(createTimeStr);
             Log.v(Global.debug_text, "create time str" + createTimeStr);
             Log.v(Global.debug_text, "create time int" + createTime);
             if (validity_expired(createTime)) {

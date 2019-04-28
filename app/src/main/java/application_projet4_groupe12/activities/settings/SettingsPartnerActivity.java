@@ -79,7 +79,7 @@ public class SettingsPartnerActivity extends AppCompatActivity {
         selectFileButton = (Button) findViewById(R.id.settings_partner_picture_select_button);
         selectFileButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {//TODO @Martin see UserSettings
+            public void onClick(View v) {
                 //Initializes imagePath (thepath of the new image selected by the user)
                 onBtnPickGallery();
             }
@@ -194,11 +194,9 @@ public class SettingsPartnerActivity extends AppCompatActivity {
         super.onCreateContextMenu(menu, v, menuInfo);
         if(nbAdmins<=1){
             getMenuInflater().inflate(R.menu.delete_admin_context_empty, menu);
-            //menu.setHeaderIcon(R.drawable.ic_launcher_foreground); //TODO change this icon : a stop sign, for example. Also make it actually show an icon
             menu.setHeaderTitle("Can't delete your last admin !");
         } else {
             getMenuInflater().inflate(R.menu.delete_admin_context, menu);
-            //menu.setHeaderIcon(R.drawable.googleg_disabled_color_18); //TODO change this icon : a trash can, for example. Also make it actually show an icon
             menu.setHeaderTitle("Delete this Admin ?");
         }
     }

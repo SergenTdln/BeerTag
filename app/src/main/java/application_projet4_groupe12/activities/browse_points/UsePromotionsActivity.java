@@ -30,19 +30,25 @@ import application_projet4_groupe12.entities.User;
 public class UsePromotionsActivity extends AppCompatActivity {
 
     ListView listView;
+    TextView subTitle;
     TextView subTitle2;
 
     List<Promotion> promotions;
     long currentShopID;
+    String currentShopDescr;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent in = getIntent();
         currentShopID = in.getLongExtra("ShopID", -1);
+        currentShopDescr = in.getStringExtra("ShopDescr");
         setContentView(R.layout.activity_use_promotions);
 
         listView = (ListView) findViewById(R.id.use_promotions_listview);
+
+        subTitle = (TextView) findViewById(R.id.use_promotions_textview_subtitle);
+        subTitle.setText(currentShopDescr);
 
         subTitle2 = (TextView) findViewById(R.id.use_promotions_textview_subtitle_2);
     }

@@ -19,6 +19,7 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -101,35 +102,36 @@ public class QRResultActivity extends AppCompatActivity {
     private void initFunctionality() {
         checkConsomation();
 
-        getSupportActionBar().setTitle(getString(R.string.result));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(getString(R.string.result));
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowHomeEnabled(true);
+        }
         ArrayList<String> arrayList = AppPreference.getInstance(mContext).getStringArray(PrefKey.RESULT_LIST);
         String lastResult = arrayList.get(arrayList.size() - 1);
         String decryptedQrCode = Encryption.decryptQrCode(lastResult, this);
 
         /* recup des infos via qr code */
         if(decryptedQrCode == null){
-            Log.v(Global.debug_text,"invalid qr code decrpted");
+            Log.v(Global.debug_text,"invalid qr code decrypted");
             valid_qr_code = false;
         } else {
             String[] data = decryptedQrCode.split("_5%/");
             int achat = Integer.parseInt(data[0]);
-            Long partnerId = Long.valueOf(data[1]);
+            long shopID = Long.valueOf(data[1]);
 
             if(!hasQrExpired()){
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 //            result.setText(Html.fromHtml(lastResult, Html.FROM_HTML_MODE_LEGACY));
                     result.setText(Html.fromHtml("qr code crypté= " + lastResult + "| qr code  décrypté= " + decryptedQrCode, Html.FROM_HTML_MODE_LEGACY));
                 } else {
-                    result.setText(Html.fromHtml(lastResult));
+                    result.setText(Html.fromHtml(lastResult, Html.FROM_HTML_MODE_LEGACY));
                 }
                 result.setMovementMethod(LinkMovementMethod.getInstance());
                 try {
                     db = new SQLHelper(this);
-                    db.addPoints(User.connectedUser.getUsername(), achat, partnerId);
-//            db.addPoints(User.connectedUser.getUsername(), Integer.parseInt(encryptedQrCode), 1); //TODO à terminer : il me faut accès à l'ID du shop qui a généré le qr code
+                    db.addPoints(User.connectedUser.getUsername(), achat, shopID);
                 } catch (IOException e) {
                     e.printStackTrace();
                     Log.v(Global.debug_text, "" + e);

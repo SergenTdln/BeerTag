@@ -69,8 +69,8 @@ public class SettingsUserActivity extends AppCompatActivity {
         if (ActivityUtils.getInstance().isLoggedInFacebook()){
             URL image_url = new FacebookUtils().getFacebookProfilePic();
             Picasso.with(this).load(String.valueOf(image_url)).into(picture);
-            selectFileButton.setText("Disabled for accounts created from Facebook");
-            selectFileButton.setTextColor(getResources().getColor(R.color.red, null)); //TODO j'ai un cannot resolve avec grey, wtf
+            selectFileButton.setText(R.string.disabled_for_facebook);
+            selectFileButton.setTextColor(getResources().getColor(R.color.grey, null));
             selectFileButton.setEnabled(false);
         } else {
             picture.setImageBitmap(BitmapFactory.decodeFile(this.getFilesDir() + "/" + User.connectedUser.getImagePath()));
@@ -149,7 +149,6 @@ public class SettingsUserActivity extends AppCompatActivity {
                 }
             }
         });
-        //TODO en faire un floating button comme pour les settings Partner @Sergen
     }
 
     /**

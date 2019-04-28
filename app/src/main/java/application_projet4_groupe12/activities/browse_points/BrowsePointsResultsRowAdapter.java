@@ -68,6 +68,7 @@ public class BrowsePointsResultsRowAdapter extends ArrayAdapter<BrowsePointsAsso
                         // New Activity with available Promos and a way to "consume" them
                         Intent intent = new Intent(getContext(), UsePromotionsActivity.class);
                         intent.putExtra("ShopID", assoc.getShopID());
+                        intent.putExtra("ShopDescr", assoc.getShopDescr());
                         getContext().startActivity(intent);
                     }
                 });

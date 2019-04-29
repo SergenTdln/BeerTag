@@ -1,6 +1,5 @@
 package application_projet4_groupe12.activities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -23,13 +22,11 @@ import application_projet4_groupe12.R;
 import application_projet4_groupe12.activities.browse_points.BrowsePointsActivity;
 import application_projet4_groupe12.activities.find_partner.FindPartnerActivity;
 import application_projet4_groupe12.activities.settings.SettingsUserActivity;
-import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.utils.ActivityUtils;
 import application_projet4_groupe12.utils.AppUtils;
 import application_projet4_groupe12.utils.FacebookUtils;
 
-import java.io.IOException;
 import java.net.URL;
 
 import application_projet4_groupe12.utils.Global;
@@ -50,7 +47,6 @@ public class MainActivity extends AppCompatActivity
     private AdView mAdView;
 
     SharedPreferences shared_login_choice;
-    SQLHelper db;
     Toolbar toolbar;
     FloatingActionButton fab;
     DrawerLayout drawer;
@@ -63,117 +59,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-//        FirebaseUtils.FirebaseSync(this);
-        try {
-            db = new SQLHelper(this);
-            db.TransferUser();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.v(Global.debug_text, "printStackTrace" + e);
-        }
-// finally {
-//            db.close();
-//        }
-
-        try {
-            db = new SQLHelper(this);
-            db.TransferAddress();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.v(Global.debug_text, "TransferAddress" + e);
-        }
-//        finally {
-//            db.close();
-//        }
-
-        try {
-            db = new SQLHelper(this);
-            db.TransferAdmin_user();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.v(Global.debug_text, "TransferAdmin_user" + e);
-        }
-        //finally {
-          //  db.close();
-        //}
-
-        try {
-            db = new SQLHelper(this);
-            db.TransferFavorite_shops();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.v(Global.debug_text, "TransferFavorite_shops" + e);
-        }
-        //finally {
-          //  db.close();
-        //}
-
-            try {
-            db = new SQLHelper(this);
-            db.TransferPromotion();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.v(Global.debug_text, "TransferPromotion" + e);
-        }
-        //finally {
-          //  db.close();
-        //}
-
-        try {
-            db = new SQLHelper(this);
-            db.TransferShop_frames();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.v(Global.debug_text, "TransferShop_frames" + e);
-        }
-        //finally {
-          //  db.close();
-        //}
-
-        try {
-            db = new SQLHelper(this);
-            db.TransferShop_location();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.v(Global.debug_text, "TransferShop_location" + e);
-        }
-        //finally {
-          //  db.close();
-        //}
-
-        try {
-            db = new SQLHelper(this);
-            db.TransferUser_points();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.v(Global.debug_text, "TransferUser_points" + e);
-        }
-        //finally {
-          //  db.close();
-        //}
-
-        try {
-            db = new SQLHelper(this);
-            db.TransferUser_promotion();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.v(Global.debug_text, "TransferUser_promotion" + e);
-        }
-        //finally {
-          //  db.close();
-        //}
-
-        try {
-            db = new SQLHelper(this);
-            db.TransferPartner();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.v(Global.debug_text, "TransferPartner" + e);
-        }
-        //finally {
-          //  db.close();
-        //}
 
         setContentView(R.layout.activity_main_user);
 

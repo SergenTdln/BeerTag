@@ -201,6 +201,10 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @return An LinkedList<String> containing all the results, or an empty list if there was none
      */
     private LinkedList<String> getElementFromDB(String table, String column, String conditionSQL) throws SQLiteException{
+        if(! myDB.isOpen()) {
+            String path = DATABASE_PATH + DATABASE_NAME;
+            this.myDB = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READWRITE);
+        }
         LinkedList<String> requestResult = new LinkedList<>();
         Cursor c = myDB.query("\""+table+"\"",
                 new String[]{"\""+column+"\""},
@@ -231,6 +235,10 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @return A Cursor containing the query result
      */
     private Cursor getEntriesFromDB(String table, String[] columns, String conditionSQL, String orderBy){
+        if(! myDB.isOpen()) {
+            String path = DATABASE_PATH + DATABASE_NAME;
+            this.myDB = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READWRITE);
+        }
         Cursor cursor = myDB.query("\""+table+"\"",
                 columns,
                 conditionSQL,
@@ -1445,7 +1453,7 @@ public class SQLHelper extends SQLiteOpenHelper {
     //FIREBASE SYNC METHODS
     //*****
 
-    public void TransferUser() {
+    public boolean TransferUser() {
         Log.e("TAG", "Hello");
         dab.collection("User")
                 .get()
@@ -1490,9 +1498,10 @@ public class SQLHelper extends SQLiteOpenHelper {
                         }
                     }
                 });
+        return true;
     }
 
-    public void TransferAddress() {
+    public boolean TransferAddress() {
         dab.collection("Address")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -1524,9 +1533,10 @@ public class SQLHelper extends SQLiteOpenHelper {
                         }
                     }
                 });
+        return true;
     }
 
-    public void TransferAdmin_user() {
+    public boolean TransferAdmin_user() {
         dab.collection("Admin_user")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -1549,9 +1559,10 @@ public class SQLHelper extends SQLiteOpenHelper {
                         }
                     }
                 });
+        return true;
     }
 
-    public void TransferFavorite_shops() {
+    public boolean TransferFavorite_shops() {
         dab.collection("Favorite_shops")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -1574,9 +1585,10 @@ public class SQLHelper extends SQLiteOpenHelper {
                         }
                     }
                 });
+        return true;
     }
 
-    public void TransferPromotion() {
+    public boolean TransferPromotion() {
         dab.collection("Promotion")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -1620,9 +1632,10 @@ public class SQLHelper extends SQLiteOpenHelper {
                         }
                     }
                 });
+        return true;
     }
 
-    public void TransferShop_frames() {
+    public boolean TransferShop_frames() {
         dab.collection("Shop_frames")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -1648,9 +1661,10 @@ public class SQLHelper extends SQLiteOpenHelper {
                         }
                     }
                 });
+        return true;
     }
 
-    public void TransferShop_location() {
+    public boolean TransferShop_location() {
         dab.collection("Shop_location")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -1682,9 +1696,10 @@ public class SQLHelper extends SQLiteOpenHelper {
                         }
                     }
                 });
+        return true;
     }
 
-    public void TransferUser_points() {
+    public boolean TransferUser_points() {
         dab.collection("User_points")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -1710,9 +1725,10 @@ public class SQLHelper extends SQLiteOpenHelper {
                         }
                     }
                 });
+        return true;
     }
 
-    public void TransferUser_promotion() {
+    public boolean TransferUser_promotion() {
         dab.collection("User_promotion")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -1738,9 +1754,10 @@ public class SQLHelper extends SQLiteOpenHelper {
                         }
                     }
                 });
+        return true;
     }
 
-    public void TransferPartner(){
+    public boolean TransferPartner(){
         dab.collection("Partner")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -1775,5 +1792,6 @@ public class SQLHelper extends SQLiteOpenHelper {
                         }
                     }
                 });
+        return true;
     }
 }

@@ -92,10 +92,14 @@
     <string name="browse_clients_default_user_fullname">Default User Full Name</string>
     <string name="browse_clients_default_user_username">Default User email</string>
     <string name="browse_clients_shop_title">Shop located at :</string>
+    <string name="default_shop_name">Default Shop name</string>
 
     <!--Settings-->
     <string name="settings_title">Settings</string>
     <string name="settings_partner_spinner_default">Please select an User</string>
+    <string name="select_file">Select a file</string>
+    <string name="manage_admins">Manage your administrators :</string>
+    <string name="change_logo">Change your logo :</string>
 
     <string name="type_here_bar">Generate barcode</string>
     <string name="type_here_qr">Generate QR code</string>

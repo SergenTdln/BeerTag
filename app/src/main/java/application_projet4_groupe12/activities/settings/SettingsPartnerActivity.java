@@ -101,6 +101,7 @@ public class SettingsPartnerActivity extends AppCompatActivity {
                     //Do nothing
                     dropDownUsers.setBackgroundResource(R.drawable.border_error);
                 } else {
+                    dropDownUsers.setBackground(null);
                     if(addAdmin(currentPartner, getUser(v.getContext(), selected), v.getContext())){
                         //Update the displayed list
                         fillListView(listAdmins, v.getContext());
@@ -218,6 +219,7 @@ public class SettingsPartnerActivity extends AppCompatActivity {
                         fillListView(listAdmins, this); //Refreshing the admins list
                         registerForContextMenu(listAdmins);
                         fillSpinner(dropDownUsers, this); //Refresh the spinner
+                        dropDownUsers.setBackground(null);
                         return true;
                     } else {
                         Toast.makeText(this, "Could not delete this admin. Please try again.", Toast.LENGTH_SHORT).show();

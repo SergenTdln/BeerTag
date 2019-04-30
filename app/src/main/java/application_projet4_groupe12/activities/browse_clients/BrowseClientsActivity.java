@@ -27,6 +27,12 @@ public class BrowseClientsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_browse_clients);
         listView = findViewById(R.id.browse_clients_listview);
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
         List<BrowseClientsShopDataAssociation> elements = new ArrayList<>();
         SQLHelper db = null;
         try {

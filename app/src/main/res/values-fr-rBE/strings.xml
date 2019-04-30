@@ -92,6 +92,7 @@
     <string name="default_reusability">Réutilisabilité par défaut</string>
     <string name="use_promotions_points_collected">Points collectés :</string>
     <string name="use_promotions_title">Activer des promotions</string>
+    <string name="default_shop_name">Nom par défaut</string>
 
     <!--<string name="login_fields">Veuillez completer tous les champs</string>-->
     <!--<string name="login_success">Connection</string>-->

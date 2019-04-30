@@ -71,7 +71,7 @@
                     android:id="@+id/textView9"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Réglages"
+                    android:text="@string/settings_title"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
                     android:textColor="@android:color/white" />
 
@@ -204,7 +204,7 @@
                                     android:layout_height="30dp"
                                     android:layout_alignParentTop="true"
                                     android:layout_marginTop="16dp"
-                                    android:text="Change your logo :"
+                                    android:text="@string/change_logo"
                                     android:textSize="23sp"
                                     app:layout_constraintStart_toStartOf="parent"
                                     app:layout_constraintTop_toBottomOf="@id/settings_partner_change_address" />
@@ -226,7 +226,7 @@
                                     android:layout_below="@+id/settings_partner_picture"
                                     android:layout_marginStart="8dp"
                                     android:layout_marginTop="8dp"
-                                    android:text="Select file"
+                                    android:text="@string/select_file"
                                     android:textColor="@color/colorPrimaryDark"
                                     app:layout_constraintStart_toEndOf="@+id/settings_partner_picture"
                                     app:layout_constraintTop_toBottomOf="@+id/settings_partner_change_picture_title" />
@@ -237,15 +237,15 @@
                                     android:layout_height="30dp"
                                     android:layout_marginTop="16dp"
                                     android:ellipsize="middle"
-                                    android:text="Manage your administrators :"
+                                    android:text="@string/manage_admins"
                                     android:textSize="23sp"
                                     app:layout_constraintStart_toStartOf="parent"
                                     app:layout_constraintTop_toBottomOf="@+id/settings_partner_picture" />
 
-                                <ListView
+                                <application_projet4_groupe12.utils.CustomListView
                                     android:id="@+id/settings_partner_manage_admins_listview"
                                     android:layout_width="fill_parent"
-                                    android:layout_height="300dp"
+                                    android:layout_height="wrap_content"
                                     android:layout_marginTop="8dp"
                                     app:layout_constraintEnd_toEndOf="parent"
                                     app:layout_constraintStart_toStartOf="parent"

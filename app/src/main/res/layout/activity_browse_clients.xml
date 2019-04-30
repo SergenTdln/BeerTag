@@ -79,7 +79,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <ListView
+                    <application_projet4_groupe12.utils.CustomListView
                         android:id="@+id/browse_clients_listview"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -91,7 +91,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/browse_clients_textview_title">
-                    </ListView>
+                    </application_projet4_groupe12.utils.CustomListView>
 
                 </android.support.constraint.ConstraintLayout>
 

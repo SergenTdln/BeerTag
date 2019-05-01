@@ -29,7 +29,7 @@
     <string name="nav_logout">Déconnexion</string>
     <string name="nav_title_management">Gestion du compte</string>
     <string name="browse_points_title">Consulter mes points</string>
-    <string name="browse_points_default_partner_name">Nom Partenaire par défaut</string>
+    <string name="default_partner_name">Nom Partenaire par défaut</string>
     <string name="browse_points_default_shop_address">Addresse par défaut</string>
     <string name="settings_title">Paramètres</string>
     <string name="default_username">Email par défaut</string>

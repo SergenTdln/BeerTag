@@ -3,6 +3,9 @@ package application_projet4_groupe12.entities;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
+
 import java.io.IOException;
 
 import application_projet4_groupe12.data.SQLHelper;
@@ -17,6 +20,8 @@ public class Shop {
     private long addressID;
     private String description;
     private String creationDate;
+
+    public Shop(){}
 
     public Shop(long id, long partnerID, long addressID, String description, String creationDate){
         this.id = id;
@@ -82,6 +87,8 @@ public class Shop {
             if(! db.updateShopData(this)){
                 Toast.makeText(c, "Database update did not work. Please try again", Toast.LENGTH_SHORT).show();
             }
+            FirebaseFirestore dab = FirebaseFirestore.getInstance();
+            dab.collection("Shop_location").document(String.valueOf(id)).set(this, SetOptions.merge());
         } catch (IOException e){
             e.printStackTrace();
             Toast.makeText(c, "Could not update the database. Please try again", Toast.LENGTH_SHORT).show();

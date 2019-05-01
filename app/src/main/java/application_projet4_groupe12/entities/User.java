@@ -5,6 +5,9 @@ import android.database.sqlite.SQLiteException;
 import android.support.annotation.NonNull;
 import android.widget.Toast;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
+
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,6 +32,8 @@ public class User {
     private String imagePath; //Image path inside of the assets folder
 
     private boolean isAdmin;
+
+    public User(){}
 
     // Call SQLHelper.getFreeIDUser to obtain an available ID to use
     public User(long id, String username, String hashedPassword, String creationDate, String firstName, String lastName, String birthday, String imagePath, boolean isAdmin) {
@@ -225,6 +230,8 @@ public class User {
             if(! db.updateUserData(this)){
                 Toast.makeText(c, "Database update did not work. Please try again", Toast.LENGTH_SHORT).show();
             }
+            FirebaseFirestore dab = FirebaseFirestore.getInstance();
+            dab.collection("User").document(String.valueOf(id)).set(this, SetOptions.merge());
         } catch (IOException e){
             e.printStackTrace();
             Toast.makeText(c, "Could not update the database. Please try again", Toast.LENGTH_SHORT).show();

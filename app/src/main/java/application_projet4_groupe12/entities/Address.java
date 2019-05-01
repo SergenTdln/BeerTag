@@ -3,6 +3,9 @@ package application_projet4_groupe12.entities;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
+
 import java.io.IOException;
 
 import application_projet4_groupe12.data.SQLHelper;
@@ -14,6 +17,8 @@ public class Address {
     private String city;
     private String street;
     private String numbers; //This is a string in case of a weird mailbox structure is being used
+
+    public Address(){}
 
     public Address(long id, String country, String city, String street, String numbers){
         this.id = id;
@@ -86,6 +91,8 @@ public class Address {
             if(! db.updateAddressData(this)){
                 Toast.makeText(c, "Database update did not work. Please try again", Toast.LENGTH_SHORT).show();
             }
+            FirebaseFirestore dab = FirebaseFirestore.getInstance();
+            dab.collection("Address").document(String.valueOf(id)).set(this, SetOptions.merge());
         } catch (IOException e){
             e.printStackTrace();
             Toast.makeText(c, "Could not update the database. Please try again", Toast.LENGTH_SHORT).show();

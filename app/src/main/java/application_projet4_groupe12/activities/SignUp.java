@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.util.Base64;
 import android.util.Log;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -32,6 +33,7 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -79,6 +81,9 @@ public class SignUp extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Prevents the keyboard from automatically opening up when arriving on the activity
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         if (ActivityUtils.getInstance().isLoggedInFacebook()) {
             finish();
             SharedPreferences shared = getApplicationContext().getSharedPreferences("session", MODE_PRIVATE);
@@ -248,27 +253,18 @@ public class SignUp extends AppCompatActivity {
                             Context ct = getApplicationContext();
                             try {
                                 db = new SQLHelper(ct);
-//                                db = new SQLHelper(getContext());
 
                                 if (db.doesUserExist(session_email)) {
                                     Log.d(Global.debug_text, "fb user already exists in db");
+
+                                    User user_fb = db.getUser(session_email);
+                                    User.connectUser(ct, user_fb);
                                 } else {
 //                                    int id = Integer.valueOf(session_id); //id de la session facebook
                                     long db_id = db.getFreeIDUser();
                                     Date date = Calendar.getInstance().getTime();
                                     DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                                     String today = formatter.format(date);
-
-//                                    User user = new User(
-//                                            db_id,
-//                                            session_email,
-//                                            Hash.hash(Password.GetPassword(6)),
-//                                            today,
-//                                            firstname,
-//                                            lastname,
-//                                            today, //TODO remplacer par la date de naissance à récupérer via fb
-//                                            imagepath.toString(),
-//                                            false
 
                                     User user = new User(
                                             db_id,
@@ -277,7 +273,7 @@ public class SignUp extends AppCompatActivity {
                                             today,
                                             firstname,
                                             lastname,
-                                            today, //TODO remplacer par la date de naissance à récupérer via fb
+                                            today,
                                             imagepath.toString(),
                                             false
                                     );
@@ -290,23 +286,21 @@ public class SignUp extends AppCompatActivity {
                                         e.printStackTrace();
                                     }
 
-
                                     try {
-                                        db_firebase.collection("User").add(user);
-                                        User.connectUser(ct, user);
+                                        db_firebase.collection("User")
+                                                .document(String.valueOf(db_id))
+                                                .set(user, SetOptions.merge());
                                     } catch (Exception e) {
                                         Log.v(Global.debug_text, " erreur ajout firebase: "+e);
                                     }
 
+                                    User.connectUser(ct, user);
                                 }
-
                             } catch (IOException e) {
                                 e.printStackTrace();
                                 Log.v(Global.debug_text, "fb login db error" + e);
                             }
 
-                            User user_fb = db.getUser(session_email);
-                            User.connectUser(ct, user_fb);
                             startActivity(new Intent(SignUp.this, MainActivity.class));
                             finish();
                         } else {

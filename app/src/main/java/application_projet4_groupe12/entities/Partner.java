@@ -3,6 +3,9 @@ package application_projet4_groupe12.entities;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
+
 import java.io.IOException;
 
 import application_projet4_groupe12.data.SQLHelper;
@@ -18,6 +21,8 @@ public class Partner {
     private String address;
     private String creationDate; //This HAS to follow this format : DD/MM/YYYY. (Example: "31/01/2000")
     private String imagePath; //Image path inside of the assets folder
+
+    public Partner(){}
 
     // Call SQLHelper.getFreeIDPartner() to obtain an available ID to use
     public Partner(long id, String tvaNumber, String name, String address, String creationDate, String imagePath) {
@@ -97,6 +102,8 @@ public class Partner {
             if(! db.updatePartnerData(this)){
                 Toast.makeText(c, "Database update did not work. Please try again", Toast.LENGTH_SHORT).show();
             }
+            FirebaseFirestore dab = FirebaseFirestore.getInstance();
+            dab.collection("Partner").document(String.valueOf(id)).set(this, SetOptions.merge());
         } catch (IOException e){
             e.printStackTrace();
             Toast.makeText(c, "Could not update the database. Please try again", Toast.LENGTH_SHORT).show();

@@ -74,7 +74,7 @@
 
     <!--Browse points-->
     <string name="browse_points_title">Browse my points</string>
-    <string name="browse_points_default_partner_name">Default Partner Name</string>
+    <string name="default_partner_name">Default Partner Name</string>
     <string name="browse_points_default_shop_address">Default Shop Address</string>
     <string name="activate_promotion">Activate this promotion</string>
     <string name="points_required">Points required</string>
@@ -100,6 +100,9 @@
     <string name="select_file">Select a file</string>
     <string name="manage_admins">Manage your administrators :</string>
     <string name="change_logo">Change your logo :</string>
+    <string name="settings_change_name">Change the Partner\'s name :</string>
+    <string name="settings_change_address">Change the Partner\'s address :</string>
+    <string name="default_address">Default Address</string>
 
     <string name="type_here_bar">Generate barcode</string>
     <string name="type_here_qr">Generate QR code</string>

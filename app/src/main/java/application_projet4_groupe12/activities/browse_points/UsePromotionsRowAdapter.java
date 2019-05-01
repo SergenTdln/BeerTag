@@ -48,6 +48,7 @@ public class UsePromotionsRowAdapter extends ArrayAdapter<Promotion> {
         if(promotion!=null) {
             viewHolder.promoID = promotion.getId();
             viewHolder.shopID = promotion.getIdShop();
+            viewHolder.reusable = promotion.isReusable();
             viewHolder.pointsRequired.setText(String.valueOf(promotion.getPointsRequired()));
             viewHolder.pointsRequiredTitle.setText(R.string.points_required);
             viewHolder.descr.setText(promotion.getDescription());
@@ -63,10 +64,11 @@ public class UsePromotionsRowAdapter extends ArrayAdapter<Promotion> {
         return convertView;
     }
 
-    class ViewHolder {
-        long promoID;
-        long shopID;
-        TextView pointsRequired;
+    public class ViewHolder {
+        public long promoID;
+        public long shopID;
+        public boolean reusable;
+        public TextView pointsRequired;
         TextView pointsRequiredTitle;
         TextView descr;
         TextView endDate;

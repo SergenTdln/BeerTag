@@ -45,8 +45,7 @@ public class BrowseClientsShopDataRowAdapter extends ArrayAdapter<BrowseClientsS
 
         BrowseClientsShopDataAssociation assoc = getItem(position);
         if(assoc!=null){
-            viewholder.shopTitle.setText("Shop n° 1"); //TODO debugging @Martin
-            //viewholder.shopTitle.setText(R.string.browse_clients_shop_title+assoc.getShopAddress().stringRepresentation());
+            viewholder.shopTitle.setText(assoc.getShopDescr());
             viewholder.listClients.setAdapter(new BrowseClientsClientDataRowAdapter(getContext(), assoc.getList()));
         }
 

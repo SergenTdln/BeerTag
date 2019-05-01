@@ -19,16 +19,20 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.data.SQLHelper;
@@ -49,7 +53,7 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
     private FirebaseFirestore dab = FirebaseFirestore.getInstance();
     private FirebaseAuth mAuth;
 
-    private String docuemnt_id;
+    private String document_id;
 
     private EditText name;
     private EditText address;
@@ -73,7 +77,7 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
             db = new SQLHelper(getContext());
 
             List<String> allUsernamesList = db.getAllUsernames();
-            allUsernamesList.add(0, "Please select an User");
+            allUsernamesList.add(0, getString(R.string.settings_partner_spinner_default));
 
             ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_adapter_plain_text, allUsernamesList);
             dropDownUsers.setAdapter(adapter);
@@ -120,63 +124,15 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
         //Do nothing
     }
 
-    public void Transfer(){
-        dab.collection("Partner")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                partner = document.toObject(Partner.class);
-                                try {
-                                    db.addPartner(partner);
-                                }
-                                catch (WrongDateFormatException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
-    }
-    public void Transfer2(){
-        dab.collection("Users")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Partner partner = document.toObject(Partner.class);
-                                int id = Integer.parseInt(document.getString("id"));
-                                String tvaNumber = document.getString("tva");
-                                String creationDate = document.getString("created_on");
-                                String address = document.getString("id_address");
-                                String name = document.getString("name");
-                                String imagePath = document.getString("image_path");
-                                partner = new Partner(id, tvaNumber, name, address, creationDate, imagePath);
-                                try {
-                                    db.addPartner(partner);
-                                }
-                                catch (WrongDateFormatException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
-    }
-
     private boolean signUp() {
         String mName = name.getText().toString();
         String mAddress = address.getText().toString();
         String mTVA = tva.getText().toString();
-        if( mName.equals("") || mAddress.equals("") || mTVA.equals(""))
+        String mSelectedUsername = (String) dropDownUsers.getSelectedItem();
+        if( mName.equals("") ||
+                mAddress.equals("") ||
+                mTVA.equals("") ||
+                mSelectedUsername.equals(getString(R.string.settings_partner_spinner_default)) )
         {
             Toast.makeText(getActivity(), "Please fill in all the fields", Toast.LENGTH_SHORT).show();
             return false;
@@ -184,28 +140,41 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
         try {
             db = new SQLHelper(getContext());
 
-             if (db.doesPartnerExist(mTVA))  {
-                 Toast.makeText(getActivity(),  "This TVA number is already used", Toast.LENGTH_SHORT).show();
-                 return false;
-             }
-            long id = db.getFreeIDPartner();
+            if (db.doesPartnerExist(mTVA))  {
+                Toast.makeText(getActivity(),  "This TVA number is already used", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            long partnerID = db.getFreeIDPartner();
+            long adminID = db.getUserID(mSelectedUsername);
+            if (adminID==-1){
+                Toast.makeText(getActivity(),  "The selected Admin is invalid", Toast.LENGTH_SHORT).show();
+                return false;
+            }
 
             Date date = Calendar.getInstance().getTime();
             DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             String today = formatter.format(date);
 
-            partner = new Partner(id, mTVA, mName, mAddress, today, ""); //ImagePath will be edited later by partner in Settings Activity
+            partner = new Partner(partnerID, mTVA, mName, mAddress, today, ""); //ImagePath will be edited later by partner in Settings Activity
+
+            /*Adding the partner to the DB (local)*/
             try {
-                System.out.println("Partner inséré : " + db.addPartner(partner));
+                boolean success = db.addPartner(partner);
+                System.out.println("Partner inséré : " + success);
             } catch (WrongDateFormatException e){
                 e.printStackTrace();
                 Toast.makeText(getActivity(), "Invalid date format : please use DD/MM/YYYY", Toast.LENGTH_SHORT).show();
                 return false;
             }
 
-            //Now we need to add the admin User for this Partner
+            /*Adding the partner to the DB (Firestore)*/
+            dab.collection("Partner").document(String.valueOf(partner.getId())).set(partner, SetOptions.merge());
+            Toast.makeText(getActivity(), "Partner created", Toast.LENGTH_SHORT).show();
+
+            /*Adding the Admin_User entry to the DB (local)*/
             try {
-                db.addAdmin(selectedUsername, partner.getId());
+                db.addAdmin(adminID, partner.getId());
             } catch (UnknownUserException e) {
                 Log.v(Global.debug_text,"addAdmin "+e);
                 e.printStackTrace();
@@ -213,40 +182,19 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
                 return false;
             }
 
-            //Firebase stuff
-            dab.collection("Partner").add(partner);
-            Toast.makeText(getActivity(), "Partner created", Toast.LENGTH_SHORT).show();
-            //TODO add the first admin user to Firebase as well
+            /*Adding the Admin_User entry to the DB (Firestore)*/
+            Map<String, Long> data = new HashMap<>();
+            data.put("id_user", adminID);
+            data.put("id_partner", partnerID);
+            dab.collection("Admin_User").
+                    document(String.valueOf(adminID)+String.valueOf(partnerID)). //Document ID = concat of both ids (assures its unique + very easy to retrieve later on)
+                    set(data, SetOptions.merge());
+            //Log.v(Global.debug_text, "add admin no error"+mAuth.getUid());
 
-            try {
-                dab.collection("user").document( mAuth.getUid()).update("admin", true);
-                Log.v(Global.debug_text, "add admin no error"+mAuth.getUid());
-            } catch (Exception e) {
-                e.printStackTrace();
-                Log.v(Global.debug_text, "add admin error"+e);
-            }
-            Log.d(Global.debug_text, "Firebase instance: " + mAuth);
-            /**
-             * Useless for Partner creation IMO
-             *
-            mAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()) {
-                        Toast.makeText(getActivity(), R.string.login_success, Toast.LENGTH_SHORT).show();
 
-                        signIn(email);
-                    } else {
-                        Exception e = task.getException();
-                        if (e instanceof FirebaseNetworkException){
-                            Toast.makeText(getActivity(), "Could not create your account. Are you offline ?", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(getActivity(), "Firebase Failed" + e, Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }
-            });
-             **/
+            //Log.d(Global.debug_text, "Firebase instance: " + mAuth);
+
+            // Logging in
             SharedPreferences session = getActivity().getSharedPreferences("session", MODE_PRIVATE);
             session.edit().putBoolean("choice made", true).apply();
             session.edit().putBoolean("loggin_chosed", true).apply();
@@ -255,7 +203,6 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
             User user = db.getUser(selectedUsername);
             User.connectUser(getContext(), user);
             AppUtils.end_home_admin(getActivity());
-
 
         } catch (IOException e) {
             e.printStackTrace();

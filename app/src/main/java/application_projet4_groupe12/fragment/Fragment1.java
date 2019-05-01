@@ -1,7 +1,6 @@
 package application_projet4_groupe12.fragment;
 
 import android.content.Intent;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -24,10 +23,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
 
 
 import application_projet4_groupe12.R;
@@ -52,6 +47,8 @@ public class Fragment1 extends Fragment {
     private EditText username;
     private EditText password;
 
+    SharedPreferences session;
+
     private  CallbackManager callbackManager;
 
 
@@ -64,14 +61,28 @@ public class Fragment1 extends Fragment {
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
+        session = getApplicationContext().getSharedPreferences("session", MODE_PRIVATE);
+
+        if(session.contains("login_status") && session.getBoolean("login_status",true)) {
+            signIn(session.getString("email",""));
+
+            Intent intent = new Intent(getActivity(), MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            if(getActivity()!=null){
+                getActivity().finish();
+            }
+        }
+
         fragment1_sign_in.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 username = getView().findViewById(R.id.sign_in_input_email);
                 password = getView().findViewById(R.id.sign_in_input_password);
 
-                String email = username.getText().toString();
-                String pass = password.getText().toString();
+                //trim pour virer les espaces blancs
+                String email = username.getText().toString().trim();
+                String pass = password.getText().toString().trim();
 
                 if (TextUtils.isEmpty(email) || TextUtils.isEmpty(pass)) {
                     Toast.makeText(getActivity(),R.string.login_fields, Toast.LENGTH_SHORT).show();
@@ -79,10 +90,12 @@ public class Fragment1 extends Fragment {
                 else {
                     try {
                         db = new SQLHelper(getContext());
-                        if(db.doesUsernameExist(email)) {
-                            if (db.getHashedPassword(email).equals(Hash.hash(pass))) { //If password is correct
+                        if(db.doesUserExist(email)) {
+                            String hashedPassword = Hash.hash(pass);
+                            System.out.println("hashedPassword = "+hashedPassword);
+                            if (db.getHashedPassword(email).equals(hashedPassword)) { //If password is correct
 
-                                mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() { //TODO use Hash.hash(pass) instead
+                                mAuth.signInWithEmailAndPassword(email, Hash.hash(pass)).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                     @Override
                                     public void onComplete(@NonNull Task<AuthResult> task) {
                                         if (task.isSuccessful()) {
@@ -98,7 +111,7 @@ public class Fragment1 extends Fragment {
                                             }
                                         } else {Exception e = task.getException();
                                             if (e instanceof FirebaseNetworkException){
-                                                Toast.makeText(getActivity(), "Could not create your account. Are you offline ?", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(getActivity(), "Could not connect to your account. Are you offline ?", Toast.LENGTH_SHORT).show();
                                             } else {
                                                 Toast.makeText(getActivity(), "Firebase Failed" + e, Toast.LENGTH_LONG).show();
                                             }
@@ -159,7 +172,7 @@ public class Fragment1 extends Fragment {
         try {
             db = new SQLHelper(getContext());
 
-            boolean userExists = db.doesUsernameExist(email);
+            boolean userExists = db.doesUserExist(email);
             System.out.println("Utilisateur existe :" + userExists);
             if (userExists) {
 
@@ -167,9 +180,9 @@ public class Fragment1 extends Fragment {
                 User.connectUser(getContext(), user);
 
                 /* creation d'une sessions globale lors du login */
-                SharedPreferences shared = getApplicationContext().getSharedPreferences("session", MODE_PRIVATE);
-                SharedPreferences.Editor editor = shared.edit();
+                SharedPreferences.Editor editor = session.edit();
                 editor.putString("email", email); // Storing string value
+                editor.putBoolean("login_status", true);
                 editor.apply();
                 /* end */
             } else {

@@ -3,10 +3,11 @@ package application_projet4_groupe12.fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import application_projet4_groupe12.activities.MainActivity;
-import application_projet4_groupe12.utils.Encryption;
+import application_projet4_groupe12.utils.Global;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.activities.QRResultActivity;
@@ -27,7 +28,9 @@ import application_projet4_groupe12.data.preference.AppPreference;
 import application_projet4_groupe12.data.preference.PrefKey;
 import application_projet4_groupe12.utils.ActivityUtils;
 
-public class QRScanFragment extends Fragment  {
+import static android.content.Context.MODE_PRIVATE;
+
+public class QRScanFragment extends Fragment {
 
     private Activity mActivity;
     private Context mContext;
@@ -38,6 +41,7 @@ public class QRScanFragment extends Fragment  {
 
     private boolean isFlash, isAutoFocus;
     private int camId, frontCamId, rearCamId;
+    private int run;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -65,7 +69,7 @@ public class QRScanFragment extends Fragment  {
         isFlash = AppPreference.getInstance(mContext).getBoolean(PrefKey.FLASH, false); // flash off by default
         isAutoFocus = AppPreference.getInstance(mContext).getBoolean(PrefKey.FOCUS, true); // auto focus on by default
         camId = AppPreference.getInstance(mContext).getInteger(PrefKey.CAM_ID); // back camera by default
-        if(camId == -1) {
+        if (camId == -1) {
             camId = rearCamId;
         }
 
@@ -74,25 +78,31 @@ public class QRScanFragment extends Fragment  {
 
     private void initView(View rootView) {
         contentFrame = rootView.findViewById(R.id.content_frame);
-        //todo : corriger le toolbar sur le scanner
+        //todo : corriger le toolbar sur le scanner @Sergen j'imagine ?
 //        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Scanning");
 
     }
 
 
     private void initListener() {
+
         zXingScannerView.setResultHandler(new ZXingScannerView.ResultHandler() {
             @Override
             public void handleResult(Result result) {
 
-                String resultStr = result.getText();
-                ArrayList<String> previousResult = AppPreference.getInstance(mContext).getStringArray(PrefKey.RESULT_LIST);
-                previousResult.add(resultStr);
-                AppPreference.getInstance(mContext).setStringArray(PrefKey.RESULT_LIST, previousResult);
+                if(run < 1){
+                    String resultStr = result.getText();
+                    ArrayList<String> previousResult = AppPreference.getInstance(mContext).getStringArray(PrefKey.RESULT_LIST);
+                    previousResult.add(resultStr);
+                    AppPreference.getInstance(mContext).setStringArray(PrefKey.RESULT_LIST, previousResult);
 
-                zXingScannerView.resumeCameraPreview(this);
+                    zXingScannerView.resumeCameraPreview(this);
+                    run = run + 1;
+                    ActivityUtils.getInstance().invokeActivity(mActivity, QRResultActivity.class, false);
+                }
 
-                ActivityUtils.getInstance().invokeActivity(mActivity, QRResultActivity.class, false);
+
+                Log.v(Global.debug_text, "camera scan run nb: "+run);
 
             }
         });
@@ -100,14 +110,14 @@ public class QRScanFragment extends Fragment  {
     }
 
     private void activateScanner() {
-        if(zXingScannerView != null) {
+        if (zXingScannerView != null) {
 
-            if(zXingScannerView.getParent()!=null) {
+            if (zXingScannerView.getParent() != null) {
                 ((ViewGroup) zXingScannerView.getParent()).removeView(zXingScannerView); // to prevent crush on re adding view
             }
             contentFrame.addView(zXingScannerView);
 
-            if(zXingScannerView.isActivated()) {
+            if (zXingScannerView.isActivated()) {
                 zXingScannerView.stopCamera();
             }
 
@@ -120,17 +130,17 @@ public class QRScanFragment extends Fragment  {
 
     public void setupFormats() {
         List<BarcodeFormat> formats = new ArrayList<>();
-        if(mSelectedIndices == null || mSelectedIndices.isEmpty()) {
+        if (mSelectedIndices == null || mSelectedIndices.isEmpty()) {
             mSelectedIndices = new ArrayList<>();
-            for(int i = 0; i < ZXingScannerView.ALL_FORMATS.size(); i++) {
+            for (int i = 0; i < ZXingScannerView.ALL_FORMATS.size(); i++) {
                 mSelectedIndices.add(i);
             }
         }
 
-        for(int index : mSelectedIndices) {
+        for (int index : mSelectedIndices) {
             formats.add(ZXingScannerView.ALL_FORMATS.get(index));
         }
-        if(zXingScannerView != null) {
+        if (zXingScannerView != null) {
             zXingScannerView.setFormats(formats);
         }
     }
@@ -145,7 +155,7 @@ public class QRScanFragment extends Fragment  {
     @Override
     public void onPause() {
         super.onPause();
-        if(zXingScannerView != null) {
+        if (zXingScannerView != null) {
             zXingScannerView.stopCamera();
         }
     }
@@ -153,7 +163,7 @@ public class QRScanFragment extends Fragment  {
     @Override
     public void setMenuVisibility(final boolean visible) {
         super.setMenuVisibility(visible);
-        if(zXingScannerView != null) {
+        if (zXingScannerView != null) {
             if (visible) {
                 zXingScannerView.setFlash(isFlash);
             } else {
@@ -167,7 +177,7 @@ public class QRScanFragment extends Fragment  {
         AppPreference.getInstance(mContext).setInteger(PrefKey.CAM_ID, 0);
     }
 
-    //todo : corriger le retour à Home
+    //todo : corriger le retour à Home @Sergen j'imagine ?
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -180,5 +190,6 @@ public class QRScanFragment extends Fragment  {
                 return super.onOptionsItemSelected(item);
         }
     }
+
 
 }

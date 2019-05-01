@@ -5,68 +5,75 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <RelativeLayout
+        android:id="@+id/fragment_generate_spinner_layout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_margin="20dp"
+        android:background="@drawable/custom_input">
+
+        <android.support.v7.widget.AppCompatSpinner
+            android:id="@+id/fragment_generate_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/inputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_margin="20dp"
+        android:layout_below="@+id/fragment_generate_spinner_layout"
+        android:background="@drawable/custom_input">
+
+        <EditText
+            android:id="@+id/inputText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:background="@android:color/transparent"
+            android:hint="@string/type_here_qr"
+            android:imeOptions="actionDone"
+            android:inputType="number"
+            android:lines="1"
+            android:maxLines="1"
+            android:paddingStart="20dp"
+            android:paddingEnd="50dp" />
+
+        <ImageView
+            android:id="@+id/switcher"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:background="@android:color/transparent"
+            android:padding="15dp"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/euro_logo" />
+    </RelativeLayout>
 
 
+    <ImageView
+        android:id="@+id/outputBitmap"
+        android:layout_width="match_parent"
+        android:layout_height="280dp"
+        android:layout_below="@+id/inputLayout"
+        android:layout_marginTop="5dp"
+        android:padding="10dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/qr_placeholder"/>
 
-            <RelativeLayout
-                android:id="@+id/inputLayout"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_margin="20dp"
-                android:background="@drawable/custom_input">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/outputBitmap"
+        android:layout_marginEnd="5dp"
+        android:layout_marginTop="5dp"
+        android:gravity="end"
+        android:orientation="horizontal">
 
-
-                <EditText
-                    android:id="@+id/inputText"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    android:background="@android:color/transparent"
-                    android:hint="@string/type_here_qr"
-                    android:imeOptions="actionDone"
-                    android:inputType="number"
-                    android:lines="1"
-                    android:maxLines="1"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="50dp" />
-
-                <ImageView
-                    android:id="@+id/switcher"
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentEnd="true"
-                    android:background="@android:color/transparent"
-                    android:padding="15dp"
-                    android:scaleType="centerInside"
-                    app:srcCompat="@drawable/euro_logo" />
-
-
-
-
-            </RelativeLayout>
-
-
-            <ImageView
-                android:id="@+id/outputBitmap"
-                android:layout_width="match_parent"
-                android:layout_height="280dp"
-                android:layout_below="@+id/inputLayout"
-                android:layout_marginTop="5dp"
-                android:padding="10dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/qr_placeholder"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/outputBitmap"
-                android:layout_marginRight="5dp"
-                android:layout_marginTop="5dp"
-                android:gravity="end"
-                android:orientation="horizontal">
-
-            </LinearLayout>
+    </LinearLayout>
 
 
 

@@ -1,14 +1,12 @@
 package application_projet4_groupe12.activities;
 
-import android.content.Intent;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.fragment.GenerateFragment;
+import application_projet4_groupe12.utils.AppUtils;
 
 public class QRGenerateActivity extends AppCompatActivity {
 
@@ -38,18 +36,8 @@ public class QRGenerateActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer == null) {
-            startActivity(new Intent(QRGenerateActivity.this, MainActivity.class));
-            finish();
-        } else {
-            if (drawer.isDrawerOpen(GravityCompat.START)) {
-                drawer.closeDrawer(GravityCompat.START);
-            } else {
-                super.onBackPressed();
-            }
-        }
+    public void onBackPressed(){
+        AppUtils.end_home_admin(this);
     }
 
 

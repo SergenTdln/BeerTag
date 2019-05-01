@@ -2,7 +2,8 @@
 <resources>
     <color name="red">#FF0089</color>
     <color name="blue">#36C6EA</color>
-    <color name="colorPrimary">#E42261FF</color>
+    <color name="colorPrimary">#2261FF</color>
+    <!--<color name="colorPrimary">#E42261FF</color>-->
     <color name="colorPrimaryDark">#033A86</color>
     <color name="colorAccent">#6E1C03</color>
     <color name="white">#F0F0F0</color>
@@ -13,8 +14,19 @@
     <color name="placeholder">#d9aeaeae</color>
     <color name="viewfinder_laser">#F4F2FA</color>
     <color name="viewfinder_border">@color/colorPrimaryDark</color>
+    <color name="black">#000000</color>
 
     <!-- -->
     <color name="login_text">#FFFFFF</color>
-    <color name="login_text_hint">#97FFFFFF</color>
+    <!--<color name="login_text_hint">#97FFFFFF</color>-->
+    <color name="login_text_hint">#FFFFFF</color>
+
+
+
+
+    <!-- admin colors -->
+    <color name="admin_colorPrimary">#DF781E</color>
+    <color name="admin_fab_generate">#DF781E</color>
+
+    <color name="transparent"></color>
 </resources>

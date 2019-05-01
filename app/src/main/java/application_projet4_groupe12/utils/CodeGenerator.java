@@ -1,17 +1,12 @@
 package application_projet4_groupe12.utils;
 
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.net.Uri;
 import android.os.AsyncTask;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
-
-
-import java.util.Arrays;
 
 
 public class CodeGenerator extends AsyncTask<Void, Void, Bitmap>{

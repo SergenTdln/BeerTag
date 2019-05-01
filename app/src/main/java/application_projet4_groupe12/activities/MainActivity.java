@@ -2,6 +2,7 @@ package application_projet4_groupe12.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,9 +19,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import application_projet4_groupe12.R;
-import application_projet4_groupe12.activities.browse_clients.BrowseClientsActivity;
 import application_projet4_groupe12.activities.browse_points.BrowsePointsActivity;
-import application_projet4_groupe12.activities.settings.SettingsPartnerActivity;
+import application_projet4_groupe12.activities.find_partner.FindPartnerActivity;
 import application_projet4_groupe12.activities.settings.SettingsUserActivity;
 import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.utils.ActivityUtils;
@@ -31,92 +31,66 @@ import java.net.URL;
 
 import application_projet4_groupe12.utils.Global;
 
-import android.content.Context;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.login.LoginManager;
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.squareup.picasso.Picasso;
+
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+
     static boolean active = false;
+    private AdView mAdView;
+
+    SharedPreferences shared_login_choice;
+    Toolbar toolbar;
+    FloatingActionButton fab;
+    DrawerLayout drawer;
+    NavigationView navigationView;
+
+    ImageView navHeaderImage;
+    TextView navHeaderText1;
+    TextView navHeaderText2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main_user);
 
-        /*
-         * Toolbar
-         */
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        loadAdMob();
 
-        /*
-         * Floating button - scan QR
-         */
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, QRScanActivity.class));
-            }
-        });
+        handleToolBar();
 
-        /*
-         * Floating button - generate QR
-         */
-        FloatingActionButton fab_gen = findViewById(R.id.fab_gen);
-        fab_gen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-                startActivity(new Intent(MainActivity.this, QRGenerateActivity.class));
-            }
-        });
+        handleFloatingButtons();
 
-        /*
-         * Sliding drawer
-         */
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
+        handleDrawer();
 
-        /*
-         * Navigation view
-         */
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        if(User.connectedUser.isAdmin()){
-            navigationView.inflateMenu(R.menu.activity_main_navigation_drawer_admin);
-            MenuItem adminTitle = navigationView.getMenu().findItem(R.id.nav_admin_title);
-            adminTitle.setTitle("Admin of " + User.connectedUser.getAdministratedPartner(this).getName());
-        } else {
-            navigationView.inflateMenu(R.menu.activity_main_navigation_drawer);
-        }
-        navigationView.setNavigationItemSelectedListener(this);
-        navigationView.bringToFront();
+        handleNavigationView();
+
+        AdminChoiceCheck();
+
+        display_dialog_share_check();
 
     }
 
     /*
         Quand on appuie sur le boutton de retour en arrière
      */
-
     @Override
     public void onBackPressed() {
-        if(active){
-            AppUtils.tapToExit(this);
+        if (active) {
+            AppUtils.tapToExit(this, 0);
         }
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout_user);
         if (drawer == null) {
             Intent intent = new Intent(MainActivity.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();
         } else {
@@ -132,36 +106,6 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
-
-        /*
-         * Navigation view header data
-         */
-        ImageView navHeaderImage = findViewById(R.id.activity_main_navigation_header_image);
-        TextView navHeaderText1 = findViewById(R.id.activity_main_navigation_header_text1);
-        TextView navHeaderText2 = findViewById(R.id.activity_main_navigation_header_text2);
-
-        /* Remplacer le logo par la photo de profil fb*/
-        if (ActivityUtils.getInstance().isLoggedInFacebook()) {
-            Log.i(Global.debug_text, "nav" + navHeaderImage);
-            String id = new FacebookUtils().getFacebookId();
-            SharedPreferences shared = getSharedPreferences(id, MODE_PRIVATE);
-            String session_name = shared.getString("name", "");
-            String session_email = shared.getString("email", "");
-            URL image_url = new FacebookUtils().getFacebookProfilePic();
-            Log.i(Global.debug_text, "session img url / name / email " + image_url + session_name + session_email);
-            Picasso.with(this).load(String.valueOf(image_url)).into(navHeaderImage);
-            navHeaderText1.setText(session_name);
-            navHeaderText2.setText(session_email);
-        } else {
-            String userFullName = User.connectedUser.getFullName();
-            Log.i(Global.debug_text, "userFullName" + userFullName);
-            navHeaderText1.setText(userFullName);
-
-            String userUsername = User.connectedUser.getUsername();
-            Log.i(Global.debug_text, "getUsername" + userUsername);
-            navHeaderText2.setText(userUsername);
-            navHeaderImage.setImageBitmap(BitmapFactory.decodeFile(this.getFilesDir()+"/"+User.connectedUser.getImagePath()));
-        }
         return true;
     }
 
@@ -179,6 +123,31 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onStart() {
         super.onStart();
+
+        if (ActivityUtils.getInstance().isLoggedInFacebook()) {
+            /* Remplacer les données par celles du profil fb*/
+            shared_login_choice = getSharedPreferences("session", MODE_PRIVATE);
+            String session_name = shared_login_choice.getString("name", "");
+            String session_email = shared_login_choice.getString("email", "");
+            URL image_url = new FacebookUtils().getFacebookProfilePic();
+            Picasso.with(this).load(String.valueOf(image_url)).into(navHeaderImage);
+            navHeaderText1.setText(session_name);
+            navHeaderText2.setText(session_email);
+        } else {
+            /* Remplacer les données par celles de la db locale*/
+            String userFullName = User.connectedUser.getFullName();
+            navHeaderText1.setText(userFullName);
+
+            String userUsername = User.connectedUser.getUsername();
+            navHeaderText2.setText(userUsername);
+
+            System.err.println("Loading profile picture in Navigation View");
+            Bitmap bitmap = BitmapFactory.decodeFile(this.getFilesDir() + "/" + User.connectedUser.getImagePath());
+            if (bitmap != null) {
+                navHeaderImage.setImageBitmap(bitmap);
+            }
+        }
+
         active = true;
     }
 
@@ -198,51 +167,128 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_scan:
                 startActivity(new Intent(MainActivity.this, QRScanActivity.class));
                 break;
-
-            case R.id.nav_generate:
-                startActivity(new Intent(MainActivity.this, QRGenerateActivity.class));
-                break;
-
             case R.id.nav_browse_points:
                 //Toast.makeText(getApplicationContext(), "Clicked on Browse points", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(MainActivity.this, BrowsePointsActivity.class));
                 break;
+            case R.id.nav_find_partner:
+                startActivity(new Intent(MainActivity.this, FindPartnerActivity.class));
+                break;
             case R.id.nav_settings:
                 startActivity(new Intent(MainActivity.this, SettingsUserActivity.class));
+                onStop();
                 break;
-            case R.id.nav_logout:
-                //reset la session globale fb ou standar
-                if (ActivityUtils.getInstance().isLoggedInFacebook()) {
-                    String session_id = new FacebookUtils().getFacebookId();
-                    SharedPreferences fb_login = getApplicationContext().getSharedPreferences(session_id, Context.MODE_PRIVATE);
-                    fb_login.edit().clear().apply();
-                } else {
-                    SharedPreferences standard_login = getApplicationContext().getSharedPreferences("session", Context.MODE_PRIVATE);
-                    //Déconnecter en local
-                    User.disconnectUser(this);
-                    standard_login.edit().clear().apply();
-                }
 
-                //couper la session firebase
-                FirebaseAuth.getInstance().signOut();
-                //couper la session facebook
-                LoginManager.getInstance().logOut();
-
-                Intent intent = new Intent(MainActivity.this, SignUp.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //Clears the Activity stack
+            case R.id.change_interface_user:
+                Intent intent = new Intent(MainActivity.this, AdminActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
+                break;
+
+            case R.id.go_to_instagram:
+                AppUtils.openInstagram(this);
                 finish();
                 break;
-            case R.id.nav_admin_browse_clients:
-                startActivity(new Intent(MainActivity.this, BrowseClientsActivity.class));
+
+            case R.id.nav_logout:
+                AppUtils.logout(this);
                 break;
-            case R.id.nav_admin_settings:
-                startActivity(new Intent(MainActivity.this, SettingsPartnerActivity.class));
-                break;
+
         }
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    private void handleToolBar() {
+        /*
+         * Toolbar
+         */
+        toolbar = findViewById(R.id.app_bar_main_user_toolbar);
+        setSupportActionBar(toolbar);
+    }
+
+    private void handleFloatingButtons() {
+        /*
+         * Floating button - scan QR
+         */
+        fab = findViewById(R.id.app_bar_main_user_fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, QRScanActivity.class));
+                finish();
+            }
+        });
+    }
+
+    private void handleDrawer() {
+        /*
+         * Sliding drawer
+         */
+        drawer = findViewById(R.id.drawer_layout_user);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+    }
+
+    private void handleNavigationView() {
+        /*
+         * Navigation view
+         */
+        navigationView = findViewById(R.id.user_nav_view);
+        navigationView.inflateMenu(R.menu.activity_main_navigation_drawer_user);
+        MenuItem interface_change_button = navigationView.findViewById(R.id.change_interface_user);
+        handleInterfaceButton();
+        View headerLayout = navigationView.inflateHeaderView(R.layout.activity_main_user_navigation_header);
+
+        navHeaderImage = headerLayout.findViewById(R.id.activity_main_navigation_header_image);
+        navHeaderText1 = headerLayout.findViewById(R.id.activity_main_navigation_header_text1);
+        navHeaderText2 = headerLayout.findViewById(R.id.activity_main_navigation_header_text2);
+
+        navigationView.setNavigationItemSelectedListener(this);
+        navigationView.bringToFront();
+    }
+
+    private void handleInterfaceButton() {
+        if (!User.connectedUser.isAdmin()) {
+            Menu navMenuLogIn = navigationView.getMenu();
+            navMenuLogIn.findItem(R.id.change_interface_user).setVisible(false);
+        }
+    }
+
+
+    private void display_dialog_share_check() {
+        SharedPreferences session = getSharedPreferences("session", MODE_PRIVATE);
+        boolean dialog_share = session.getBoolean("dialog_share", false);
+        session.edit().putBoolean("dialog_share", false).apply();
+        if (dialog_share) {
+            AppUtils.display_dialog_share(this);
+        }
+    }
+
+
+    private void AdminChoiceCheck() {
+        shared_login_choice = getSharedPreferences("session", MODE_PRIVATE);
+        boolean choice_made = shared_login_choice.getBoolean("loggin_chosed", false);
+        Log.v(Global.debug_text, "choice made " + choice_made);
+        Log.v(Global.debug_text, "is admin" + User.connectedUser.isAdmin());
+        if (User.connectedUser.isAdmin() && (!choice_made)) {
+            startActivity(new Intent(MainActivity.this, LoginChoiceActivity.class));
+            finish();
+        }
+    }
+
+    private void loadAdMob() {
+        AdView mAdView = (AdView) findViewById(R.id.adView);
+        AdView mAdView2 = (AdView) findViewById(R.id.adView2);
+        AdRequest request = new AdRequest.Builder()
+                .build();
+        mAdView.loadAd(request);
+        mAdView2.loadAd(request);
+    }
+
+
 }

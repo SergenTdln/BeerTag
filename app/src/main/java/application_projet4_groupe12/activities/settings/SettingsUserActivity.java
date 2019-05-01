@@ -1,31 +1,37 @@
 package application_projet4_groupe12.activities.settings;
 
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.graphics.Bitmap;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.net.URL;
 
 import application_projet4_groupe12.R;
+import application_projet4_groupe12.activities.MainActivity;
 import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.exceptions.WrongDateFormatException;
 import application_projet4_groupe12.utils.ActivityUtils;
 import application_projet4_groupe12.utils.AppUtils;
 import application_projet4_groupe12.utils.FacebookUtils;
-import application_projet4_groupe12.utils.Global;
 import application_projet4_groupe12.utils.Hash;
 
 public class SettingsUserActivity extends AppCompatActivity {
@@ -40,11 +46,11 @@ public class SettingsUserActivity extends AppCompatActivity {
     Button selectFileButton;
     ImageButton buttonOut;
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings_user);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN); // Prevents the keyboard from automatically opening up when arriving on the activity
 
         subTitle = (TextView) findViewById(R.id.settings_user_sub_title);
         subTitle.setText(User.connectedUser.getUsername());
@@ -63,32 +69,22 @@ public class SettingsUserActivity extends AppCompatActivity {
         if (ActivityUtils.getInstance().isLoggedInFacebook()){
             URL image_url = new FacebookUtils().getFacebookProfilePic();
             Picasso.with(this).load(String.valueOf(image_url)).into(picture);
-            selectFileButton.setText("Disabled for accounts created from Facebook");
+            selectFileButton.setText(R.string.disabled_for_facebook);
             selectFileButton.setTextColor(getResources().getColor(R.color.grey, null));
-            selectFileButton.setClickable(false);
+            selectFileButton.setEnabled(false);
         } else {
             picture.setImageBitmap(BitmapFactory.decodeFile(this.getFilesDir() + "/" + User.connectedUser.getImagePath()));
         }
 
 
         selectFileButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //TODO
-                    //Prompts the user to select a file from local storage and COPY it into the app's internal storage
+            @Override
+            public void onClick(View v) {
 
-                    if(AppUtils.changeProfilePicture(v.getContext(), User.connectedUser)){
-                        //Image changed
-                        //Show new pic in this Activity
-                        picture.setImageBitmap(BitmapFactory.decodeFile(v.getContext().getFilesDir()+"/"+User.connectedUser.getImagePath()));
-                    } else {
-                        //An error occurred
-                        //Image  was not changed
-                        System.err.println("Profile pic was not changed");
-                    }
-
-                }
-            });
+                //Initializes imagePath (the path of the new image selected by the user)
+                onBtnPickGallery();
+            }
+        });
 
         buttonOut = (ImageButton) findViewById(R.id.settings_user_save_button);
         buttonOut.setOnClickListener(new View.OnClickListener() {
@@ -101,10 +97,18 @@ public class SettingsUserActivity extends AppCompatActivity {
                 String newBirthdayS = newBirthday.getText().toString();
 
                 if(! newFirstNameS.equals("")){
-                    User.connectedUser.setFirstName(newFirstNameS);
+                    newFirstName.setText("");
+                    newFirstName.setHint(newFirstNameS);
+                    User.connectedUser.setFirstName(v.getContext(), newFirstNameS);
+                    System.out.println("First Name changed");
+                    Toast.makeText(v.getContext(), "Done", Toast.LENGTH_LONG).show();
                 }
                 if(! newLastNameS.equals("")){
-                    User.connectedUser.setLastName(newLastNameS);
+                    newLastName.setText("");
+                    newLastName.setHint(newLastNameS);
+                    User.connectedUser.setLastName(v.getContext(), newLastNameS);
+                    System.out.println("Last Name changed");
+                    Toast.makeText(v.getContext(), "Done", Toast.LENGTH_LONG).show();
                 }
                 if( (currPasswordS.equals("")) != (newPasswordS.equals(""))){ //XOR
                     currentPassword.setBackgroundResource(R.drawable.border_error);
@@ -121,7 +125,10 @@ public class SettingsUserActivity extends AppCompatActivity {
                     if(Hash.hash(currPasswordS).equals(User.connectedUser.getPasswordHashed())) {
                         currentPassword.setBackgroundResource(0);
                         newPassword.setBackgroundResource(0);
-                        User.connectedUser.setPasswordHashed(Hash.hash(newPasswordS));
+                        User.connectedUser.setPasswordHashed(v.getContext(), Hash.hash(newPasswordS));
+                        currentPassword.setText("");
+                        newPassword.setText("");
+                        System.out.println("Password changed");
                         Toast.makeText(v.getContext(), "Password changed successfully", Toast.LENGTH_SHORT).show();
                     } else {
                         currentPassword.setBackgroundResource(R.drawable.border_error);
@@ -131,7 +138,10 @@ public class SettingsUserActivity extends AppCompatActivity {
                 }
                 if(! newBirthdayS.equals("")){
                     try {
-                        User.connectedUser.setBirthday(newBirthdayS);
+                        newBirthday.setText("");
+                        User.connectedUser.setBirthday(v.getContext(), newBirthdayS);
+                        System.out.println("Birthday changed");
+                        Toast.makeText(v.getContext(), "Done", Toast.LENGTH_LONG).show();
                     } catch (WrongDateFormatException e) {
                         Toast.makeText(v.getContext(), "Invalid Birthdate format", Toast.LENGTH_SHORT).show();
                         newBirthday.setBackgroundResource(R.drawable.border_error);
@@ -139,5 +149,64 @@ public class SettingsUserActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    /**
+     * Code found on StackOverflow
+     * @author Shankar Agarwal
+     */
+    private void onBtnPickGallery() {
+        Intent pickPhoto = new Intent(Intent.ACTION_PICK,
+            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(pickPhoto , 123);//one can be replaced with any action code
+    }
+
+    /**
+     * Code found on StackOverflow
+     * @author Shankar Agarwal
+     */
+    protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
+        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+
+        switch(requestCode) {
+            case 123:
+                if(resultCode == RESULT_OK){
+                    Uri selectedImage = imageReturnedIntent.getData();
+                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+                    Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+                    cursor.moveToFirst();
+
+                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                    String imagePath = cursor.getString(columnIndex);
+                    cursor.close();
+
+
+                    //New pic's name
+                    String outputFilePath = User.connectedUser.getId()+"_pic.png";
+                    FileInputStream streamIn = AppUtils.getStreamIn(new File(imagePath));
+                    FileOutputStream streamOut = AppUtils.getStreamOut(this, outputFilePath);
+                    if(streamIn!=null && streamOut!=null && AppUtils.copyFile(streamIn, streamOut)) {
+                        //Image successfully coped
+                        User.connectedUser.setImagePath(this, outputFilePath);
+                        //Show new pic in this Activity
+                        System.out.println("Profile pic was changed");
+                        picture.setImageBitmap(BitmapFactory.decodeFile(this.getFilesDir()+"/"+outputFilePath));
+                    } else {
+                        //An error occurred
+                        //Image  was not changed
+                        System.err.println("Profile pic was not changed");
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        AppUtils.end_home(this);
     }
 }

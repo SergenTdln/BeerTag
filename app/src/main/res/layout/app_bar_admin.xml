@@ -7,17 +7,30 @@
     android:layout_height="match_parent"
     tools:context="application_projet4_groupe12.activities.MainActivity">
 
+
+
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay" >
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/app_bar_main_admin_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            android:background="@color/admin_colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" >
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_marginRight="40dp"
+                app:srcCompat="@drawable/logo_header" />
+
+
+        </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
 
@@ -31,21 +44,14 @@
         android:layout_gravity="bottom|end">
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab_gen"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/app_bar_main_admin_fab_gen"
+            android:layout_width="match_parent"
+            android:layout_height="109dp"
             android:layout_gravity="bottom|end"
-            android:layout_marginBottom="80dp"
             android:layout_marginEnd="16dp"
-            app:backgroundTint="@color/red" />
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/fab_margin"
-            app:backgroundTint="@color/colorPrimary"
-            app:srcCompat="@drawable/ic_bar_placeholder" />
+            android:layout_marginBottom="20dp"
+            app:backgroundTint="@color/admin_fab_generate"
+            app:srcCompat="@drawable/ic_bar_placeholder"/>
 
     </android.support.v7.widget.ActionBarContainer>
 

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="application_projet4_groupe12">
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- SD card write permission -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <!-- camera permission -->
     <uses-permission android:name="android.permission.CAMERA" />
@@ -13,6 +13,9 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- location permission -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
 
     <application
@@ -20,10 +23,33 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
+        android:largeHeap="true"
         android:theme="@style/AppTheme">
+        <!--
+     The API key for Google Maps-based APIs is defined as a string resource.
+     (See the file "res/values/google_maps_api.xml").
+     Note that the API key is linked to the encryption key used to sign the APK.
+     You need a different API key for each encryption key, including the release key that is used to
+     sign the APK for publishing.
+     You can define the keys for the debug and release targets in src/debug/ and src/release/.
+-->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
+        <activity
+            android:name=".activities.find_partner.FindPartnerActivity"
+            android:label="@string/title_activity_find_partner">
+        </activity>
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+
+        <!-- Google Ads-->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-7502022090495179~2813129044"/>
 
         <activity
             android:name="application_projet4_groupe12.activities.SplashActivity"
@@ -35,34 +61,83 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name="application_projet4_groupe12.activities.VerificationActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
         <activity android:name="application_projet4_groupe12.activities.SignUp"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/UserTheme"/>
 
         <activity android:name="application_projet4_groupe12.activities.MainActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/UserTheme"/>
+
+        <activity android:name="application_projet4_groupe12.activities.LoginChoiceActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity android:name="application_projet4_groupe12.activities.AdminActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AdminTheme"/>
 
         <activity
             android:name="application_projet4_groupe12.activities.QRResultActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".activities.MainActivity" />
+            android:parentActivityName=".activities.MainActivity"
+            />
 
         <activity android:name="application_projet4_groupe12.activities.QRGenerateActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/AdminTheme"
+            />
 
         <activity android:name="application_projet4_groupe12.activities.QRScanActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/UserTheme"/>
 
         <activity android:name=".activities.browse_points.BrowsePointsActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/UserTheme"/>
+
+      <activity android:name=".activities.ShareActivityResult"
+            android:screenOrientation="portrait"
+          android:theme="@style/UserTheme"/>
+
+        <activity
+            android:name=".activities.AlcoolSensiActivity"
+            android:parentActivityName=".activities.QRResultActivity"
+            android:launchMode="singleTask"
+            android:taskAffinity=""
+            android:excludeFromRecents="true">
+        </activity>
 
         <activity android:name=".activities.browse_clients.BrowseClientsActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AdminTheme"/>
 
         <activity android:name=".activities.settings.SettingsUserActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/UserTheme"/>
 
         <activity android:name=".activities.settings.SettingsPartnerActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AdminTheme"/>
+
+        <activity android:name=".activities.browse_points.UsePromotionsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/UserTheme"/>
+
+        <activity android:name=".activities.ExpiredActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/UserTheme"/>
+
+        <activity android:name=".activities.ShareActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/UserTheme"/>
+
 
         <meta-data
             android:name="io.fabric.ApiKey"

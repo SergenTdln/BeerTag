@@ -3,11 +3,18 @@ package application_projet4_groupe12.data;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteCantOpenDatabaseException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.support.annotation.NonNull;
+import android.util.Log;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -15,19 +22,24 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.TimeZone;
 
 import application_projet4_groupe12.activities.browse_clients.BrowseClientsClientDataAssociation;
 import application_projet4_groupe12.activities.browse_clients.BrowseClientsShopDataAssociation;
 import application_projet4_groupe12.activities.browse_points.BrowsePointsAssociation;
 import application_projet4_groupe12.entities.Address;
 import application_projet4_groupe12.entities.Partner;
+import application_projet4_groupe12.entities.Promotion;
 import application_projet4_groupe12.entities.Shop;
+import application_projet4_groupe12.entities.ShopFrame;
 import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.exceptions.UnknownUserException;
 import application_projet4_groupe12.exceptions.WrongDateFormatException;
 import application_projet4_groupe12.exceptions.WrongEmailFormatException;
-import application_projet4_groupe12.utils.Pair;
+
+import static application_projet4_groupe12.utils.AppUtils.occurrences;
 
 
 /**
@@ -38,6 +50,7 @@ import application_projet4_groupe12.utils.Pair;
 
 public class SQLHelper extends SQLiteOpenHelper {
 
+    private FirebaseFirestore dab = FirebaseFirestore.getInstance();
     /**
      * Our database
      */
@@ -104,14 +117,18 @@ public class SQLHelper extends SQLiteOpenHelper {
      */
     private boolean doesDBExist(){
         SQLiteDatabase checkDB = null;
-        try{
+        try {
             String path = DATABASE_PATH + DATABASE_NAME;
 
-           checkDB = SQLiteDatabase.openDatabase(path, null , SQLiteDatabase.OPEN_READWRITE);
-        } catch (SQLiteException e){
+            checkDB = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READWRITE);
+        } catch (SQLiteCantOpenDatabaseException f){
             //The DB couldn't be opened -> it doesn't exist yet
             //This could be considered abusive use of exceptions (?)
             System.out.println("Database has to be created");
+        } catch (SQLiteException e){
+            //The DB couldn't be opened -> it doesn't exist yet
+            //This could be considered abusive use of exceptions (?)
+            System.out.println("Database has to be created.");
         }
         boolean dbExists = (checkDB != null);
         if(dbExists){
@@ -168,6 +185,7 @@ public class SQLHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion){
     }
 
+
     //*****
     //BEGINNING OF THE DB QUERY METHODS
     //*****
@@ -180,10 +198,14 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param conditionSQL A filter declaring which rows to return, formatted as an SQL WHERE clause (excluding the WHERE itself).
      *                     Passing null will return all rows for the given table and column.
      * @throws SQLiteException if an error occurs while reading the DB
-     * @return An ArrayList<String> containing all the results, or an empty list if there was none
+     * @return An LinkedList<String> containing all the results, or an empty list if there was none
      */
-    private ArrayList<String> getElementFromDB(String table, String column, String conditionSQL) throws SQLiteException{
-        ArrayList<String> requestResult = new ArrayList<>();
+    private LinkedList<String> getElementFromDB(String table, String column, String conditionSQL) throws SQLiteException{
+        if(! myDB.isOpen()) {
+            String path = DATABASE_PATH + DATABASE_NAME;
+            this.myDB = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READWRITE);
+        }
+        LinkedList<String> requestResult = new LinkedList<>();
         Cursor c = myDB.query("\""+table+"\"",
                 new String[]{"\""+column+"\""},
                 conditionSQL,
@@ -213,6 +235,10 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @return A Cursor containing the query result
      */
     private Cursor getEntriesFromDB(String table, String[] columns, String conditionSQL, String orderBy){
+        if(! myDB.isOpen()) {
+            String path = DATABASE_PATH + DATABASE_NAME;
+            this.myDB = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READWRITE);
+        }
         Cursor cursor = myDB.query("\""+table+"\"",
                 columns,
                 conditionSQL,
@@ -225,18 +251,248 @@ public class SQLHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
+
+    //*****
+    //GETTER METHODS
+    //*****
+
+    /**
+     * Retrieves information on an Address from the database and returns it as an Address instance.
+     * @param addressID the internal id of the Address to retrieve
+     * @return an Address instance, or null if this id was not present in the database
+     */
+    public Address getAddress(long addressID){
+        Cursor c = getEntriesFromDB("Address", null, "_id = \""+addressID+"\"", null);
+        if(c.moveToFirst()){
+            if(c.getCount() != 1){
+                //Duplicate Address in the database
+                Toast.makeText(context, "A duplicated entry of Address with ID \""+addressID+"\" was found in the database", Toast.LENGTH_LONG).show();
+            }
+            Address out = new Address(c.getLong(c.getColumnIndex("_id")),
+                    c.getString(c.getColumnIndex("country")),
+                    c.getString(c.getColumnIndex("city")),
+                    c.getString(c.getColumnIndex("street")),
+                    c.getString(c.getColumnIndex("numbers"))
+            );
+            c.close();
+            return out;
+        } else {
+            //No such address in the database
+            c.close();
+            return null;
+        }
+    }
+
+    /**
+     * Retrieves information on a Partner from the database and returns it as a Partner instance.
+     * @param partnerID the internal id of the Partner to retrieve
+     * @return a Partner instance, or null if this id was not present in the database
+     */
+    public Partner getPartner(long partnerID){
+        Cursor c = getEntriesFromDB("Partner", null, "_id = \""+partnerID+"\"", null);
+        if(c.moveToFirst()){
+            if(c.getCount() > 1){
+                //Duplicate Partner in the database
+                Toast.makeText(context, "A duplicated entry of partner with ID \""+partnerID+"\" was found in the database", Toast.LENGTH_LONG).show();
+            }
+            Partner out = new Partner(c.getLong(c.getColumnIndex("_id")),
+                    c.getString(c.getColumnIndex("tva")),
+                    c.getString(c.getColumnIndex("name")),
+                    c.getString(c.getColumnIndex("address")),
+                    c.getString(c.getColumnIndex("created_on")),
+                    c.getString(c.getColumnIndex("image_path"))
+            );
+            c.close();
+            return out;
+        } else {
+            //No such partner in the database
+            c.close();
+            return null;
+        }
+    }
+
+    /**
+     * Retrieves information on a Promotion from the database and returns it as a Promotion instance.
+     * @param promotionID the internal id of the Promotion to retrieve
+     * @return a Promotion instance, or null if this id was not present in the database
+     */
+    public Promotion getPromotion(long promotionID){
+        Cursor c = getEntriesFromDB("Promotion", null, "_id = \""+promotionID+"\"", null);
+        if(c.moveToFirst()){
+            if(c.getCount() > 1){
+                //Duplicate Promotion in the database
+                Toast.makeText(context, "A duplicated entry of promotion with ID \""+promotionID+"\" was found in the database", Toast.LENGTH_LONG).show();
+            }
+            boolean isReusable = (c.getInt(c.getColumnIndex("is_reusable")) == 1);
+            boolean isActive = (c.getInt(c.getColumnIndex("active")) == 1);
+            Promotion out = new Promotion(c.getLong(c.getColumnIndex("_id")),
+                                        c.getLong(c.getColumnIndex("id_partner")),
+                                        c.getLong(c.getColumnIndex("id_shop")),
+                                        c.getInt(c.getColumnIndex("points_required")),
+                                        isReusable,
+                                        c.getString(c.getColumnIndex("description")),
+                                        c.getString(c.getColumnIndex("image_path")),
+                                        isActive,
+                                        c.getString(c.getColumnIndex("end_date")));
+            c.close();
+            return out;
+        } else {
+            //No such promotion in the database
+            c.close();
+            return null;
+        }
+    }
+
+    /**
+     * Retrieves information on a picture Frame from the database and returns it as a ShopFrame instance.
+     * @param frameID the internal id of the Promotion to retrieve
+     * @return a ShopFrame instance, or null if this id was not present in the database
+     */
+    public ShopFrame getFrame(long frameID){
+        Cursor c = getEntriesFromDB("Shop_frame", null, "_id = \""+frameID+"\"", null);
+        if(c.moveToFirst()){
+            if(c.getCount() > 1){
+                //Duplicate Frame in the database
+                Toast.makeText(context, "A duplicated entry of picture frame with ID \""+frameID+"\" was found in the database", Toast.LENGTH_LONG).show();
+            }
+            ShopFrame out = new ShopFrame(c.getLong(c.getColumnIndex("_id")),
+                                        c.getLong(c.getColumnIndex("id_shop")),
+                                        c.getString(c.getColumnIndex("image_path")));
+            c.close();
+            return out;
+        } else {
+            //No such frame in the database
+            c.close();
+            return null;
+        }
+    }
+
+    /**
+     * Retrieves information on a Shop location from the database and returns it as a Shop instance.
+     * @param shopID the internal id of the Shop to retrieve
+     * @return a Shop instance, or null if this id was not present in the database
+     */
+    public Shop getShop(long shopID){
+        Cursor c = getEntriesFromDB("Shop_location", null, "_id = \""+shopID+"\"", null);
+        if(c.moveToFirst()){
+            if(c.getCount() > 1){
+                //Duplicate Shop in the database
+                Toast.makeText(context, "A duplicated entry of Shop with ID \""+shopID+"\" was found in the database", Toast.LENGTH_LONG).show();
+            }
+            Shop out = new Shop(c.getLong(c.getColumnIndex("_id")),
+                    c.getLong(c.getColumnIndex("id_partner")),
+                    c.getLong(c.getColumnIndex("id_address")),
+                    c.getString(c.getColumnIndex("description")),
+                    c.getString(c.getColumnIndex("created_on"))
+            );
+            c.close();
+            return out;
+        } else {
+            //No such shop in the database
+            c.close();
+            return null;
+        }
+    }
+
+    /**
+     * Retrieves information on a User from the database and returns it as an User instance.
+     * @param userId the ID of the User to retrieve
+     * @return a User instance, or null if this id was not present in the database
+     */
+    public User getUser(long userId){
+        Cursor c = getEntriesFromDB("User", null, "_id = \""+userId+"\"", null);
+        if(c.moveToFirst()){
+            if(c.getCount() > 1){
+                //Duplicate User in the database
+                Toast.makeText(context, "A duplicated entry of User with id \""+userId+"\" was found in the database", Toast.LENGTH_LONG).show();
+            }
+            User out = new User(c.getLong(c.getColumnIndex("_id")),
+                    c.getString(c.getColumnIndex("username")),
+                    c.getString(c.getColumnIndex("password")),
+                    c.getString(c.getColumnIndex("created_on")),
+                    c.getString(c.getColumnIndex("first_name")),
+                    c.getString(c.getColumnIndex("last_name")),
+                    c.getString(c.getColumnIndex("birthday")),
+                    c.getString(c.getColumnIndex("image_path")),
+                    this.isAdmin(c.getString(c.getColumnIndex("username")))
+            );
+            c.close();
+            return out;
+        } else {
+            //No such user in the database
+            c.close();
+            return null;
+        }
+    }
+
+    /**
+     * Retrieves information on a User from the database and returns it as an User instance.
+     * @param username the email of the User to retrieve
+     * @return a User instance, or null if this username was not present in the database
+     */
+    public User getUser(String username){
+        Cursor c = getEntriesFromDB("User", null, "username = \""+username+"\"", null);
+        if(c.moveToFirst()){
+            if(c.getCount() > 1){
+                //Duplicate User in the database
+                Toast.makeText(context, "A duplicated entry of User with username \""+username+"\" was found in the database", Toast.LENGTH_LONG).show();
+            }
+            //for(int i=0; i<c.getColumnCount(); i++){
+            //    System.out.println("Column "+i+" is "+c.getColumnName(i));
+            //}
+            User out = new User(c.getLong(c.getColumnIndex("_id")),
+                    c.getString(c.getColumnIndex("username")),
+                    c.getString(c.getColumnIndex("password")),
+                    c.getString(c.getColumnIndex("created_on")),
+                    c.getString(c.getColumnIndex("first_name")),
+                    c.getString(c.getColumnIndex("last_name")),
+                    c.getString(c.getColumnIndex("birthday")),
+                    c.getString(c.getColumnIndex("image_path")),
+                    this.isAdmin(username)
+            );
+            c.close();
+            return out;
+        } else {
+            //No such user in the database
+            c.close();
+            return null;
+        }
+    }
+
+    /**
+     * Returns the internal ID of the Partner owning/running the Shop passed as argument
+     * @param shopID the Shop_location to look for
+     * @return an internal Partner ID as a long, or -1 if <code>shopID</code> was not present in the database
+     */
+    public long getPartnerID(long shopID){
+        Cursor c = getEntriesFromDB("Shop_location",
+                new String[]{"id_partner"},
+                "_id = \""+shopID+"\"",
+                null);
+        // c should only contain one "cell"
+        if(c.moveToFirst()){
+            long out = c.getLong(c.getColumnIndex("id_partner"));
+            c.close();
+            return out;
+        } else {
+            //This shop does not exist
+            c.close();
+            return -1;
+        }
+    }
+
     /**
      * Returns the internal ID of the user identified by the passed <code>email</code> argument.
      * @param email the email of the user we are looking for
-     * @return The ID of this user as an instance of Integer, or null if this <code>email</code> is not present in the database.
+     * @return The ID of this user as a long, or -1 if this <code>email</code> is not present in the database.
      */
-    private Integer getUserID(String email){
-        ArrayList<String> res = this.getElementFromDB("User", "_id", "username = \""+email+"\"");
+    private long getUserID(String email){
+        List<String> res = this.getElementFromDB("User", "_id", "username = \""+email+"\"");
         if( res.isEmpty() ){
             //No user with such email was found in the database
-            return null;
+            return -1;
         } else {
-            return Integer.parseInt(res.get(0));
+            return Long.parseLong(res.get(0));
         }
     }
 
@@ -245,8 +501,8 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param userID the internal ID of the user we are looking for
      * @return The username of this User as a String, or null if this <code>userID</code> is not present in the database.
      */
-    public String getUsername(int userID){
-        ArrayList<String> res = this.getElementFromDB("User", "username", "_id = \""+userID+"\"");
+    public String getUsername(long userID){
+        List<String> res = this.getElementFromDB("User", "username", "_id = \""+userID+"\"");
         if( res.isEmpty() ){
             //No user with such ID was found in the database
             return null;
@@ -256,16 +512,331 @@ public class SQLHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Returns whether this email/username is already present in the database
-     * @param email the email/username of the User to look for
-     * @return True if this username already exists, False otherwise
+     * Returns the amount of points the passed User currently has at the passed Shop.
+     * @param userID the username (email) to look for
+     * @param shopID the internal ID of the shop to look for
+     * @return the amount of points the user has earned as a long. Returns -1 if the User has never earned points at this Shop before.
      */
-    public boolean doesUsernameExist(String email){
+    public int getPoints(long userID, long shopID){
+        List<String> res = this.getElementFromDB("User_points",
+                "points",
+                "id_user = \""+userID+"\" AND id_shop = \""+shopID+"\"");
+        int l = res.size();
+        if( l == 0 ){
+            // No pair userID - shopID was found in the User_points table.
+            // This user has never earned points here before.
+            return -1;
+        } else {
+            return Integer.parseInt(res.get(0));
+        }
+    }
+
+    /**
+     * Returns the hashed password of the User identified by <code>email</code>.
+     * @param email the username/e-mail of the User to look for
+     * @return the hashed password of this User as a String
+     */
+    public String getHashedPassword(String email) throws UnknownUserException {
+        List<String> res = getElementFromDB("User", "password", "username = \""+email+"\"");
+        if(res.isEmpty()){
+            throw new UnknownUserException("User \""+email+"\" is not present in the database");
+        } else {
+            return res.get(0);
+        }
+    }
+
+    /**
+     * Retrieves information on an Shop Address from the database and returns it as an Address instance.
+     * @param shopID the internal id of the Shop to look for
+     * @return an Address instance, or null if this Shop id was not present in the database
+     */
+    public Address getShopAddress(long shopID){
+        List<String> res = getElementFromDB("Shop_location", "id_address", "_id = \""+shopID+"\"");
+        if(res.isEmpty()){
+            //This shopID is invalid
+            return null;
+        } else {
+            return getAddress(Long.parseLong(res.get(0)));
+        }
+    }
+
+    /**
+     * Returns the amount of points required to be aligible for the given Promotion
+     * @param promoID the internal ID of the Promotion to look for
+     * @return the amount of points required as an int.
+     */
+    public int getPointsRequired(long promoID){
+        List<String> list = getElementFromDB("Promotion", "points_required", "_id = \""+promoID+"\"");
+        return Integer.parseInt(list.get(0));
+    }
+
+    /**
+     * Returns the internal ID of the Partner that this user is administrating.
+     * @param userId the internal ID of an admin User.
+     * @return The ID of the Partner that this User is administrating as a long, or -1 if thhis User is not an administrator.
+     */
+    public long getPartnerIDFromUser(long userId){
+        List<String> list = getElementFromDB("Admin_user", "id_partner", "id_user = \""+userId+"\"");
+        if(list.isEmpty()){
+            return -1;
+        } else {
+            return Long.parseLong(list.get(0));
+        }
+    }
+
+    /**
+     * Returns a list of the IDs of the Shops that this User has marked as favorites
+     * @param userId the User to look for
+     * @return a <code>List</code> of <code>Long</code> instances. This <code>List</code> might be empty if this User doesn't have any favorite shops.
+     */
+    public List<Long> getFavoriteShopsIDs(long userId){
+        List<Long> ret = new LinkedList<>();
+        List<String> res = getElementFromDB("Favorite_shops", "id_shop", "id_user = \""+userId+"\"");
+        for (String s : res) {
+            ret.add(Long.parseLong(s));
+        }
+        return ret;
+    }
+
+    /**
+     * Returns a list of the Shops that this User has marked as favorites
+     * @param userId the User to look for
+     * @return a <code>List</code> of <code>Shop</code> instances. This <code>List</code> might be empty if this User doesn't have any favorite shops.
+     */
+    public List<Shop> getFavoriteShops(long userId){
+        List<Shop> ret = new LinkedList<>();
+        List<Long> res = getFavoriteShopsIDs(userId);
+        for (long id : res) {
+            ret.add(getShop(id));
+        }
+        return ret;
+    }
+
+    /**
+     * Returns a list of Shop IDs representing all this Partner's physical shops.
+     * @param partnerID the partner to look for
+     * @return a list of Longs. This list can be empty if this Partner has no Shop registered in the database.
+     */
+    public List<Long> getAllShopsIDs(long partnerID){
+        List<Long> res = new LinkedList<>();
+        List<String> shopIds = getElementFromDB("Shop_location", "_id", "id_partner = \""+partnerID+"\"");
+        for (String shopID : shopIds) {
+            res.add(Long.parseLong(shopID));
+        }
+        return res;
+    }
+
+    /**
+     * Returns a list of User IDs representing all this Shop's clients (that is, all clients who currently have points there).
+     * @param shopID the Shop to look for
+     * @return a list of Longs. This list can be empty if this Shop has no client registered in the database.
+     */
+    public List<Long> getAllClientsUserIDs(long shopID){
+        List<Long> res = new LinkedList<>();
+        List<String> userIds = getElementFromDB("User_points", "id_user", "id_shop = \""+shopID+"\" AND points > 0");
+        for (String userID : userIds){
+            res.add(Long.parseLong(userID));
+        }
+        return res;
+    }
+
+    /**
+     * Returns a list of Shop instances representing all this Partner's physical shops.
+     * @param partnerID the partner to look for
+     * @return a list of Shop instances. This list can be empty if this Partner has no Shop registered in the database.
+     */
+    public List<Shop> getAllShops(long partnerID){
+        List<Shop> res = new LinkedList<>();
+        List<String> shopIds = getElementFromDB("Shop_location", "_id", "id_partner = \""+partnerID+"\"");
+        for (String shopID : shopIds) {
+            res.add(this.getShop(Long.parseLong(shopID)));
+        }
+        return res;
+    }
+
+    /**
+     * Returns a List of <code>User</code> instances representing all the administrators of the <code>Partner</code> passed in argument.
+     * @param partnerID the ID of the <code>Partner</code> to look for
+     * @return a List of <code>User</code> instances. This list might be empty if this <code>Partner</code> has no administrator. (Which should seriously be avoided)
+     */
+    public List<User> getAllAdmins(long partnerID){
+        List<User> ret = new LinkedList<User>();
+        List<String> adminsIDs = getElementFromDB("Admin_user", "id_user", "id_partner = \""+partnerID+"\"");
+
+        for (String userId : adminsIDs) {
+            ret.add(this.getUser(Long.parseLong(userId)));
+        }
+        return ret;
+    }
+
+    /**
+     * Returns a <code>List</code> of all the usernames currently present in the local database, as Strings
+     * @return a <code>List<String></code> of all the usernames in the database
+     */
+    public List<String> getAllUsernames(){
+        return getElementFromDB("User", "username", null);
+    }
+
+    /**
+     * Returns a list of all the currently active promotions present in the database as instances of promotion.
+     * @return a list of Promotion instances. This list may be empty if there is no currently active promotions in the database.
+     */
+    public List<Promotion> getAllActivePromotions(){
+        List<Promotion> ret = new LinkedList<>();
+        Cursor c = getEntriesFromDB("Promotion", null, "active = \"1\"", null);
+        if(c.moveToFirst()){
+            for (int i=0; i<c.getCount(); i++){
+                boolean isReusable = false;
+                if(c.getInt(c.getColumnIndex("is_reusable"))==1){isReusable=true;}
+                ret.add(new Promotion(c.getLong(c.getColumnIndex("_id")),
+                                    c.getLong(c.getColumnIndex("id_partner")),
+                                    c.getLong(c.getColumnIndex("id_shop")),
+                                    c.getInt(c.getColumnIndex("points_required")),
+                                    isReusable,
+                                    c.getString(c.getColumnIndex("description")),
+                                    c.getString(c.getColumnIndex("image_path")),
+                                    true,
+                                    c.getString(c.getColumnIndex("end_date"))));
+            }
+        }
+        c.close();
+        return ret;
+    }
+
+    /**
+     * Returns a list of all the currently active promotions at the given shop.
+     * @return a list of Promotion instances. This list may be empty if there is no currently active promotions in the database.
+     */
+    public List<Promotion> getAllActivePromotions(long shopID){
+        List<Promotion> ret = new LinkedList<>();
+        Cursor c = getEntriesFromDB("Promotion", null, "active = \"1\" AND id_shop = \""+shopID+"\"", null);
+        if(c.moveToFirst()){
+            for (int i=0; i<c.getCount(); i++){
+                boolean isReusable = false;
+                if(c.getInt(c.getColumnIndex("is_reusable"))==1){isReusable=true;}
+                ret.add(new Promotion(c.getLong(c.getColumnIndex("_id")),
+                        c.getLong(c.getColumnIndex("id_partner")),
+                        c.getLong(c.getColumnIndex("id_shop")),
+                        c.getInt(c.getColumnIndex("points_required")),
+                        isReusable,
+                        c.getString(c.getColumnIndex("description")),
+                        c.getString(c.getColumnIndex("image_path")),
+                        true,
+                        c.getString(c.getColumnIndex("end_date"))));
+            }
+        }
+        c.close();
+        return ret;
+    }
+
+    /**
+     * Returns a list of all the promotions that the passed User can get, given the information contained in the passed Association.
+     * @param user the User to look for
+     * @param assoc an instance of <code>BrowsePointsAssociation</code>. This contains info about the points the User has at a given shop.
+     * @return a list of <code>Promotion</code> instances. This list might be empty if the User has no available Promotion.
+     */
+    public ArrayList<Promotion> getAllAvailablePromotions(User user, BrowsePointsAssociation assoc){
+        // With this much points at this shop (see data in assoc), what promotions could user get ?
+        ArrayList<Promotion> ret = new ArrayList<>();
+        List<Promotion> shopPromos = getAllActivePromotions(assoc.getShopID());
+        for (Promotion promo : shopPromos) {
+            if(promo.getPointsRequired() <= assoc.getPoints()){
+                //If the user has enough points for this promo
+                ret.add(promo);
+            }
+        }
+        return ret;
+    }
+
+    public ArrayList<Promotion> getAllAvailablePromotions(User user, long shopID){
+        ArrayList<Promotion> out = new ArrayList<>();
+        List<Promotion> allPromotions = getAllActivePromotions(shopID);
+        int userPoints = getPoints(user.getId(), shopID);
+        for (Promotion p : allPromotions) {
+            if(p.getPointsRequired() <= userPoints){
+                out.add(p);
+            }
+        }
+        return out;
+    }
+
+    /**
+     * Returns a list of BrowsePointsAssociation instances representing all the points the User has earned from all the Partners/Shops.
+     * @param username the username (email) to look for
+     * @return a list of BrowsePointsAssociation instances. This list might be empty if the User does not currently have any points.
+     */
+    public List<BrowsePointsAssociation> getAllPoints(String username){
+        List<BrowsePointsAssociation> res = new ArrayList<>();
+        Cursor c = this.getEntriesFromDB("User_points",
+                null,
+                "id_user = \""+getUserID(username)+"\"",
+                null);
+
+        if(c.moveToFirst()){
+            for(int i=0; i<c.getCount(); i++){
+                long shopID = c.getLong(c.getColumnIndex("id_shop"));
+                long partnerID = getPartnerID(shopID);
+                res.add(new BrowsePointsAssociation(context,
+                        partnerID,
+                        shopID,
+                        c.getInt(c.getColumnIndex("points"))
+                ));
+                c.moveToNext();
+            }
+        }
+        c.close();
+        return res;
+    }
+
+    /**
+     * Returns a list of BrowseClientsShopDataAssociation instances representing all the points all the Users have earned from this Partner.
+     * @param partnerId the Partner to look for
+     * @return a list of BrowseClientsShopDataAssociation instances. This list might be empty if no User has earned points from this Partner so far.
+     */
+    public List<BrowseClientsShopDataAssociation> getAllClientPoints(long partnerId){
+        List<BrowseClientsShopDataAssociation> res = new ArrayList<>();
+
+        List<Long> partnerShops = getAllShopsIDs(partnerId);
+        for (long id : partnerShops) {
+            res.add(new BrowseClientsShopDataAssociation(context,
+                    id,
+                    getAllClientsPointsAtShop(id)));
+        }
+        return res;
+    }
+
+    /**
+     * Returns a list of BrowseClientsClientDataAssociation instances representing all the points all the Users have earned from this Shop.
+     * @param shopID the Shop to look for
+     * @return a list of BrowseClientsClientDataAssociation instances. This list might be empty if no User has earned points from this Shop so far.
+     */
+    public List<BrowseClientsClientDataAssociation> getAllClientsPointsAtShop(long shopID){
+        List<BrowseClientsClientDataAssociation> res = new ArrayList<>();
+
+        List<Long> users = getAllClientsUserIDs(shopID);
+        for (long userID : users) {
+            //For each user using this shop :
+            res.add(new BrowseClientsClientDataAssociation(context, getUsername(userID), getPoints(userID, shopID)));
+        }
+        return res;
+    }
+
+
+    //*****
+    //PRESENCE-CHECK METHODS
+    //*****
+
+    /**
+     * Returns whether this address is present in the database
+     * @param addressID the internal ID of the address to look for
+     * @return True if this address already exists, False otherwise
+     */
+    public boolean doesAddressExist(long addressID){
         boolean out;
-        Cursor c = getEntriesFromDB("User",
-                                    new String[]{"username"},
-                                    "username = \""+email+"\"",
-                                    null);
+        Cursor c = getEntriesFromDB("Address",
+                new String[]{"_id"},
+                "_id = \""+addressID+"\"",
+                null);
         out = (c.moveToFirst());
         c.close();
         return out;
@@ -276,7 +847,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param partnerID the internal ID of the partner to look for
      * @return True if this partnerID already exists, False otherwise
      */
-    public boolean doesPartnerExist(int partnerID){
+    public boolean doesPartnerExist(long partnerID){
         boolean out;
         Cursor c = getEntriesFromDB("Partner",
                 new String[]{"name"},
@@ -288,14 +859,177 @@ public class SQLHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Returns the number of occurrences of the character <code>pattern</code> in the <code>target</code> String.
-     * @param pattern the pattern character to look for
-     * @param target the String in which we are searching
-     * @return the number of occurrences as a long.
+     * Returns whether this partner is already present in the database
+     * @param tvaNumber the tva number of the partner to look for
+     * @return True if this tvaNumber already exists, False otherwise
      */
-    private static long occurrences(char pattern, String target){
-        return target.codePoints().filter(c -> c==pattern).count();
+    public boolean doesPartnerExist(String tvaNumber){
+        boolean out;
+        Cursor c = getEntriesFromDB("Partner",
+                new String[]{"name"},
+                "tva = \""+tvaNumber+"\"",
+                null);
+        out = (c.moveToFirst());
+        c.close();
+        return out;
     }
+
+    /**
+     * Returns whether this promotion is present in the database
+     * @param promotionID the internal ID of the promotion to look for
+     * @return True if this promotion already exists, False otherwise
+     */
+    public boolean doesPromotionExist(long promotionID){
+        boolean out;
+        Cursor c = getEntriesFromDB("Promotion",
+                new String[]{"_id"},
+                "_id = \""+promotionID+"\"",
+                null);
+        out = (c.moveToFirst());
+        c.close();
+        return out;
+    }
+
+    /**
+     * Returns whether this picture frame is present in the database
+     * @param frameID the internal ID of the frame to look for
+     * @return True if this frame already exists, False otherwise
+     */
+    public boolean doesFrameExist(long frameID){
+        boolean out;
+        Cursor c = getEntriesFromDB("Shop_frame",
+                new String[]{"_id"},
+                "_id = \""+frameID+"\"",
+                null);
+        out = (c.moveToFirst());
+        c.close();
+        return out;
+    }
+
+    /**
+     * Returns whether this shop is present in the database
+     * @param shopID the internal ID of the shop to look for
+     * @return True if this shop already exists, False otherwise
+     */
+    public boolean doesShopExist(long shopID){
+        boolean out;
+        Cursor c = getEntriesFromDB("Shop_location",
+                new String[]{"_id"},
+                "_id = \""+shopID+"\"",
+                null);
+        out = (c.moveToFirst());
+        c.close();
+        return out;
+    }
+
+    /**
+     * Returns whether this email/username is already present in the database
+     * @param email the email/username of the User to look for
+     * @return True if this username already exists, False otherwise
+     */
+    public boolean doesUserExist(String email){
+        boolean out;
+        Cursor c = getEntriesFromDB("User",
+                new String[]{"username"},
+                "username = \""+email+"\"",
+                null);
+        out = (c.moveToFirst());
+        c.close();
+        return out;
+    }
+
+    /**
+     * Returns whether this user is already present in the database
+     * @param userID the internal ID of the User to look for
+     * @return True if this user already exists, False otherwise
+     */
+    public boolean doesUserExist(long userID){
+        boolean out;
+        Cursor c = getEntriesFromDB("User",
+                new String[]{"_id"},
+                "_id = \""+userID+"\"",
+                null);
+        out = (c.moveToFirst());
+        c.close();
+        return out;
+    }
+
+    /**
+     * Returns whether the passed User is an administrator of the passed Partner in the database.
+     * @param partnerID the internal ID of the Partner to look for
+     * @param userID the internal ID of the User to look for
+     * @return True if such a pair exists in the database, False otherwise
+     */
+    public boolean doesUserAdminExist(long partnerID, long userID){
+        boolean out;
+        Cursor c = getEntriesFromDB("Admin_User",
+                new String[]{"id_user"},
+                "id_user = \""+userID+"\" AND id_partner = \""+partnerID+"\"",
+                null);
+        out = (c.moveToFirst());
+        c.close();
+        return out;
+    }
+
+    /**
+     * Returns whether the passed User has marked the passed SHop as a favorite.
+     * @param shopID the internal ID of the Shop to look for
+     * @param userID the internal ID of the User to look for
+     * @return True if such a pair exists in the database, False otherwise
+     */
+    public boolean doesFavoriteShopExist(long shopID, long userID){
+        boolean out;
+        Cursor c = getEntriesFromDB("Favorite_shops",
+                new String[]{"id_user"},
+                "id_user = \""+userID+"\" AND id_shop = \""+shopID+"\"",
+                null);
+        out = (c.moveToFirst());
+        c.close();
+        return out;
+    }
+
+    /**
+     * Returns whether the passed User has already used the passed Promotion at the passed date, according to the database
+     * @param promotionID the internal ID of the Promotion to look for
+     * @param userID the internal ID of the User to look for
+     * @param dateUsed the date to look for
+     * @return True if such an association exists in the database, False otherwise
+     */
+    public boolean promotionUsed(long promotionID, long userID, String dateUsed){
+        boolean out;
+        Cursor c = getEntriesFromDB("User_promotion",
+                    new String[]{"id_user"},
+                    "id_user = \""+userID+"\" AND id_promotion = \""+promotionID+"\" AND used_on = \""+dateUsed+"\"",
+                    null);
+        out = (c.moveToFirst());
+        c.close();
+        return out;
+    }
+
+    /**
+     * Returns whether this user is an Admin, that is if he appears in the Admin_user table.
+     * @param username the username to look for
+     * @return True if the user identified by <code>username</code> is an Admin for any Partner, or False otherwise
+     */
+    public boolean isAdmin(String username){
+        long id = getUserID(username);
+        return (getElementFromDB("Admin_user", "id_user", "id_user = \""+id+"\"")
+                .size() > 0);
+    }
+
+    /**
+     * Returns whether this Promotion is reusable.
+     * @param promoID the internal ID of the Promotion to look for
+     * @return True if this Promotion is reusable, or False otherwise
+     */
+    public boolean isReusable(long promoID){
+        List<String> res = getElementFromDB("Promotion", "is_reusable", "_id = \""+promoID+"\"");
+        return (Integer.parseInt(res.get(0))==1);
+    }
+
+    //*****
+    //VALIDITY METHODS
+    //*****
 
     /**
      * Checks whether <code>email</code> follows a valid email address format. Note this method only checks for a valid format, it does not make sure if this address actually exists.
@@ -327,6 +1061,11 @@ public class SQLHelper extends SQLiteOpenHelper {
         return ! (day<1 || day>31 || month<1 || month>12 || year<1900 || year>currentYear);
     }
 
+
+    //*****
+    //INSERTION/CREATION METHODS
+    //*****
+
     /**
      * Inserts a new User in the database.
      * @param user a valid instance of User to insert in the database
@@ -334,9 +1073,9 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @throws WrongDateFormatException if user.creationDate does not follow the (DD/MM/YYYY) format
      * @return True if the insertion was successful, False if it failed (for any reason not covered by a thrown exception).
      * For example, this could be caused by an SQLite error OR because this username was already present : this means that you should always
-     * call <code>doesUsernameExist()</code> BEFORE trying to insert the user.
+     * call <code>doesUserExist()</code> BEFORE trying to insert the user.
      */
-    public boolean createUser(User user) throws WrongEmailFormatException, WrongDateFormatException {
+    public boolean addUser(User user) throws WrongEmailFormatException, WrongDateFormatException {
         if(! isValidEmail(user.getUsername())){
             throw new WrongEmailFormatException(user.getUsername() + " is not a valid email address");
         }
@@ -346,7 +1085,7 @@ public class SQLHelper extends SQLiteOpenHelper {
         if( !isValidDate(user.getBirthday()) ){
             throw new WrongDateFormatException(user.getBirthday() + " is not a valid date format.");
         }
-        if(doesUsernameExist(user.getUsername())){
+        if(doesUserExist(user.getUsername()) || doesUserExist(user.getId())){
             return false;
         }
 
@@ -369,7 +1108,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @throws WrongDateFormatException if partner.creationDate does not follow the (DD/MM/YYYY) format
      * @return True if the insertion was successful, False if it failed (for any reason not covered by a thrown exception).
      */
-    public boolean createPartner(Partner partner) throws WrongDateFormatException {
+    public boolean addPartner(Partner partner) throws WrongDateFormatException {
         if (! isValidDate(partner.getCreationDate())){
             throw new WrongDateFormatException(partner.getCreationDate() + " is not a valid date format.");
         }
@@ -377,7 +1116,7 @@ public class SQLHelper extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put("\"_id\"", partner.getId());
         cv.put("\"name\"", partner.getName());
-        cv.put("\"id_address\"", partner.getAddressID());
+        cv.put("\"address\"", partner.getAddress());
         cv.put("\"created_on\"", partner.getCreationDate());
         cv.put("\"image_path\"", partner.getImagePath());
 
@@ -385,273 +1124,145 @@ public class SQLHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Adds <code>amount</code> points to the User's account.
-     * @param username the user's email address
-     * @param amount the amount of points to add. This can be positive or negative.
-     * @param shopID Please not this is different from the partner's name.
-     * @return True if the insertion was successful, False if it failed (for any reason not covered by a thrown exception).
+     * Inserts a new Promotion in the database.
+     * @param promotion a valid instance of Promotion to insert in the database
+     * @return True if the insertion was successful, False if it failed;
+     * For example, this could be caused by an SQLite error OR because this promotion was already present : this means that you should always
+     * call <code>doesPromotionExist()</code> BEFORE trying to insert the promotion.
      */
-    public boolean addPoints(String username, int amount, int shopID){
+    public boolean addPromotion(Promotion promotion){
+        if(doesPromotionExist(promotion.getId())){
+            return false;
+        }
 
-        int currentPoints = this.getPoints(getUserID(username), shopID);
+        ContentValues cv = new ContentValues();
+        cv.put("\"_id\"", promotion.getId());
+        cv.put("\"id_partner\"", promotion.getIdPartner());
+        cv.put("\"id_shop\"", promotion.getIdShop());
+        cv.put("\"points_required\"", promotion.getPointsRequired());
+        int isReusable; if(promotion.isReusable()){isReusable=1;}else{isReusable=0;}
+        cv.put("\"is_reusable\"", isReusable);
+        cv.put("\"description\"", promotion.getDescription());
+        cv.put("\"image_path\"", promotion.getImagePath());
+        int isActive; if(promotion.isActive()){isActive=1;}else{isActive=0;}
+        cv.put("\"active\"", isActive);
+        cv.put("\"end_date\"", promotion.getEndDate());
+
+        return (myDB.insert("Promotion", null, cv) != -1);
+    }
+
+    /**
+     * Adds an association between an existing User and a Partner.
+     * @param username the User's username/e-mail address as a String
+     * @param partnerID the Partner's ID in the local database as a long
+     * @return True if the operation succeeded, false otherwise
+     */
+    public boolean addAdmin(String username, long partnerID) throws UnknownUserException {
+        if(! doesUserExist(username)){
+            throw new UnknownUserException("User with username \""+username+"\" does not exist.");
+        }
 
         ContentValues cv = new ContentValues();
         cv.put("\"id_user\"", getUserID(username));
-        cv.put("\"id_shop\"", shopID);
-        cv.put("\"points\"", (currentPoints + amount));
+        cv.put("\"id_partner\"", partnerID);
 
-        return (myDB.insert("User_points", null, cv) != -1);
+        return ( myDB.insert("Admin_user", null, cv) != -1);
     }
 
     /**
-     * Returns the amount of points the passed User currently has at the passed Shop.
-     * @param userID the username (email) to look for
-     * @param shopID the internal ID of the shop to look for
-     * @return the amount of points the user has earned as an int. Returns 0 if the User has never earned points at this Shop before.
+     * Adds <code>amount</code> points to the User's account.
+     * @param username the user's email address
+     * @param amount the amount of points to add. This number can be positive or negative.
+     * @param shopID please note this is different from the partner's name.
+     * @return True if the insertion was successful, False if it failed (for any reason not covered by a thrown exception).
      */
-    public int getPoints(int userID, int shopID){
-        ArrayList<String> res = this.getElementFromDB("User_points",
-                                                    "points",
-                                                "id_user = \""+userID+"\" AND id_shop = \""+shopID+"\"");
-        int l = res.size();
-        if( l == 0 ){
-            // No pair userID - shopID was found in the User_points table.
-            // This user has never earned points here before.
-            return 0;
+    public boolean addPoints(String username, int amount, long shopID){
+
+        int currentPoints = this.getPoints(getUserID(username), shopID);
+
+        if(currentPoints >= 0){
+            //Make an update
+            ContentValues cv = new ContentValues();
+            cv.put("\"points\"", (currentPoints+amount));
+            return (myDB.update("User_points", cv, "id_user = \""+getUserID(username)+"\" AND id_shop = \""+shopID+"\"", null) != 0);
         } else {
-            return Integer.parseInt(res.get(0));
+            //Insert a new row
+            ContentValues cv = new ContentValues();
+            cv.put("\"id_user\"", getUserID(username));
+            cv.put("\"id_shop\"", shopID);
+            cv.put("\"points\"", amount);
+
+            return (myDB.insert("User_points", null, cv) != -1);
         }
     }
 
     /**
-     * Returns a list of Shop IDs representing all this Partner's physical shops.
-     * @param partnerID the partner to look for
-     * @return a list of Integers. This list can be empty if this Partner has no Shop registered in the database.
+     * Notifies the DB that this User has used the passed Promotion.
+     * @param userID the user's internal ID.
+     * @param promoID the promotion's internal ID.
+     * @return True if the insertion was successful, False if it failed.
      */
-    public List<Integer> getAllShopsIDs(int partnerID){
-        List<Integer> res = new ArrayList<>();
-        List<String> shopIds = getElementFromDB("Shop_location", "_id", "id_partner = \""+partnerID+"\"");
-        for (String shopID : shopIds) {
-            res.add(Integer.parseInt(shopID));
-        }
-        return res;
+    private boolean addUserPromotion(long userID, long promoID, String date){
+        ContentValues cv = new ContentValues();
+        cv.put("id_user", userID);
+        cv.put("id_promotion", promoID);
+        cv.put("used_on", date);
+        return (myDB.insert("User_promotion", null, cv) != -1);
     }
 
     /**
-     * Returns a list of User IDs representing all this Shop's clients.
-     * @param shopID the Shop to look for
-     * @return a list of Integers. This list can be empty if this Shop has no client registered in the database.
+     *Updates the values of an existing Address in the database. Its _id is the only field that can not be updated
+     * @param address an instance of Address containing the new values
+     * @return True if the row was successfully affected, False otherwise
      */
-    public List<Integer> getAllClientsUserIDs(int shopID){
-        List<Integer> res = new ArrayList<>();
-        List<String> userIds = getElementFromDB("User_points", "id_user", "id_shop = \""+shopID+"\"");
-        for (String userID : userIds){
-            res.add(Integer.parseInt(userID));
-        }
-        return res;
+    public boolean updateAddressData(Address address){
+        ContentValues cv = new ContentValues();
+        cv.put("\"country\"", address.getCountry());
+        cv.put("\"city\"", address.getCity());
+        cv.put("\"street\"", address.getStreet());
+        cv.put("\"numbers\"", address.getNumbers());
+
+        return (myDB.update("Address", cv, "_id = \""+address.getId()+"\"", null) >= 1);
     }
 
     /**
-     * Returns a list of Shop instances representing all this Partner's physical shops.
-     * @param partnerID the partner to look for
-     * @return a list of Shop instances. This list can be empty if this Partner has no Shop registered in the database.
+     *Updates the values of an existing Partner in the database. Its _id is the only field that can not be updated
+     * @param partner an instance of Partner containing the new values
+     * @return True if the row was successfully affected, False otherwise
      */
-    public List<Shop> getAllShops(int partnerID){
-        List<Shop> res = new ArrayList<>();
-        List<String> shopIds = getElementFromDB("Shop_location", "_id", "id_partner = \""+partnerID+"\"");
-        for (String shopID : shopIds) {
-            res.add(this.getShop(Integer.parseInt(shopID)));
-        }
-        return res;
+    public boolean updatePartnerData(Partner partner){
+        ContentValues cv = new ContentValues();
+        cv.put("\"name\"", partner.getName());
+        cv.put("\"address\"", partner.getAddress());
+        cv.put("\"created_on\"", partner.getCreationDate());
+        cv.put("\"image_path\"", partner.getImagePath());
+
+        return (myDB.update("Partner", cv, "_id = \""+partner.getId()+"\"", null) >= 1);
     }
 
     /**
-     * Returns a List of <code>User</code> instances representing all the administrators of the <code>Partner</code> passed in argument.
-     * @param partnerID the ID of the <code>Partner</code> to look for
-     * @return a List of <code>User</code> instances. This list might be empty if this <code>Partner</code> has no administrator. (Which should seriously be avoided)
+     *Updates the values of an existing Promotion in the database. Its _id is the only field that can not be updated
+     * @param promotion an instance of Promotion containing the new values
+     * @return True if the row was successfully affected, False otherwise
      */
-    public List<User> getAllAdmins(int partnerID){
-        List<User> ret = new ArrayList<User>();
-        List<String> adminsIDs = getElementFromDB("Admin_user", "id_user", "id_partner = \""+partnerID+"\"");
+    public boolean updatePromotionData(Promotion promotion){
+        ContentValues cv = new ContentValues();
+        cv.put("\"id_partner\"", promotion.getIdPartner());
+        cv.put("\"id_shop\"", promotion.getIdShop());
+        cv.put("\"points_required\"", promotion.getPointsRequired());
+        int isReusable; if(promotion.isReusable()){isReusable=1;}else{isReusable=0;}
+        cv.put("\"is_reusable\"", isReusable);
+        cv.put("\"description\"", promotion.getDescription());
+        cv.put("\"image_path\"", promotion.getImagePath());
+        int isActive; if(promotion.isActive()){isActive=1;}else{isActive=0;}
+        cv.put("\"active\"", isActive);
+        cv.put("\"end_date\"", promotion.getEndDate());
 
-        for (String userId : adminsIDs) {
-            ret.add(this.getUser(Integer.parseInt(userId)));
-        }
-        return ret;
+        return (myDB.update("Promotion", cv, "_id = \""+promotion.getId()+"\"", null) >= 1);
     }
 
     /**
-     * Returns the internal ID of the Partner owning/running the Shop passed as argument
-     * @param shopID the Shop_location to look for
-     * @return an internal Partner ID as an int, or -1 if <code>shopID</code> was not present in the database
-     */
-    public int getPartnerID(int shopID){
-        Cursor c = getEntriesFromDB("Shop_location",
-                                    new String[]{"id_partner"},
-                                    "_id = \""+shopID+"\"",
-                                    null);
-        // c should only contain one "cell"
-        if(c.moveToFirst()){
-            int out = c.getInt(c.getColumnIndex("id_partner"));
-            c.close();
-            return out;
-        } else {
-            //This shop does not exist
-            c.close();
-            return -1;
-        }
-    }
-
-    /**
-     * Retrieves information on a User from the database and returns it as an User instance.
-     * @param username the email of the User to retrieve
-     * @return a User instance, or null if this username was not present in the database
-     */
-    public User getUser(String username){
-        Cursor c = getEntriesFromDB("User", null, "username = \""+username+"\"", null);
-        if(c.moveToFirst()){
-            if(c.getCount() > 1){
-                //Duplicate User in the database
-                Toast.makeText(context, "A duplicated entry of User with username \""+username+"\" was found in the database", Toast.LENGTH_LONG).show();
-            }
-            //for(int i=0; i<c.getColumnCount(); i++){
-            //    System.out.println("Column "+i+" is "+c.getColumnName(i));
-            //}
-            User out = new User(c.getInt(c.getColumnIndex("_id")),
-                                c.getString(c.getColumnIndex("username")),
-                                c.getString(c.getColumnIndex("password")),
-                                c.getString(c.getColumnIndex("created_on")),
-                                c.getString(c.getColumnIndex("first_name")),
-                                c.getString(c.getColumnIndex("last_name")),
-                                c.getString(c.getColumnIndex("birthday")),
-                                c.getString(c.getColumnIndex("image_path")),
-                                this.isAdmin(username)
-                                );
-            c.close();
-            return out;
-        } else {
-            //No such user in the database
-            c.close();
-            return null;
-        }
-    }
-
-    /**
-     * Retrieves information on a User from the database and returns it as an User instance.
-     * @param userId the ID of the User to retrieve
-     * @return a User instance, or null if this id was not present in the database
-     */
-    public User getUser(int userId){
-        Cursor c = getEntriesFromDB("User", null, "_id = \""+userId+"\"", null);
-        if(c.moveToFirst()){
-            if(c.getCount() > 1){
-                //Duplicate User in the database
-                Toast.makeText(context, "A duplicated entry of User with id \""+userId+"\" was found in the database", Toast.LENGTH_LONG).show();
-            }
-            User out = new User(c.getInt(c.getColumnIndex("_id")),
-                    c.getString(c.getColumnIndex("username")),
-                    c.getString(c.getColumnIndex("password")),
-                    c.getString(c.getColumnIndex("created_on")),
-                    c.getString(c.getColumnIndex("first_name")),
-                    c.getString(c.getColumnIndex("last_name")),
-                    c.getString(c.getColumnIndex("birthday")),
-                    c.getString(c.getColumnIndex("image_path")),
-                    this.isAdmin(c.getString(c.getColumnIndex("username")))
-            );
-            c.close();
-            return out;
-        } else {
-            //No such user in the database
-            c.close();
-            return null;
-        }
-    }
-
-    /**
-     * Retrieves information on a Partner from the database and returns it as a Partner instance.
-     * @param partnerID the internal id of the Partner to retrieve
-     * @return a Partner instance, or null if this id was not present in the database
-     */
-    public Partner getPartner(int partnerID){
-        Cursor c = getEntriesFromDB("Partner", null, "_id = \""+partnerID+"\"", null);
-        if(c.moveToFirst()){
-            if(c.getCount() > 1){
-                //Duplicate Partner in the database
-                Toast.makeText(context, "A duplicated entry of partner with ID \""+partnerID+"\" was found in the database", Toast.LENGTH_LONG).show();
-            }
-            Partner out = new Partner(c.getInt(c.getColumnIndex("_id")),
-                                    c.getString(c.getColumnIndex("name")),
-                                    c.getInt(c.getColumnIndex("id_address")),
-                                    c.getString(c.getColumnIndex("created_on")),
-                                    c.getString(c.getColumnIndex("image_path"))
-                                    );
-            c.close();
-            return out;
-        } else {
-            //No such partner in the database
-            c.close();
-            return null;
-        }
-    }
-
-    /**
-     * Returns an unused id available for a new User
-     * @return an unused ID as an int
-     */
-    public int getFreeIDUser(){
-        int i = 1;
-        List<String> list = getElementFromDB("User", "_id", null);
-        while( list.contains( Integer.toString(i) )) {
-            i++;
-        }
-        return i;
-        //TODO re-code all similar methods based on this format, or another more efficient one (this one has a big complexity)
-    }
-
-    /**
-     * Returns an unused id available for a new Partner
-     * @return an unused ID as an int
-     */
-    public int getFreeIDPartner() {
-        List<String> idsAsString = getElementFromDB("Partner", "_id", null);
-        idsAsString.sort(null);
-        int i = 1;
-        for (String s : idsAsString) {
-            int id = Integer.parseInt(s);
-            if( id==i ){
-                //Advance to next
-                i++;
-            } else {
-                return i;
-            }
-        }
-        return i;
-    }
-
-    /**
-     * Returns an unused id available for a new Promotion
-     * @return an unused ID as an int
-     */
-    public int getFreeIDPromotion() {
-        List<String> idsAsString = getElementFromDB("Promotion", "_id", null);
-        idsAsString.sort(null);
-        int i = 1;
-        for (String s : idsAsString) {
-            int id = Integer.parseInt(s);
-            if( id==i ){
-                //Advance to next
-                i++;
-            } else {
-                return i;
-            }
-        }
-        return i;
-    }
-
-    //TODO getFreeID() methods for all tables
-
-    /**
-     *Updates the values of an existing user in the database. Its _id is the only field that can not be updated
+     *Updates the values of an existing User in the database. Its _id is the only field that can not be updated
      * @param user an instance of User containing the new values
      * @return True if the row was successfully affected, False otherwise
      */
@@ -669,195 +1280,518 @@ public class SQLHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Retrieves information on a Shop location from the database and returns it as a Shop instance.
-     * @param shopID the internal id of the Shop to retrieve
-     * @return a Shop instance, or null if this id was not present in the database
+     *Updates the values of an existing picture Frame in the database. Its _id is the only field that can not be updated
+     * @param frame an instance of ShopFrame containing the new values
+     * @return True if the row was successfully affected, False otherwise
      */
-    public Shop getShop(int shopID){
-        Cursor c = getEntriesFromDB("Shop_location", null, "_id = \""+shopID+"\"", null);
-        if(c.moveToFirst()){
-            if(c.getCount() > 1){
-                //Duplicate Shop in the database
-                Toast.makeText(context, "A duplicated entry of Shop with ID \""+shopID+"\" was found in the database", Toast.LENGTH_LONG).show();
-            }
-            Shop out = new Shop(c.getInt(c.getColumnIndex("_id")),
-                    c.getInt(c.getColumnIndex("id_partner")),
-                    c.getInt(c.getColumnIndex("id_address")),
-                    c.getString(c.getColumnIndex("description")),
-                    c.getString(c.getColumnIndex("created_on"))
-            );
-            c.close();
-            return out;
-        } else {
-            //No such shop in the database
-            c.close();
-            return null;
-        }
+    public boolean updateFrameData(ShopFrame frame){
+        ContentValues cv = new ContentValues();
+        cv.put("\"id_shop\"", frame.getIdShop());
+        cv.put("\"image_path\"", frame.getFilePath());
+
+        return (myDB.update("Shop_frame", cv, "_id = \""+frame.getId()+"\"", null) >= 1);
     }
 
     /**
-     * Retrieves information on an Address from the database and returns it as an Address instance.
-     * @param addressID the internal id of the Address to retrieve
-     * @return an Address instance, or null if this id was not present in the database
+     *Updates the values of an existing picture Shop in the database. Its _id is the only field that can not be updated
+     * @param shop an instance of Shop containing the new values
+     * @return True if the row was successfully affected, False otherwise
      */
-    public Address getAddress(int addressID){
-        Cursor c = getEntriesFromDB("Address", null, "_id = \""+addressID+"\"", null);
-        if(c.moveToFirst()){
-            if(c.getCount() != 1){
-                //Duplicate Address in the database
-                Toast.makeText(context, "A duplicated entry of Address with ID \""+addressID+"\" was found in the database", Toast.LENGTH_LONG).show();
-            }
-            Address out = new Address(c.getInt(c.getColumnIndex("_id")),
-                    c.getString(c.getColumnIndex("city")),
-                    c.getString(c.getColumnIndex("street")),
-                    c.getString(c.getColumnIndex("numbers"))
-            );
-            c.close();
-            return out;
-        } else {
-            //No such address in the database
-            c.close();
-            return null;
+    public boolean updateShopData(Shop shop){
+        ContentValues cv = new ContentValues();
+        cv.put("\"id_partner\"", shop.getPartnerID());
+        cv.put("\"id_address\"", shop.getAddressID());
+        cv.put("\"description\"", shop.getDescription());
+        cv.put("\"created_on\"", shop.getCreationDate());
+
+        return (myDB.update("Shop_location", cv, "_id = \""+shop.getId()+"\"", null) >= 1);
+    }
+
+
+    //*****
+    //DELETION METHODS
+    //*****
+
+    /**
+     * Simulate the consumption of the Promotion with ID <code>promoID</code> by the passed User. If this Promotion was not reusable, it is deleted from the database.
+     * @param promoID the ID of the Promotion to delete
+     * @param user the User who activated this Promotion
+     * @return
+     */
+    public boolean usePromotion(long promoID, long shopID, User user, String date){
+        if(! isReusable(promoID)) {
+            removePromotion(promoID);
         }
+        int pointsCost = getPointsRequired(promoID);
+        addPoints(user.getUsername(), (-1)*pointsCost, shopID); // Remove points from User's account
+        return addUserPromotion(user.getId(), promoID, date);
     }
 
     /**
-     * Retrieves information on an Shop Address from the database and returns it as an Address instance.
-     * @param shopID the internal id of the Shop to look for
-     * @return an Address instance, or null if this Shop id was not present in the database
-     */
-    public Address getShopAddress(int shopID){
-        List<String> res = getElementFromDB("Shop_location", "id_address", "_id = \""+shopID+"\"");
-        if(res.isEmpty()){
-            //This shopID is invalid
-            return null;
-        } else {
-            return getAddress(Integer.parseInt(res.get(0)));
-        }
-    }
-
-    /**
-     * Returns the hashed password of the User identified by <code>email</code>.
-     * @param email the username/e-mail of the User to look for
-     * @return the hashed password of this User as a String
-     */
-    public String getHashedPassword(String email) throws UnknownUserException {
-        ArrayList<String> res = getElementFromDB("User", "password", "username = \""+email+"\"");
-        if(res.isEmpty()){
-            throw new UnknownUserException("User \""+email+"\" is not present in the database");
-        } else {
-            return res.get(0);
-        }
-    }
-
-    /**
-     * Adds an association between an existing User and a Partner.
-     * @param adminPair a pair instance. a must contain the User's username/e-mail address as a String, and b must be the Partner's ID in the local database as an Integer
+     * Removes a Promotion from the database. Use this method wisely.
+     * @param promoID the Promotion's ID in the local database as a long
      * @return True if the operation succeeded, false otherwise
      */
-    public boolean addAdmin(Pair adminPair) throws UnknownUserException {
-        if(! doesUsernameExist((String) adminPair.getA())){
-            throw new UnknownUserException("User with username \""+adminPair.getA()+"\" does not exist.");
+    private boolean removePromotion(long promoID){
+        return (myDB.delete("Promotion", "_id = \""+promoID+"\"", null) > 0);
+    }
+
+    /**
+     * Removes an association between an existing User and a Partner.
+     * @param username the User's username/e-mail address as a String
+     * @param partnerID the Partner's ID in the local database as a long
+     * @return True if the operation succeeded, false otherwise
+     */
+    public boolean removeAdmin(String username, long partnerID) throws UnknownUserException {
+        if(! doesUserExist(username)){
+            throw new UnknownUserException("User with username \""+username+"\" does not exist.");
         }
+        return (myDB.delete("Admin_user", "id_user = \""+this.getUserID(username)+"\" AND id_partner = \""+partnerID+"\"", null) > 0);
+    }
 
-        ContentValues cv = new ContentValues();
-        cv.put("\"id_user\"", getUserID((String) adminPair.getA()));
-        cv.put("\"id_partner\"", (Integer) adminPair.getB());
 
-        return ( myDB.insert("Admin_user", null, cv) != -1);
+    //*****
+    //ID GENERATION METHODS
+    //*****
+
+    /**
+     * Generates an ID from the current date, time and timezone. This allows to create a number that is almost guaranteed to be unique.
+     * @return a candidate for an unique ID, as a long
+     */
+    private long genID(){
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe/Brussels"));
+        //int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
+        int min = cal.get(Calendar.MINUTE);
+        int sec = cal.get(Calendar.SECOND);
+        int millisec = cal.get(Calendar.MILLISECOND);
+        String tzCode = TimeZone.getDefault().getDisplayName();
+        char tzb = tzCode.charAt(0);
+        char tze = tzCode.charAt(tzCode.length()-1);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(month).append(day).append(hour).append(min).append(sec).append(millisec);
+        return Long.parseLong(sb.toString());
     }
 
     /**
-     * Returns whether this user is an Admin, that is if he appears in the Admin_user table.
-     * @param username the username to look for
-     * @return True if the user identified by <code>username</code> is an Admin for any Partner, or False otherwise
+     * Returns an unused id available for a new Address
+     * @return an unused ID as a long
      */
-    public boolean isAdmin(String username){
-        int id = getUserID(username);
-        return (getElementFromDB("Admin_user", "id_user", "id_user = \""+id+"\"")
-                .size() > 0);
-    }
-
-    /**
-     * Returns the internal ID of the Partner that this user is administrating.
-     * @param userId the internal ID of an admin User.
-     * @return The ID of the Partner that this User is administrating as an int, or -1 if thhis User is not an administrator.
-     */
-    public int getAdminFromUser(int userId){
-        List<String> list = getElementFromDB("Admin_user", "id_partner", "id_user = \""+userId+"\"");
-        if(list.isEmpty()){
-            return -1;
-        } else {
-            return Integer.parseInt(list.get(0));
+    public long getFreeIDAddress(){
+        long candidate = genID();
+        while (doesAddressExist(candidate)){
+            candidate = genID();
         }
+        return candidate;
     }
 
     /**
-     * Returns a <code>List</code> of all the usernames currently present in the local database, as Strings
-     * @return a <code>List<String></code> of all the usernames in the database
+     * Returns an unused id available for a new Partner
+     * @return an unused ID as a long
      */
-    public List<String> getAllUsernames(){
-        return getElementFromDB("User", "username", null);
-    }
-
-    /**
-     * Returns a list of BrowsePointsAssociation instances representing all the points the User has earned from all the Partners/Shops.
-     * @param username the username (email) to look for
-     * @return a list of BrowsePointsAssociation instances. This list might be empty if the User does not currently have any points.
-     */
-    public List<BrowsePointsAssociation> getAllPoints(String username){
-        ArrayList<BrowsePointsAssociation> res = new ArrayList<>();
-        Cursor c = this.getEntriesFromDB("User_points",
-                null,
-                "id_user = \""+getUserID(username)+"\"",
-                null);
-
-        if(c.moveToFirst()){
-            for(int i=0; i<c.getCount(); i++){
-                int shopID = c.getInt(c.getColumnIndex("id_shop"));
-                int partnerID = getPartnerID(shopID);
-                res.add(new BrowsePointsAssociation(context,
-                        partnerID,
-                        shopID,
-                        c.getInt(c.getColumnIndex("points"))
-                ));
-                c.moveToNext();
-            }
+    public long getFreeIDPartner() {
+        long candidate = genID();
+        while (doesPartnerExist(candidate)){
+            candidate = genID();
         }
-        c.close();
-        return res;
+        return candidate;
     }
 
     /**
-     * Returns a list of BrowseClientsShopDataAssociation instances representing all the points all the Users have earned from this Partner.
-     * @param partnerId the Partner to look for
-     * @return a list of BrowseClientsShopDataAssociation instances. This list might be empty if no User has earned points from this Partner so far.
+     * Returns an unused id available for a new Promotion
+     * @return an unused ID as a long
      */
-    public List<BrowseClientsShopDataAssociation> getAllClientPoints(int partnerId){
-        List<BrowseClientsShopDataAssociation> res = new ArrayList<>();
-
-        List<Integer> partnerShops = getAllShopsIDs(partnerId);
-        for (int id : partnerShops) {
-            res.add(new BrowseClientsShopDataAssociation(context,
-                                                            id,
-                                                            getAllClientsPointsAtShop(id)));
+    public long getFreeIDPromotion() {
+        long candidate = genID();
+        while (doesPromotionExist(candidate)){
+            candidate = genID();
         }
-        return res;
+        return candidate;
     }
 
     /**
-     * Returns a list of BrowseClientsClientDataAssociation instances representing all the points all the Users have earned from this Shop.
-     * @param shopID the Shop to look for
-     * @return a list of BrowseClientsClientDataAssociation instances. This list might be empty if no User has earned points from this Shop so far.
+     * Returns an unused id available for a new Frame
+     * @return an unused ID as a long
      */
-    public List<BrowseClientsClientDataAssociation> getAllClientsPointsAtShop(int shopID){
-        List<BrowseClientsClientDataAssociation> res = new ArrayList<>();
-
-        List<Integer> users = getAllClientsUserIDs(shopID);
-        for (int userID : users) {
-            //For each user using this shop :
-            res.add(new BrowseClientsClientDataAssociation(context, getUsername(userID), getPoints(userID, shopID)));
+    public long getFreeIDFrame() {
+        long candidate = genID();
+        while (doesFrameExist(candidate)){
+            candidate = genID();
         }
-        return res;
+        return candidate;
+    }
+
+    /**
+     * Returns an unused id available for a new Shop
+     * @return an unused ID as a long
+     */
+    public long getFreeIDShop() {
+        long candidate = genID();
+        while (doesShopExist(candidate)){
+            candidate = genID();
+        }
+        return candidate;
+    }
+
+    /**
+     * Returns an unused id available for a new User
+     * @return an unused ID as a long
+     */
+    public long getFreeIDUser(){
+        long candidate = genID();
+        while (doesUserExist(candidate)){
+            candidate = genID();
+        }
+        return candidate;
+    }
+
+
+    //*****
+    //FIREBASE SYNC METHODS
+    //*****
+
+    public boolean TransferUser() {
+        Log.e("TAG", "Hello");
+        dab.collection("User")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    public void onComplete(Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                long id = (document.getLong("id"));
+                                Log.e("TAG", "id : " + id);
+                                if (!doesUserExist(id)) {
+                                    String lastName = document.getString("lastName");
+                                    Log.e("TAG", "lastName: " + lastName);
+                                    String firstName = document.getString("firstName");
+                                    Log.e("TAG", "firstName: " + firstName);
+                                    String username = document.getString("username");
+                                    Log.e("TAG", "username: " + username);
+                                    String password = document.getString("passwordHashed");
+                                    Log.e("TAG", "password: " + password);
+                                    String created_on = document.getString("creationDate");
+                                    Log.e("TAG", "created_on: " + created_on);
+                                    String birthday = document.getString("birthday");
+                                    Log.e("TAG", "birthday: " + birthday);
+                                    String image_path = document.getString("imagePath");
+                                    Log.e("TAG", "image_path: " + image_path);
+                                    boolean admin = document.getBoolean("admin");
+                                    Log.e("TAG", "admin: " + admin);
+                                    ContentValues cv = new ContentValues();
+                                    cv.put("\"_id\"", id);
+                                    cv.put("\"username\"", username);
+                                    cv.put("\"password\"", password);
+                                    cv.put("\"created_on\"", created_on);
+                                    cv.put("\"first_name\"", firstName);
+                                    cv.put("\"last_name\"", lastName);
+                                    cv.put("\"birthday\"", birthday);
+                                    cv.put("\"image_path\"", image_path);
+                                    Log.e("TAG","Réussi");
+                                    myDB.insert("User", null, cv);
+                                }
+                            }
+                        } else {
+                            Log.e("TAG", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+        return true;
+    }
+
+    public boolean TransferAddress() {
+        dab.collection("Address")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    public void onComplete(Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                long id = (document.getLong("id"));
+                                Log.e("TAG", "id : " + id);
+                                if (!doesAddressExist(id)) {
+                                    String city = document.getString("city");
+                                    Log.e("TAG", "city: " + city);
+                                    String country = document.getString("country");
+                                    Log.e("TAG", "country: " + country);
+                                    String numbers = document.getString("numbers");
+                                    Log.e("TAG", "numbers: " + numbers);
+                                    String street = document.getString("street");
+                                    Log.e("TAG", "street: " + street);
+                                    ContentValues cv = new ContentValues();
+                                    cv.put("\"city\"", city);
+                                    cv.put("\"country\"", country);
+                                    cv.put("\"_id\"", id);
+                                    cv.put("\"numbers\"", numbers);
+                                    cv.put("\"street\"", street);
+                                    myDB.insert("Address", null, cv);
+                                }
+                            }
+                        } else {
+                            Log.e("TAG", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+        return true;
+    }
+
+    public boolean TransferAdmin_user() {
+        dab.collection("Admin_user")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    public void onComplete(Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                long id_partner = (document.getLong("id_partner"));
+                                Log.e("TAG", "id_partner : " + id_partner);
+                                long id_user = (document.getLong("id_user"));
+                                Log.e("TAG", "id_user: " + id_user);
+                                if (!doesUserAdminExist(id_partner, id_user)){
+                                    ContentValues cv = new ContentValues();
+                                    cv.put("\"id_partner\"", id_partner);
+                                    cv.put("\"id_user\"", id_user);
+                                    myDB.insert("Admin_user", null, cv);
+                                }
+                            }
+                        } else {
+                            Log.e("TAG", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+        return true;
+    }
+
+    public boolean TransferFavorite_shops() {
+        dab.collection("Favorite_shops")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    public void onComplete(Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                long id_shop = (document.getLong("id_shop"));
+                                Log.e("TAG", "id : " + id_shop);
+                                long id_user = (document.getLong("id_user"));
+                                Log.e("TAG", "id : " + id_user);
+                                if (!doesFavoriteShopExist(id_shop, id_user)) {
+                                    ContentValues cv = new ContentValues();
+                                    cv.put("\"id_shop\"", id_shop);
+                                    cv.put("\"id_user\"", id_user);
+                                    myDB.insert("Favorite_shops", null, cv);
+                                }
+                            }
+                        } else {
+                            Log.e("TAG", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+        return true;
+    }
+
+    public boolean TransferPromotion() {
+        dab.collection("Promotion")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    public void onComplete(Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                long id = (document.getLong("id"));
+                                Log.e("TAG", "id : " + id);
+                                if (!doesPromotionExist(id)) {
+                                    boolean active = document.getBoolean("active");
+                                    Log.e("TAG", "active: " + active);
+                                    String description = document.getString("description");
+                                    Log.e("TAG", "description: " + description);
+                                    long id_partner = (document.getLong("id_partner"));
+                                    Log.e("TAG", "id : " + id_partner);
+                                    long id_shop = (document.getLong("id_shop"));
+                                    Log.e("TAG", "id : " + id_shop);
+                                    String end_date = document.getString("end_date");
+                                    Log.e("TAG", "end_date: " + end_date);
+                                    String image_path = document.getString("image_path");
+                                    Log.e("TAG", "image_path: " + image_path);
+                                    boolean is_reusable = document.getBoolean("is_reusable");
+                                    Log.e("TAG", "is_reusable: " + is_reusable);
+                                    int points_required = (document.getLong("points_required")).intValue();
+                                    Log.e("TAG", "points_required : " + points_required);
+                                    ContentValues cv = new ContentValues();
+                                    cv.put("\"_id\"", id);
+                                    cv.put("\"id_partner\"", id_partner);
+                                    cv.put("\"id_shop\"", id_shop);
+                                    cv.put("\"points_required\"", points_required);
+                                    cv.put("\"is_reusable\"", is_reusable);
+                                    cv.put("\"description\"", description);
+                                    cv.put("\"image_path\"", image_path);
+                                    cv.put("\"active\"", active);
+                                    cv.put("\"end_date\"", end_date);
+                                    myDB.insert("Promotion", null, cv);
+                                }
+                            }
+                        } else {
+                            Log.e("TAG", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+        return true;
+    }
+
+    public boolean TransferShop_frames() {
+        dab.collection("Shop_frames")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    public void onComplete(Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                long id = (document.getLong("id"));
+                                Log.e("TAG", "_id : " + id);
+                                if (!doesFrameExist(id)) {
+                                    long id_shop = (document.getLong("id_shop"));
+                                    Log.e("TAG", "id_shop : " + id_shop);
+                                    String image_path = document.getString("image_path");
+                                    Log.e("TAG", "image_path: " + image_path);
+                                    ContentValues cv = new ContentValues();
+                                    cv.put("\"_id\"", id);
+                                    cv.put("\"id_shop\"", id_shop);
+                                    cv.put("\"image_path\"", image_path);
+                                    myDB.insert("Shop_frames", null, cv);
+                                }
+                            }
+                        } else {
+                            Log.e("TAG", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+        return true;
+    }
+
+    public boolean TransferShop_location() {
+        dab.collection("Shop_location")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    public void onComplete(Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                long id = (document.getLong("id"));
+                                Log.e("TAG", "id : " + id);
+                                if (!doesShopExist(id)) {
+                                    String description = document.getString("description");
+                                    Log.e("TAG", "description: " + description);
+                                    long id_partner = (document.getLong("id_partner"));
+                                    Log.e("TAG", "id : " + id_partner);
+                                    long id_address = (document.getLong("id_address"));
+                                    Log.e("TAG", "id : " + id_address);
+                                    String created_on = document.getString("created_on");
+                                    Log.e("TAG", "created_on: " + created_on);
+                                    ContentValues cv = new ContentValues();
+                                    cv.put("\"_id\"", id);
+                                    cv.put("\"id_partner\"", id_partner);
+                                    cv.put("\"id_address\"", id_address);
+                                    cv.put("\"description\"", description);
+                                    cv.put("\"created_on\"", created_on);
+                                    myDB.insert("Shop_location", null, cv);
+                                }
+                            }
+                        } else {
+                            Log.e("TAG", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+        return true;
+    }
+
+    public boolean TransferUser_points() {
+        dab.collection("User_points")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    public void onComplete(Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                long id_shop = (document.getLong("id_shop"));
+                                Log.e("TAG", "id_shop : " + id_shop);
+                                long id_user = (document.getLong("id_user"));
+                                Log.e("TAG", "id_user : " + id_user);
+                                int points = (document.getLong("points")).intValue();
+                                Log.e("TAG", "points : " + points);
+                                if (getPoints(id_shop, id_user) != points) {
+                                    ContentValues cv = new ContentValues();
+                                    cv.put("\"id_user\"", id_user);
+                                    cv.put("\"id_shop\"", id_shop);
+                                    cv.put("\"points\"", points);
+                                    myDB.insert("User_points", null, cv);
+                                }
+                            }
+                        } else {
+                            Log.e("TAG", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+        return true;
+    }
+
+    public boolean TransferUser_promotion() {
+        dab.collection("User_promotion")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    public void onComplete(Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                long id_promotion = (document.getLong("id_promotion"));
+                                Log.e("TAG", "id_promotion : " + id_promotion);
+                                long id_user = (document.getLong("id_user"));
+                                Log.e("TAG", "id_user : " + id_user);
+                                String used_on = document.getString("used_on");
+                                Log.e("TAG", "used_on: " + used_on);
+                                if (!promotionUsed(id_promotion, id_user, used_on)) {
+                                    ContentValues cv = new ContentValues();
+                                    cv.put("\"id_user\"", id_user);
+                                    cv.put("\"id_promotion\"", id_promotion);
+                                    cv.put("\"used_on\"", used_on);
+                                    myDB.insert("User_promotion", null, cv);
+                                }
+                            }
+                        } else {
+                            Log.e("TAG", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+        return true;
+    }
+
+    public boolean TransferPartner(){
+        dab.collection("Partner")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    public void onComplete(Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                long id = (document.getLong("id"));
+                                Log.e("TAG", "id : " + id);
+                                if (!doesPartnerExist(id)) {
+                                String name = document.getString("name");
+                                Log.e("TAG", "name: " + name);
+                                String address = document.getString("address");
+                                Log.e("TAG", "address: " + address);
+                                String created_on = document.getString("creationDate");
+                                Log.e("TAG", "created_on: " + created_on);
+                                String image_path = document.getString("imagePath");
+                                Log.e("TAG", "image_path: " + image_path);
+                                String tva = document.getString("tvaNumber");
+                                Log.e("TAG", "tvaNumber: " + tva);
+                                ContentValues cv = new ContentValues();
+                                cv.put("\"_id\"", id);
+                                cv.put("\"name\"", name);
+                                cv.put("\"address\"", address);
+                                cv.put("\"created_on\"", created_on);
+                                cv.put("\"image_path\"", image_path);
+                                cv.put("\"tva\"", tva);
+                                myDB.insert("Partner", null, cv);
+                                }
+                            }
+                        } else {
+                            Log.e("TAG", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+        return true;
     }
 }

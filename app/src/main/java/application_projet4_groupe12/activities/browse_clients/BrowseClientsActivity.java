@@ -14,6 +14,7 @@ import java.util.List;
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.entities.User;
+import application_projet4_groupe12.utils.AppUtils;
 import application_projet4_groupe12.utils.Global;
 
 public class BrowseClientsActivity extends AppCompatActivity {
@@ -26,12 +27,18 @@ public class BrowseClientsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_browse_clients);
         listView = findViewById(R.id.browse_clients_listview);
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
         List<BrowseClientsShopDataAssociation> elements = new ArrayList<>();
         SQLHelper db = null;
         try {
             db = new SQLHelper(this);
 
-            elements = db.getAllClientPoints(db.getAdminFromUser(User.connectedUser.getId()));
+            elements = db.getAllClientPoints(db.getPartnerIDFromUser(User.connectedUser.getId()));
 
             if(elements.isEmpty()){
                 Toast.makeText(getApplicationContext(), "Empty list", Toast.LENGTH_SHORT).show();
@@ -49,5 +56,10 @@ public class BrowseClientsActivity extends AppCompatActivity {
 
         BrowseClientsShopDataRowAdapter bcrra = new BrowseClientsShopDataRowAdapter(this, elements);
         listView.setAdapter(bcrra);
+    }
+
+    @Override
+    public void onBackPressed(){
+        AppUtils.end_home_admin(this);
     }
 }

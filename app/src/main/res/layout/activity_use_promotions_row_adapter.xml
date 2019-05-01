@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/border_adapter_user_theme" >
+
+    <TextView
+        android:id="@+id/use_promotions_row_adapter_points_amount"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center|center_horizontal|center_vertical"
+        android:text="@string/hashtag"
+        android:textSize="18sp"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/use_promotions_row_adapter_description"
+        android:layout_width="wrap_content"
+        android:layout_height="22dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="sans-serif"
+        android:gravity="start"
+        android:text="@string/default_descr"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        app:layout_constraintStart_toEndOf="@+id/use_promotions_row_adapter_points_amount"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/use_promotions_row_adapter_end_date_title"
+        android:layout_width="wrap_content"
+        android:layout_height="22dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:fontFamily="sans-serif"
+        android:gravity="end"
+        android:text="@string/valid_until"
+        android:textAlignment="textEnd"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        app:layout_constraintStart_toEndOf="@+id/use_promotions_row_adapter_points_amount"
+        app:layout_constraintTop_toBottomOf="@+id/use_promotions_row_adapter_description" />
+
+    <TextView
+        android:id="@+id/use_promotions_row_adapter_end_date"
+        android:layout_width="wrap_content"
+        android:layout_height="22dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:fontFamily="sans-serif"
+        android:gravity="end"
+        android:text="@string/default_date"
+        android:textAlignment="textEnd"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        app:layout_constraintStart_toEndOf="@+id/use_promotions_row_adapter_end_date_title"
+        app:layout_constraintTop_toBottomOf="@+id/use_promotions_row_adapter_description" />
+
+    <TextView
+        android:id="@+id/use_promotions_row_adapter_reusable"
+        android:layout_width="wrap_content"
+        android:layout_height="22dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        android:fontFamily="sans-serif"
+        android:gravity="end"
+        android:text="@string/default_reusability"
+        android:textAlignment="textEnd"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        app:layout_constraintEnd_toStartOf="@+id/use_promotions_row_adapter_pic"
+        app:layout_constraintTop_toBottomOf="@+id/use_promotions_row_adapter_end_date_title" />
+
+    <TextView
+        android:id="@+id/use_promotions_row_adapter_points_amount_title"
+        android:layout_width="wrap_content"
+        android:layout_height="22dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="8dp"
+        android:fontFamily="sans-serif"
+        android:gravity="end"
+        android:text="@string/points_required"
+        android:textAlignment="textEnd"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/use_promotions_row_adapter_points_amount" />
+
+    <ImageView
+        android:id="@+id/use_promotions_row_adapter_pic"
+        android:layout_width="74dp"
+        android:layout_height="74dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@android:drawable/btn_star_big_on"/>
+
+</android.support.constraint.ConstraintLayout>

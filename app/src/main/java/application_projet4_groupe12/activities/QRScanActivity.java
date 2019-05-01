@@ -18,7 +18,6 @@ import java.util.ArrayList;
 
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.data.Constants;
-import application_projet4_groupe12.fragment.GenerateFragment;
 import application_projet4_groupe12.fragment.QRScanFragment;
 import application_projet4_groupe12.item.ItemMainPager;
 import application_projet4_groupe12.utils.AppUtils;
@@ -46,14 +45,13 @@ public class QRScanActivity extends AppCompatActivity {
 
         mViewPager = findViewById(R.id.viewpager);
 
-
         initQrFunctionality();
 
         setupViewPager(mViewPager);
 
     }
 
-    private void setupViewPager(ViewPager viewPager){
+    private void setupViewPager(ViewPager viewPager) {
         SectionsStatePagerAdapter adapter = new SectionsStatePagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new QRScanFragment(), "Generate Fragment");
         viewPager.setAdapter(adapter);
@@ -68,28 +66,20 @@ public class QRScanActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer == null) {
-            startActivity(new Intent(QRScanActivity.this, MainActivity.class));
-            finish();
-        } else {
-            if (drawer.isDrawerOpen(GravityCompat.START)) {
-                drawer.closeDrawer(GravityCompat.START);
-            } else {
-                super.onBackPressed();
-            }
-        }
+    public void onBackPressed(){
+        AppUtils.end_home(this);
     }
+
     private void initQrFunctionality() {
-        if ((ContextCompat.checkSelfPermission( mActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
-                || (ContextCompat.checkSelfPermission( mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
+        if ((ContextCompat.checkSelfPermission(mActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+                || (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
             ActivityCompat.requestPermissions(
                     mActivity, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.PERMISSION_REQ);
         } else {
             setUpViewPager();
         }
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         if (requestCode == Constants.PERMISSION_REQ) {

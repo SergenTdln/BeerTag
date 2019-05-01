@@ -44,6 +44,7 @@ public class BrowseClientsClientDataRowAdapter extends ArrayAdapter<BrowseClient
             viewHolder.pointsAmount.setText(Integer.toString(assoc.getPoints()));
         }
 
+        convertView.setEnabled(false);
         return convertView;
     }
 

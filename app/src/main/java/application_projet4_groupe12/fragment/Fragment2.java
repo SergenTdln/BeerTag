@@ -1,6 +1,9 @@
 package application_projet4_groupe12.fragment;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -14,22 +17,12 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.protobuf.Any;
-import java.util.Map;
-import java.util.HashMap;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -42,6 +35,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import application_projet4_groupe12.activities.MainActivity;
+import application_projet4_groupe12.activities.VerificationActivity;
 import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.exceptions.WrongDateFormatException;
@@ -50,7 +44,6 @@ import application_projet4_groupe12.utils.Hash;
 import application_projet4_groupe12.utils.Global;
 
 import static android.content.ContentValues.TAG;
-import static java.lang.System.err;
 
 public class Fragment2 extends Fragment {
 
@@ -67,6 +60,8 @@ public class Fragment2 extends Fragment {
     private EditText lastName;
     private EditText birthDate;
 
+    SharedPreferences session;
+
     private int MIN_PASSWD_LENGTH = 6; //This is a Firebase limitation
 
     @Nullable
@@ -77,6 +72,8 @@ public class Fragment2 extends Fragment {
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
+
+        session = getActivity().getPreferences(Context.MODE_PRIVATE);
 
         fragment2_sign_up.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,7 +101,7 @@ public class Fragment2 extends Fragment {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 user = document.toObject(User.class);
                                 try {
-                                    db.createUser(user);
+                                    db.addUser(user);
                                 }
                                 catch (WrongEmailFormatException e) {
                                     e.printStackTrace();
@@ -138,7 +135,7 @@ public class Fragment2 extends Fragment {
                                 String imagePath = document.getString("image_path");
                                 user = new User(id, username, hashedPassword, creationDate, firstname, lastname, birthdate, imagePath, false);
                                 try {
-                                    db.createUser(user);
+                                    db.addUser(user);
                                 }
                                 catch (WrongEmailFormatException e) {
                                     e.printStackTrace();
@@ -169,21 +166,21 @@ public class Fragment2 extends Fragment {
         try {
             db = new SQLHelper(getContext());
 
-            if (db.doesUsernameExist(email))  {
+            if (db.doesUserExist(email))  {
                 Toast.makeText(getActivity(),  "This email already exists", Toast.LENGTH_SHORT).show();
             }
             else {
                 if(pass.length() >= MIN_PASSWD_LENGTH) {
                     if (pass.equals(confirmPass)) {
-                        int id = db.getFreeIDUser();
+                        long id = db.getFreeIDUser();
 
                         Date date = Calendar.getInstance().getTime();
                         DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                         String today = formatter.format(date);
 
-                        user = new User(id, email, Hash.hash(pass), today, firstName.getText().toString(), lastName.getText().toString(), birthDate.getText().toString(), Integer.toString(id)+"_pic.png", false); //TODO file format ?
+                        user = new User(id, email, Hash.hash(pass), today, firstName.getText().toString(), lastName.getText().toString(), birthDate.getText().toString(), Long.toString(id)+"_pic.png", false);
                         try {
-                            System.out.println("Utilisateur inséré : " + db.createUser(user));
+                            System.out.println("Utilisateur inséré : " + db.addUser(user));
                         } catch (WrongEmailFormatException e){
                             e.printStackTrace();
                             Toast.makeText(getActivity(), "Invalid email format", Toast.LENGTH_SHORT).show();
@@ -197,7 +194,7 @@ public class Fragment2 extends Fragment {
                         Toast.makeText(getActivity(), "Account created", Toast.LENGTH_SHORT).show();
 
                         Log.d(Global.debug_text, "Firebase instance: " + mAuth);
-                        mAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        mAuth.createUserWithEmailAndPassword(email, Hash.hash(pass)).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
@@ -240,12 +237,20 @@ public class Fragment2 extends Fragment {
         try {
             db = new SQLHelper(getContext());
 
-            boolean userExists = db.doesUsernameExist(email);
+            boolean userExists = db.doesUserExist(email);
             System.out.println("Utilisateur existe :" + userExists);
             if (userExists) {
 
                 User user = db.getUser(email);
                 User.connectUser(getContext(), user);
+
+                /* creation d'une sessions globale lors du login */
+                SharedPreferences.Editor editor = session.edit();
+                editor.putString("email", email); // Storing string value
+                editor.putBoolean("login_status", true);
+                editor.apply();
+                /* end */
+
             } else {
                 Toast.makeText(getActivity(),"not in database", Toast.LENGTH_SHORT).show();
             }
@@ -256,4 +261,29 @@ public class Fragment2 extends Fragment {
             db.close();
         }
     }
+
+//    protected void sendEmail(String email) {
+//        Log.i(Global.debug_text,"Send email");
+//
+//        String[] TO = {email};
+//        String[] CC = {"fb.sergen.tasdelen@gmail.com"}; //rien que pour tester; à virer
+//        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+//        emailIntent.setData(Uri.parse("mailto:"));
+//        emailIntent.setType("text/plain");
+//
+//
+//        emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
+//        emailIntent.putExtra(Intent.EXTRA_CC, CC);
+//        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Your subject");
+//        emailIntent.putExtra(Intent.EXTRA_TEXT, "Email message goes here");
+//
+//        try {
+//            startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+//            getActivity().finish();
+//            Log.i("Finished sending email...", "");
+//        } catch (android.content.ActivityNotFoundException ex) {
+//            Toast.makeText(getActivity(),
+//                    "There is no email client installed.", Toast.LENGTH_SHORT).show();
+//        }
+//    }
 }

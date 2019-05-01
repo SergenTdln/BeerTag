@@ -1,5 +1,6 @@
 package application_projet4_groupe12.fragment;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -35,24 +36,28 @@ import application_projet4_groupe12.entities.Partner;
 import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.exceptions.UnknownUserException;
 import application_projet4_groupe12.exceptions.WrongDateFormatException;
+import application_projet4_groupe12.utils.AppUtils;
 import application_projet4_groupe12.utils.Global;
-import application_projet4_groupe12.utils.Pair;
 
 import static android.content.ContentValues.TAG;
+import static android.content.Context.MODE_PRIVATE;
 
 public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedListener {
 
-    private Button fragment3_sign_up;
     private SQLHelper db;
     private Partner partner;
     private FirebaseFirestore dab = FirebaseFirestore.getInstance();
     private FirebaseAuth mAuth;
 
+    private String docuemnt_id;
+
     private EditText name;
     private EditText address;
+    private EditText tva;
     private Spinner dropDownUsers;
+    private Button fragment3_sign_up;
 
-    Pair adminPair;
+    String selectedUsername;
 
     @Nullable
     @Override
@@ -64,16 +69,13 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
         mAuth = FirebaseAuth.getInstance();
 
         dropDownUsers = view.findViewById(R.id.sign_up_partner_input_spinner_admin);
-
-        adminPair = new Pair(null, null);
-
         try {
             db = new SQLHelper(getContext());
 
             List<String> allUsernamesList = db.getAllUsernames();
             allUsernamesList.add(0, "Please select an User");
 
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.fragment3_spinner_adapter, allUsernamesList);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_adapter_plain_text, allUsernamesList);
             dropDownUsers.setAdapter(adapter);
         } catch (IOException e) {
             e.printStackTrace();
@@ -81,7 +83,6 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
         } finally {
             db.close();
         }
-
         dropDownUsers.setOnItemSelectedListener(this);
 
         fragment3_sign_up.setOnClickListener(new View.OnClickListener() {
@@ -89,6 +90,7 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
             public void onClick(View v) {
                 name = getView().findViewById(R.id.sign_up_partner_input_name);
                 address = getView().findViewById(R.id.sign_up_partner_input_address);
+                tva = getView().findViewById(R.id.sign_up_partner_input_tva);
 
                 signUp();
             }
@@ -99,17 +101,17 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        String selectedUsername = (String) parent.getItemAtPosition(position);
+        String mSelectedUsername = (String) parent.getItemAtPosition(position);
         if(position==0) {
             //Default item is selected : do nothing
-        } else if(User.isAdmin(getContext(), selectedUsername)){
+        } else if(User.isAdmin(getContext(), mSelectedUsername)){
             //An User cannot be admin of two Partners at the same time
             Toast.makeText(getContext(), "This User is already an admin for another Partner. Please select another User account", Toast.LENGTH_SHORT).show();
             //Do nothing
             dropDownUsers.setSelection(0);
         } else {
-            adminPair.setA(selectedUsername);
-            Toast.makeText(getContext(), "You selected User \""+selectedUsername+"\" as an Admin for this Partner", Toast.LENGTH_SHORT).show();
+            selectedUsername = mSelectedUsername;
+            Toast.makeText(getContext(), "You selected User \""+mSelectedUsername+"\" as an Admin for this Partner", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -128,7 +130,7 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 partner = document.toObject(Partner.class);
                                 try {
-                                    db.createPartner(partner);
+                                    db.addPartner(partner);
                                 }
                                 catch (WrongDateFormatException e) {
                                     e.printStackTrace();
@@ -149,14 +151,15 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Partner partner = document.toObject(Partner.class);
-                                int id = Integer.parseInt(document.getString("id")); //TODO this field does not exist in Firebase -> use Firebase document's ID directly ?
+                                int id = Integer.parseInt(document.getString("id"));
+                                String tvaNumber = document.getString("tva");
                                 String creationDate = document.getString("created_on");
-                                int addressID = Integer.parseInt(document.getString("id_address"));
+                                String address = document.getString("id_address");
                                 String name = document.getString("name");
                                 String imagePath = document.getString("image_path");
-                                partner = new Partner(id, name, addressID, creationDate, imagePath);
+                                partner = new Partner(id, tvaNumber, name, address, creationDate, imagePath);
                                 try {
-                                    db.createPartner(partner);
+                                    db.addPartner(partner);
                                 }
                                 catch (WrongDateFormatException e) {
                                     e.printStackTrace();
@@ -169,55 +172,59 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
                 });
     }
 
-    private void signUp() {
+    private boolean signUp() {
         String mName = name.getText().toString();
-        String mAddressID = address.getText().toString(); //TODO only accepts Address IDs ! I have to put a drop-down selection menu here so the user selects an existing address or creates one. Place numbers in this field for now, I will fix this soon @Martin
-        if( mName.equals("") || mAddressID.equals("") )
+        String mAddress = address.getText().toString();
+        String mTVA = tva.getText().toString();
+        if( mName.equals("") || mAddress.equals("") || mTVA.equals(""))
         {
             Toast.makeText(getActivity(), "Please fill in all the fields", Toast.LENGTH_SHORT).show();
-            return;
+            return false;
         }
         try {
             db = new SQLHelper(getContext());
 
-            /**
-             * Deleted those lines because two Partners could have the same name.
-             * //TODO Maybe check if a Partner with ALL same fields exist ? THEN stop creating a duplicate
-             if (db.doesPartnerExist(name))  {
-             Toast.makeText(getActivity(),  "This email already exists", Toast.LENGTH_SHORT).show();
+             if (db.doesPartnerExist(mTVA))  {
+                 Toast.makeText(getActivity(),  "This TVA number is already used", Toast.LENGTH_SHORT).show();
+                 return false;
              }
-             else {
-             **/
-            int id = db.getFreeIDPartner();
+            long id = db.getFreeIDPartner();
 
             Date date = Calendar.getInstance().getTime();
             DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             String today = formatter.format(date);
 
-            partner = new Partner(id, mName, Integer.parseInt(mAddressID), today, ""); //ImagePath will be edited later by partner in Settings Activity
+            partner = new Partner(id, mTVA, mName, mAddress, today, ""); //ImagePath will be edited later by partner in Settings Activity
             try {
-                System.out.println("Partner inséré : " + db.createPartner(partner));
+                System.out.println("Partner inséré : " + db.addPartner(partner));
             } catch (WrongDateFormatException e){
                 e.printStackTrace();
                 Toast.makeText(getActivity(), "Invalid date format : please use DD/MM/YYYY", Toast.LENGTH_SHORT).show();
-                return;
+                return false;
             }
 
             //Now we need to add the admin User for this Partner
-            adminPair.setB(partner.getId());
             try {
-                db.addAdmin(adminPair);
+                db.addAdmin(selectedUsername, partner.getId());
             } catch (UnknownUserException e) {
-                String username = (String) adminPair.getA();
+                Log.v(Global.debug_text,"addAdmin "+e);
                 e.printStackTrace();
-                Toast.makeText(getActivity(), "Invalid User : \""+username+"\"", Toast.LENGTH_SHORT).show();
-                return;
+                Toast.makeText(getActivity(), "Invalid User : \""+selectedUsername+"\"", Toast.LENGTH_SHORT).show();
+                return false;
             }
 
             //Firebase stuff
             dab.collection("Partner").add(partner);
             Toast.makeText(getActivity(), "Partner created", Toast.LENGTH_SHORT).show();
+            //TODO add the first admin user to Firebase as well
 
+            try {
+                dab.collection("user").document( mAuth.getUid()).update("admin", true);
+                Log.v(Global.debug_text, "add admin no error"+mAuth.getUid());
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.v(Global.debug_text, "add admin error"+e);
+            }
             Log.d(Global.debug_text, "Firebase instance: " + mAuth);
             /**
              * Useless for Partner creation IMO
@@ -240,12 +247,23 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
                 }
             });
              **/
+            SharedPreferences session = getActivity().getSharedPreferences("session", MODE_PRIVATE);
+            session.edit().putBoolean("choice made", true).apply();
+            session.edit().putBoolean("loggin_chosed", true).apply();
+            session.edit().putBoolean("is admin", true).apply();
+
+            User user = db.getUser(selectedUsername);
+            User.connectUser(getContext(), user);
+            AppUtils.end_home_admin(getActivity());
 
 
         } catch (IOException e) {
             e.printStackTrace();
+            Log.v(Global.debug_text, "error fragment 3"+e);
         } finally {
             db.close();
         }
+        return true;
     }
+
 }

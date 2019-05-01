@@ -8,11 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -47,12 +44,12 @@ public class SettingsPartnerAdminDataRowAdapter extends ArrayAdapter<User> {
                 viewHolder.userFullName.setText(user.getFullName());
                 viewHolder.username.setText(user.getUsername());
                 viewHolder.userPic.setImageBitmap(BitmapFactory.decodeFile(convertView.getContext().getFilesDir()+"/"+user.getImagePath()));
-            }
+        }
 
         return convertView;
     }
 
-    private class ViewHolder {
+    class ViewHolder {
         TextView userFullName;
         TextView username;
         ImageView userPic;

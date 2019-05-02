@@ -3,6 +3,9 @@ package application_projet4_groupe12.entities;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
+
 import java.io.IOException;
 
 import application_projet4_groupe12.data.SQLHelper;
@@ -12,6 +15,8 @@ public class ShopFrame {
     private long id;
     private long idShop;
     String filePath;
+
+    public ShopFrame(){}
 
     public ShopFrame(long id, long idShop, String filePath){
         this.id = id;
@@ -58,6 +63,8 @@ public class ShopFrame {
             if(! db.updateFrameData(this)){
                 Toast.makeText(c, "Database update did not work. Please try again", Toast.LENGTH_SHORT).show();
             }
+            FirebaseFirestore dab = FirebaseFirestore.getInstance();
+            dab.collection("Shop_frame").document(String.valueOf(id)).set(this, SetOptions.merge());
         } catch (IOException e){
             e.printStackTrace();
             Toast.makeText(c, "Could not update the database. Please try again", Toast.LENGTH_SHORT).show();

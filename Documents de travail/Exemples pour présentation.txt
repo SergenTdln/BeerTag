@@ -1,0 +1,16 @@
+Clients standards :
+Alice Dubois
+alice.dubois@gmail.com
+MDP : azerty
+16/04/1989
+
+Zoé Barrière
+zoe.barriere@gmail.com
+MDP : azerty
+15/12/1995
+
+Admin pour Test Partner 02 :
+Olivier Vernadeau
+olivier.vernadeau@gmail.com
+MDP : azerty
+01/06/1984

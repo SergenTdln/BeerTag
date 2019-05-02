@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteCantOpenDatabaseException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -414,7 +415,7 @@ public class SQLHelper extends SQLiteOpenHelper {
                     c.getString(c.getColumnIndex("last_name")),
                     c.getString(c.getColumnIndex("birthday")),
                     c.getString(c.getColumnIndex("image_path")),
-                    this.isAdmin(c.getString(c.getColumnIndex("username")))
+                    this.isAdmin(userId)
             );
             c.close();
             return out;
@@ -448,7 +449,7 @@ public class SQLHelper extends SQLiteOpenHelper {
                     c.getString(c.getColumnIndex("last_name")),
                     c.getString(c.getColumnIndex("birthday")),
                     c.getString(c.getColumnIndex("image_path")),
-                    this.isAdmin(username)
+                    this.isAdmin(getUserID(username))
             );
             c.close();
             return out;
@@ -486,7 +487,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param email the email of the user we are looking for
      * @return The ID of this user as a long, or -1 if this <code>email</code> is not present in the database.
      */
-    private long getUserID(String email){
+    public long getUserID(String email){
         List<String> res = this.getElementFromDB("User", "_id", "username = \""+email+"\"");
         if( res.isEmpty() ){
             //No user with such email was found in the database
@@ -557,6 +558,21 @@ public class SQLHelper extends SQLiteOpenHelper {
             return null;
         } else {
             return getAddress(Long.parseLong(res.get(0)));
+        }
+    }
+
+    /**
+     * Retrieves this Shop's description field from the database and returns it as a String.
+     * @param shopID the internal id of the Shop to look for
+     * @return a String, or null if this Shop id was not present in the database
+     */
+    public String getShopDescr(long shopID){
+        List<String> res = getElementFromDB("Shop_location", "description", "_id = \""+shopID+"\"");
+        if(res.isEmpty()){
+            //This shopID is invalid
+            return null;
+        } else {
+            return res.get(0);
         }
     }
 
@@ -675,6 +691,31 @@ public class SQLHelper extends SQLiteOpenHelper {
      */
     public List<String> getAllUsernames(){
         return getElementFromDB("User", "username", null);
+    }
+
+    /**
+     * Returns a <code>List</code> of all the usernames of Users that are not currently administrator of a Partner.
+     * @return a <code>List<String></code> of all those usernames
+     */
+    public List<String> getAllNonAdminUsernames(){
+        List<String> out = new LinkedList<>();
+        List<Long> ids = getAllNonAdminUserIDs();
+
+        for (Long id : ids) {
+            out.add(getUsername(id));
+        }
+        return out;
+    }
+    public List<Long> getAllNonAdminUserIDs(){
+        List<Long> out = new LinkedList<>();
+        List<String> allUserIDs = getElementFromDB("User", "_id", null);
+        List<String> allAdminIDs = getElementFromDB("Admin_user", "id_user", null);
+        for (String userID : allUserIDs) {
+            if(! allAdminIDs.contains(userID)){// if not present
+                out.add(Long.parseLong(userID));
+            }
+        }
+        return out;
     }
 
     /**
@@ -962,7 +1003,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      */
     public boolean doesUserAdminExist(long partnerID, long userID){
         boolean out;
-        Cursor c = getEntriesFromDB("Admin_User",
+        Cursor c = getEntriesFromDB("Admin_user",
                 new String[]{"id_user"},
                 "id_user = \""+userID+"\" AND id_partner = \""+partnerID+"\"",
                 null);
@@ -1008,12 +1049,11 @@ public class SQLHelper extends SQLiteOpenHelper {
 
     /**
      * Returns whether this user is an Admin, that is if he appears in the Admin_user table.
-     * @param username the username to look for
+     * @param userID the internal ID of the user to look for
      * @return True if the user identified by <code>username</code> is an Admin for any Partner, or False otherwise
      */
-    public boolean isAdmin(String username){
-        long id = getUserID(username);
-        return (getElementFromDB("Admin_user", "id_user", "id_user = \""+id+"\"")
+    public boolean isAdmin(long userID){
+        return (getElementFromDB("Admin_user", "id_user", "id_user = \""+userID+"\"")
                 .size() > 0);
     }
 
@@ -1152,18 +1192,37 @@ public class SQLHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Adds an association between an existing User and a Partner.
-     * @param username the User's username/e-mail address as a String
-     * @param partnerID the Partner's ID in the local database as a long
-     * @return True if the operation succeeded, false otherwise
+     * Inserts a new Address in the database.
+     * @param address a valid instance of Address to insert in the database
+     * @return True if the insertion was successful, False if it failed;
+     * For example, this could be caused by an SQLite error OR because this address was already present : this means that you should always
+     * call <code>doesAddressExist()</code> BEFORE trying to insert the address.
      */
-    public boolean addAdmin(String username, long partnerID) throws UnknownUserException {
-        if(! doesUserExist(username)){
-            throw new UnknownUserException("User with username \""+username+"\" does not exist.");
+    public boolean addAddress(Address address){
+        if(doesAddressExist(address.getId())){
+            return false;
         }
 
         ContentValues cv = new ContentValues();
-        cv.put("\"id_user\"", getUserID(username));
+        cv.put("\"_id\"", address.getId());
+        cv.put("\"country\"", address.getCountry());
+        cv.put("\"city\"", address.getCity());
+        cv.put("\"street\"", address.getStreet());
+        cv.put("\"numbers\"", address.getNumbers());
+
+        return (myDB.insert("Address", null, cv) != -1);
+    }
+
+    /**
+     * Adds an association between an existing User and a Partner.
+     * @param userID the User's ID in the local database as a String
+     * @param partnerID the Partner's ID in the local database as a long
+     * @return True if the operation succeeded, false otherwise
+     */
+    public boolean addAdmin(long userID, long partnerID) throws UnknownUserException {
+
+        ContentValues cv = new ContentValues();
+        cv.put("\"id_user\"", userID);
         cv.put("\"id_partner\"", partnerID);
 
         return ( myDB.insert("Admin_user", null, cv) != -1);
@@ -1216,13 +1275,17 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @return True if the row was successfully affected, False otherwise
      */
     public boolean updateAddressData(Address address){
-        ContentValues cv = new ContentValues();
-        cv.put("\"country\"", address.getCountry());
-        cv.put("\"city\"", address.getCity());
-        cv.put("\"street\"", address.getStreet());
-        cv.put("\"numbers\"", address.getNumbers());
+        if(! doesAddressExist(address.getId())){ //This becomes effectively an insertion
+            return addAddress(address);
+        } else { // Updating
+            ContentValues cv = new ContentValues();
+            cv.put("\"country\"", address.getCountry());
+            cv.put("\"city\"", address.getCity());
+            cv.put("\"street\"", address.getStreet());
+            cv.put("\"numbers\"", address.getNumbers());
 
-        return (myDB.update("Address", cv, "_id = \""+address.getId()+"\"", null) >= 1);
+            return (myDB.update("Address", cv, "_id = \"" + address.getId() + "\"", null) >= 1);
+        }
     }
 
     /**
@@ -1231,13 +1294,21 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @return True if the row was successfully affected, False otherwise
      */
     public boolean updatePartnerData(Partner partner){
-        ContentValues cv = new ContentValues();
-        cv.put("\"name\"", partner.getName());
-        cv.put("\"address\"", partner.getAddress());
-        cv.put("\"created_on\"", partner.getCreationDate());
-        cv.put("\"image_path\"", partner.getImagePath());
+        if(! doesPartnerExist(partner.getId())){ //This becomes effectively an insertion
+            try{
+                return addPartner(partner);
+            } catch (WrongDateFormatException e) {
+                return false;
+            }
+        } else { // Updating
+            ContentValues cv = new ContentValues();
+            cv.put("\"name\"", partner.getName());
+            cv.put("\"address\"", partner.getAddress());
+            cv.put("\"created_on\"", partner.getCreationDate());
+            cv.put("\"image_path\"", partner.getImagePath());
 
-        return (myDB.update("Partner", cv, "_id = \""+partner.getId()+"\"", null) >= 1);
+            return (myDB.update("Partner", cv, "_id = \"" + partner.getId() + "\"", null) >= 1);
+        }
     }
 
     /**
@@ -1316,11 +1387,13 @@ public class SQLHelper extends SQLiteOpenHelper {
      * Simulate the consumption of the Promotion with ID <code>promoID</code> by the passed User. If this Promotion was not reusable, it is deleted from the database.
      * @param promoID the ID of the Promotion to delete
      * @param user the User who activated this Promotion
-     * @return
+     * @return true if the operation succeeded, False otherwise
      */
     public boolean usePromotion(long promoID, long shopID, User user, String date){
         if(! isReusable(promoID)) {
-            removePromotion(promoID);
+            if(! removePromotion(promoID)){
+                return false;
+            }
         }
         int pointsCost = getPointsRequired(promoID);
         addPoints(user.getUsername(), (-1)*pointsCost, shopID); // Remove points from User's account
@@ -1347,6 +1420,20 @@ public class SQLHelper extends SQLiteOpenHelper {
             throw new UnknownUserException("User with username \""+username+"\" does not exist.");
         }
         return (myDB.delete("Admin_user", "id_user = \""+this.getUserID(username)+"\" AND id_partner = \""+partnerID+"\"", null) > 0);
+    }
+
+    /**
+     * Empties all the tables in the database
+     */
+    public void emptyAll(){
+        myDB.delete("Address", null, null);
+        myDB.delete("Admin_user", null, null);
+        myDB.delete("Partner", null, null);
+        myDB.delete("Promotion", null, null);
+        myDB.delete("Shop_location", null, null);
+        myDB.delete("User", null, null);
+        myDB.delete("User_points", null, null);
+        myDB.delete("User_promotion", null, null);
     }
 
 
@@ -1452,34 +1539,26 @@ public class SQLHelper extends SQLiteOpenHelper {
     //*****
     //FIREBASE SYNC METHODS
     //*****
+    //TODO conditional transfer (see TransferUser_points)
 
     public boolean TransferUser() {
-        Log.e("TAG", "Hello");
         dab.collection("User")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    public void onComplete(Task<QuerySnapshot> task) {
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 long id = (document.getLong("id"));
-                                Log.e("TAG", "id : " + id);
                                 if (!doesUserExist(id)) {
                                     String lastName = document.getString("lastName");
-                                    Log.e("TAG", "lastName: " + lastName);
                                     String firstName = document.getString("firstName");
-                                    Log.e("TAG", "firstName: " + firstName);
                                     String username = document.getString("username");
-                                    Log.e("TAG", "username: " + username);
                                     String password = document.getString("passwordHashed");
-                                    Log.e("TAG", "password: " + password);
+                                    //Circumventing inconsistencies in FireStore naming schemes
+                                    if(password==null){password=document.getString("hashedPassword");}
                                     String created_on = document.getString("creationDate");
-                                    Log.e("TAG", "created_on: " + created_on);
                                     String birthday = document.getString("birthday");
-                                    Log.e("TAG", "birthday: " + birthday);
                                     String image_path = document.getString("imagePath");
-                                    Log.e("TAG", "image_path: " + image_path);
-                                    boolean admin = document.getBoolean("admin");
-                                    Log.e("TAG", "admin: " + admin);
                                     ContentValues cv = new ContentValues();
                                     cv.put("\"_id\"", id);
                                     cv.put("\"username\"", username);
@@ -1489,7 +1568,6 @@ public class SQLHelper extends SQLiteOpenHelper {
                                     cv.put("\"last_name\"", lastName);
                                     cv.put("\"birthday\"", birthday);
                                     cv.put("\"image_path\"", image_path);
-                                    Log.e("TAG","Réussi");
                                     myDB.insert("User", null, cv);
                                 }
                             }
@@ -1505,20 +1583,15 @@ public class SQLHelper extends SQLiteOpenHelper {
         dab.collection("Address")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    public void onComplete(Task<QuerySnapshot> task) {
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 long id = (document.getLong("id"));
-                                Log.e("TAG", "id : " + id);
                                 if (!doesAddressExist(id)) {
                                     String city = document.getString("city");
-                                    Log.e("TAG", "city: " + city);
                                     String country = document.getString("country");
-                                    Log.e("TAG", "country: " + country);
                                     String numbers = document.getString("numbers");
-                                    Log.e("TAG", "numbers: " + numbers);
                                     String street = document.getString("street");
-                                    Log.e("TAG", "street: " + street);
                                     ContentValues cv = new ContentValues();
                                     cv.put("\"city\"", city);
                                     cv.put("\"country\"", country);
@@ -1540,13 +1613,11 @@ public class SQLHelper extends SQLiteOpenHelper {
         dab.collection("Admin_user")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    public void onComplete(Task<QuerySnapshot> task) {
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 long id_partner = (document.getLong("id_partner"));
-                                Log.e("TAG", "id_partner : " + id_partner);
                                 long id_user = (document.getLong("id_user"));
-                                Log.e("TAG", "id_user: " + id_user);
                                 if (!doesUserAdminExist(id_partner, id_user)){
                                     ContentValues cv = new ContentValues();
                                     cv.put("\"id_partner\"", id_partner);
@@ -1566,13 +1637,11 @@ public class SQLHelper extends SQLiteOpenHelper {
         dab.collection("Favorite_shops")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    public void onComplete(Task<QuerySnapshot> task) {
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 long id_shop = (document.getLong("id_shop"));
-                                Log.e("TAG", "id : " + id_shop);
                                 long id_user = (document.getLong("id_user"));
-                                Log.e("TAG", "id : " + id_user);
                                 if (!doesFavoriteShopExist(id_shop, id_user)) {
                                     ContentValues cv = new ContentValues();
                                     cv.put("\"id_shop\"", id_shop);
@@ -1592,37 +1661,30 @@ public class SQLHelper extends SQLiteOpenHelper {
         dab.collection("Promotion")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    public void onComplete(Task<QuerySnapshot> task) {
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 long id = (document.getLong("id"));
-                                Log.e("TAG", "id : " + id);
                                 if (!doesPromotionExist(id)) {
                                     boolean active = document.getBoolean("active");
-                                    Log.e("TAG", "active: " + active);
                                     String description = document.getString("description");
-                                    Log.e("TAG", "description: " + description);
-                                    long id_partner = (document.getLong("id_partner"));
-                                    Log.e("TAG", "id : " + id_partner);
-                                    long id_shop = (document.getLong("id_shop"));
-                                    Log.e("TAG", "id : " + id_shop);
-                                    String end_date = document.getString("end_date");
-                                    Log.e("TAG", "end_date: " + end_date);
-                                    String image_path = document.getString("image_path");
-                                    Log.e("TAG", "image_path: " + image_path);
-                                    boolean is_reusable = document.getBoolean("is_reusable");
-                                    Log.e("TAG", "is_reusable: " + is_reusable);
-                                    int points_required = (document.getLong("points_required")).intValue();
-                                    Log.e("TAG", "points_required : " + points_required);
+                                    long id_partner = (document.getLong("idPartner"));
+                                    long id_shop = (document.getLong("idShop"));
+                                    String end_date = document.getString("endDate");
+                                    String image_path = document.getString("imagePath");
+                                    boolean is_reusable = document.getBoolean("reusable");
+                                    int points_required = (document.getLong("pointsRequired")).intValue();
                                     ContentValues cv = new ContentValues();
                                     cv.put("\"_id\"", id);
                                     cv.put("\"id_partner\"", id_partner);
                                     cv.put("\"id_shop\"", id_shop);
                                     cv.put("\"points_required\"", points_required);
-                                    cv.put("\"is_reusable\"", is_reusable);
+                                    int isReusable; if(is_reusable){isReusable=1;}else{isReusable=0;}
+                                    cv.put("\"is_reusable\"", isReusable);
                                     cv.put("\"description\"", description);
                                     cv.put("\"image_path\"", image_path);
-                                    cv.put("\"active\"", active);
+                                    int isActive; if(active){isActive=1;}else{isActive=0;}
+                                    cv.put("\"active\"", isActive);
                                     cv.put("\"end_date\"", end_date);
                                     myDB.insert("Promotion", null, cv);
                                 }
@@ -1639,16 +1701,13 @@ public class SQLHelper extends SQLiteOpenHelper {
         dab.collection("Shop_frames")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    public void onComplete(Task<QuerySnapshot> task) {
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 long id = (document.getLong("id"));
-                                Log.e("TAG", "_id : " + id);
                                 if (!doesFrameExist(id)) {
                                     long id_shop = (document.getLong("id_shop"));
-                                    Log.e("TAG", "id_shop : " + id_shop);
                                     String image_path = document.getString("image_path");
-                                    Log.e("TAG", "image_path: " + image_path);
                                     ContentValues cv = new ContentValues();
                                     cv.put("\"_id\"", id);
                                     cv.put("\"id_shop\"", id_shop);
@@ -1668,20 +1727,15 @@ public class SQLHelper extends SQLiteOpenHelper {
         dab.collection("Shop_location")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    public void onComplete(Task<QuerySnapshot> task) {
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 long id = (document.getLong("id"));
-                                Log.e("TAG", "id : " + id);
                                 if (!doesShopExist(id)) {
                                     String description = document.getString("description");
-                                    Log.e("TAG", "description: " + description);
-                                    long id_partner = (document.getLong("id_partner"));
-                                    Log.e("TAG", "id : " + id_partner);
-                                    long id_address = (document.getLong("id_address"));
-                                    Log.e("TAG", "id : " + id_address);
-                                    String created_on = document.getString("created_on");
-                                    Log.e("TAG", "created_on: " + created_on);
+                                    long id_partner = (document.getLong("partnerID"));
+                                    long id_address = (document.getLong("addressID"));
+                                    String created_on = document.getString("creationDate");
                                     ContentValues cv = new ContentValues();
                                     cv.put("\"_id\"", id);
                                     cv.put("\"id_partner\"", id_partner);
@@ -1703,22 +1757,26 @@ public class SQLHelper extends SQLiteOpenHelper {
         dab.collection("User_points")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    public void onComplete(Task<QuerySnapshot> task) {
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 long id_shop = (document.getLong("id_shop"));
-                                Log.e("TAG", "id_shop : " + id_shop);
                                 long id_user = (document.getLong("id_user"));
-                                Log.e("TAG", "id_user : " + id_user);
                                 int points = (document.getLong("points")).intValue();
-                                Log.e("TAG", "points : " + points);
-                                if (getPoints(id_shop, id_user) != points) {
-                                    ContentValues cv = new ContentValues();
-                                    cv.put("\"id_user\"", id_user);
-                                    cv.put("\"id_shop\"", id_shop);
-                                    cv.put("\"points\"", points);
+
+                                ContentValues cv = new ContentValues();
+                                cv.put("\"id_user\"", id_user);
+                                cv.put("\"id_shop\"", id_shop);
+                                cv.put("\"points\"", points);
+
+                                int current = getPoints(id_user, id_shop);
+                                if (current == -1){
                                     myDB.insert("User_points", null, cv);
-                                }
+                                } else if(current != points) {
+                                    myDB.update("User_points", cv, "\"id_user\" = "+id_user+" AND \"id_shop\" = "+id_shop, null);
+                                }// else {
+                                    //Do nothing
+                                //}
                             }
                         } else {
                             Log.e("TAG", "Error getting documents: ", task.getException());
@@ -1732,15 +1790,12 @@ public class SQLHelper extends SQLiteOpenHelper {
         dab.collection("User_promotion")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    public void onComplete(Task<QuerySnapshot> task) {
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 long id_promotion = (document.getLong("id_promotion"));
-                                Log.e("TAG", "id_promotion : " + id_promotion);
                                 long id_user = (document.getLong("id_user"));
-                                Log.e("TAG", "id_user : " + id_user);
                                 String used_on = document.getString("used_on");
-                                Log.e("TAG", "used_on: " + used_on);
                                 if (!promotionUsed(id_promotion, id_user, used_on)) {
                                     ContentValues cv = new ContentValues();
                                     cv.put("\"id_user\"", id_user);
@@ -1761,22 +1816,16 @@ public class SQLHelper extends SQLiteOpenHelper {
         dab.collection("Partner")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    public void onComplete(Task<QuerySnapshot> task) {
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 long id = (document.getLong("id"));
-                                Log.e("TAG", "id : " + id);
                                 if (!doesPartnerExist(id)) {
                                 String name = document.getString("name");
-                                Log.e("TAG", "name: " + name);
                                 String address = document.getString("address");
-                                Log.e("TAG", "address: " + address);
                                 String created_on = document.getString("creationDate");
-                                Log.e("TAG", "created_on: " + created_on);
                                 String image_path = document.getString("imagePath");
-                                Log.e("TAG", "image_path: " + image_path);
                                 String tva = document.getString("tvaNumber");
-                                Log.e("TAG", "tvaNumber: " + tva);
                                 ContentValues cv = new ContentValues();
                                 cv.put("\"_id\"", id);
                                 cv.put("\"name\"", name);

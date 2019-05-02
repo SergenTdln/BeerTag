@@ -37,6 +37,7 @@ import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.entities.Partner;
 import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.utils.AppUtils;
+import application_projet4_groupe12.utils.FirebaseUtils;
 
 public class SettingsPartnerActivity extends AppCompatActivity {
 
@@ -128,9 +129,14 @@ public class SettingsPartnerActivity extends AppCompatActivity {
 
                 if(! newNameS.equals("")){
                     currentPartner.setName(v.getContext(), newNameS);
+                    newName.setText("");
+                    newName.setHint(newNameS);
+                    subTitle.setText(newNameS);
                 }
                 if(! newAddressS.equals("")){
-                    currentPartner.setName(v.getContext(), newAddressS);
+                    currentPartner.setAddress(v.getContext(), newAddressS);
+                    newAddress.setText("");
+                    newAddress.setHint(newAddressS);
                 }
             }
         });
@@ -264,7 +270,7 @@ public class SettingsPartnerActivity extends AppCompatActivity {
         try {
             db = new SQLHelper(c);
             List<User> currentAdmins = db.getAllAdmins(currentPartner.getId());
-            List<String> allUsernames = db.getAllUsernames();
+            List<String> allUsernames = db.getAllNonAdminUsernames();
 
             allUsernames.add(0, getString(R.string.settings_partner_spinner_default));
             List<String> adminUsernames = User.getUsernames(currentAdmins);
@@ -312,7 +318,11 @@ public class SettingsPartnerActivity extends AppCompatActivity {
         SQLHelper db = null;
         try{
             db = new SQLHelper(c);
-            return (db.addAdmin(user.getUsername(), partner.getId()));
+            boolean local = db.addAdmin(user.getId(), partner.getId());
+
+            FirebaseUtils.firestoreAddAdmin(partner.getId(), user.getId());
+
+            return local;
         } catch (IOException e){
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), "An error occurred; we could not add this User as an admin in the database. Please try again", Toast.LENGTH_SHORT).show();
@@ -329,10 +339,13 @@ public class SettingsPartnerActivity extends AppCompatActivity {
             return false;
         }
         SQLHelper db = null;
-        boolean ret;
         try{
             db = new SQLHelper(this);
-            ret = db.removeAdmin(username, currentPartner.getId());
+            boolean local = db.removeAdmin(username, currentPartner.getId());
+
+            FirebaseUtils.firestoreRemoveAdmin(currentPartner.getId(), db.getUserID(username));
+
+            return local;
         } catch (IOException e){
             e.printStackTrace();
             return false;
@@ -341,6 +354,5 @@ public class SettingsPartnerActivity extends AppCompatActivity {
                 db.close();
             }
         }
-        return ret;
     }
 }

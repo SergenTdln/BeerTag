@@ -5,6 +5,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.widget.Toast;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
+
 import java.io.IOException;
 
 import application_projet4_groupe12.data.SQLHelper;
@@ -15,18 +18,20 @@ public class Promotion implements Parcelable {
     private long idPartner;
     private long idShop;
     private int pointsRequired;
-    private boolean isReusable;
+    private boolean reusable;
     private String description;
     private String imagePath; //Image path inside of the assets folder
     private boolean active; //Is the promotion currently active
     private String endDate; //This HAS to follow this format : DD/MM/YYYY. (Example: "31/01/2000")
+
+    public Promotion(){}
 
     public Promotion(long id, long idPartner, long idShop, int pointsRequired, boolean isReusable, String description, String imagePath, boolean active, String endDate){
         this.id = id;
         this.idPartner = idPartner;
         this.idShop = idShop;
         this.pointsRequired = pointsRequired;
-        this.isReusable = isReusable;
+        this.reusable = isReusable;
         this.description = description;
         this.imagePath = imagePath;
         this.active = active;
@@ -50,7 +55,7 @@ public class Promotion implements Parcelable {
     }
 
     public boolean isReusable() {
-        return isReusable;
+        return reusable;
     }
 
     public String getDescription() {
@@ -90,7 +95,7 @@ public class Promotion implements Parcelable {
     }
 
     public void setReusable(Context c, boolean reusable) {
-        isReusable = reusable;
+        this.reusable = reusable;
         this.refreshDB(c);
     }
 
@@ -125,6 +130,8 @@ public class Promotion implements Parcelable {
             if(! db.updatePromotionData(this)){
                 Toast.makeText(c, "Database update did not work. Please try again", Toast.LENGTH_SHORT).show();
             }
+            FirebaseFirestore dab = FirebaseFirestore.getInstance();
+            dab.collection("Promotion").document(String.valueOf(id)).set(this, SetOptions.merge());
         } catch (IOException e){
             e.printStackTrace();
             Toast.makeText(c, "Could not update the database. Please try again", Toast.LENGTH_SHORT).show();
@@ -147,7 +154,7 @@ public class Promotion implements Parcelable {
         out.writeLong(idPartner);
         out.writeLong(idShop);
         out.writeInt(pointsRequired);
-        out.writeInt(isReusable ? 1 : 0);
+        out.writeInt(reusable ? 1 : 0);
         out.writeString(description);
         out.writeString(imagePath);
         out.writeInt(active ? 1 : 0);
@@ -169,7 +176,7 @@ public class Promotion implements Parcelable {
         idPartner = in.readLong();
         idShop = in.readLong();
         pointsRequired = in.readInt();
-        isReusable = (in.readInt() == 1);
+        reusable = (in.readInt() == 1);
         description = in.readString();
         imagePath = in.readString();
         active = (in.readInt() == 1);

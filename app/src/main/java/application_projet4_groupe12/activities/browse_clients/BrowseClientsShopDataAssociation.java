@@ -11,6 +11,7 @@ import application_projet4_groupe12.entities.Address;
 public class BrowseClientsShopDataAssociation {
 
     private long shopID;
+    private String shopDescr;
     private Address shopAddress;
     private List<BrowseClientsClientDataAssociation> list;
 
@@ -23,6 +24,7 @@ public class BrowseClientsShopDataAssociation {
         try{
             db = new SQLHelper(c);
             this.shopAddress = db.getShopAddress(shopID);
+            this.shopDescr = db.getShopDescr(shopID);
 
         } catch (IOException e) {
             // Just skip this instance
@@ -38,11 +40,15 @@ public class BrowseClientsShopDataAssociation {
         return shopID;
     }
 
-    public List<BrowseClientsClientDataAssociation> getList(){
-        return list;
+    public String getShopDescr(){
+        return shopDescr;
     }
 
     public Address getShopAddress(){
         return shopAddress;
+    }
+
+    public List<BrowseClientsClientDataAssociation> getList(){
+        return list;
     }
 }

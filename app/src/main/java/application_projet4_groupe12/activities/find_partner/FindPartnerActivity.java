@@ -144,18 +144,16 @@ public class FindPartnerActivity extends FragmentActivity implements
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case Request_User_Location_Code:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                        if (googleApiClient == null) {
-                            buildGoogleApiClient();
-                        } else {
-                            Toast.makeText(this, "Permission Denied...", Toast.LENGTH_SHORT).show();
-                        }
-                        return;
+        if(requestCode == Request_User_Location_Code){
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    if (googleApiClient == null) {
+                        buildGoogleApiClient();
+                    } else {
+                        Toast.makeText(this, "Permission Denied...", Toast.LENGTH_SHORT).show();
                     }
                 }
+            }
         }
     }
 
@@ -180,7 +178,7 @@ public class FindPartnerActivity extends FragmentActivity implements
 
             mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 
-            if (located == false) {
+            if (! located) {
                 CameraPosition cameraPosition = new CameraPosition.Builder()
                         .target(latLng).zoom(14).build();
                 mMap.animateCamera(CameraUpdateFactory

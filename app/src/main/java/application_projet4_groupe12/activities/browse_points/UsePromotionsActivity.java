@@ -26,6 +26,7 @@ import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.entities.Promotion;
 import application_projet4_groupe12.entities.Shop;
 import application_projet4_groupe12.entities.User;
+import application_projet4_groupe12.utils.FirebaseUtils;
 
 public class UsePromotionsActivity extends AppCompatActivity {
 
@@ -128,7 +129,11 @@ public class UsePromotionsActivity extends AppCompatActivity {
             boolean fromDB = db.usePromotion(vh.promoID, vh.shopID, user, today);
             boolean fromList = removeFromList(list, vh.promoID);
 
-            return (fromDB && fromList);
+            boolean local = (fromDB && fromList);
+
+            FirebaseUtils.firestoreUsePromotion(user, vh, today);
+
+            return local;
         } catch (IOException e){
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), "An error occurred; we could ropen the database.", Toast.LENGTH_SHORT).show();

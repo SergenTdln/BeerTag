@@ -30,7 +30,7 @@
         android:layout_marginTop="8dp"
         android:fontFamily="sans-serif"
         android:gravity="start"
-        android:text="@string/browse_points_default_partner_name"
+        android:text="@string/default_partner_name"
         android:textAppearance="@style/TextAppearance.AppCompat"
         app:layout_constraintStart_toEndOf="@+id/browse_row_adapter_points_amount"
         app:layout_constraintTop_toTopOf="parent" />

@@ -8,6 +8,7 @@
     <string name="action_settings">Settings</string>
     <string name="tapAgain">Tap once again to quit !</string>
     <string name="permission_not_granted">Permission not granted!</string>
+    <string name="permission_granted">Permission granted!</string>
     <string name="copied">Result has been successfully copied</string>
     <string name="result">Result</string>
     <string name="subsplash_text">Beer Tag, your 2.0 loyalty card</string>
@@ -74,7 +75,7 @@
 
     <!--Browse points-->
     <string name="browse_points_title">Browse my points</string>
-    <string name="browse_points_default_partner_name">Default Partner Name</string>
+    <string name="default_partner_name">Default Partner Name</string>
     <string name="browse_points_default_shop_address">Default Shop Address</string>
     <string name="activate_promotion">Activate this promotion</string>
     <string name="points_required">Points required</string>
@@ -100,6 +101,9 @@
     <string name="select_file">Select a file</string>
     <string name="manage_admins">Manage your administrators :</string>
     <string name="change_logo">Change your logo :</string>
+    <string name="settings_change_name">Change the Partner\'s name :</string>
+    <string name="settings_change_address">Change the Partner\'s address :</string>
+    <string name="default_address">Default Address</string>
 
     <string name="type_here_bar">Generate barcode</string>
     <string name="type_here_qr">Generate QR code</string>

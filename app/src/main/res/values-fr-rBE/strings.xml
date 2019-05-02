@@ -62,7 +62,7 @@
     <string name="activate_promotion">Activer cette promotion</string>
     <string name="points_required">Points requis</string>
     <string name="valid_until">Valid jusqu\'au :</string>
-    <string name="become_partner">BECOME PARTNER</string>
+    <string name="become_partner">DEVENIR PARTENAIRE</string>
     <string name="birth_date">Votre date de naissance</string>
     <string name="birth_date_default">(JJ/MM/AAAA)</string>
     <string name="disabled_for_facebook">Désactivé pour les comptes Facebook</string>
@@ -93,6 +93,13 @@
     <string name="use_promotions_points_collected">Points collectés :</string>
     <string name="use_promotions_title">Activer des promotions</string>
     <string name="default_shop_name">Nom par défaut</string>
+    <string name="change_logo">Changez votre logo :</string>
+    <string name="default_address">Addresse par défaut :</string>
+    <string name="manage_admins">Gérer vos administrateurs</string>
+    <string name="permission_granted">Autorisation accordée !</string>
+    <string name="select_file">Sélectionner une image</string>
+    <string name="settings_change_address">Change l\'addresse du partenaire</string>
+    <string name="settings_change_name">Changer le nom du partenaire</string>
 
     <!--<string name="login_fields">Veuillez completer tous les champs</string>-->
     <!--<string name="login_success">Connection</string>-->

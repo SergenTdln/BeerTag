@@ -43,7 +43,7 @@
     <string name="swipe_right">Swipe from the right</string>
 
     <!--FRAGMENT 3-->
-    <string name="become_partner">DEVENIR PARTENAIRE</string>
+    <string name="become_partner">BECOME PARTNER</string>
     <string name="your_name">This is the name to be displayed to users in the app</string>
     <string name="your_name_default">Public name</string>
     <string name="your_address">This is the address of your headquarters.\nIt will not be displayed to users</string>

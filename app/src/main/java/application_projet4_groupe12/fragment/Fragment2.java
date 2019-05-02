@@ -1,14 +1,13 @@
 package application_projet4_groupe12.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +20,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
@@ -41,9 +38,6 @@ import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.exceptions.WrongDateFormatException;
 import application_projet4_groupe12.exceptions.WrongEmailFormatException;
 import application_projet4_groupe12.utils.Hash;
-import application_projet4_groupe12.utils.Global;
-
-import static android.content.ContentValues.TAG;
 
 public class Fragment2 extends Fragment {
 
@@ -70,20 +64,24 @@ public class Fragment2 extends Fragment {
         View view = inflater.inflate(R.layout.fragment2_layout, container, false);
         fragment2_sign_up = view.findViewById(R.id.sign_up_user_button_out);
 
+        username = view.findViewById(R.id.sign_up_user_input_email);
+        password = view.findViewById(R.id.sign_up_user_input_password);
+        confirmPassword = view.findViewById(R.id.sign_up_user_input_password_confirm);
+        firstName = view.findViewById(R.id.sign_up_user_input_first_name);
+        lastName = view.findViewById(R.id.sign_up_user_input_last_name);
+        birthDate = view.findViewById(R.id.sign_up_user_input_birthday);
+
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
-        session = getActivity().getPreferences(Context.MODE_PRIVATE);
+        Activity here = getActivity();
+        if(here!=null) {
+            session = here.getPreferences(Context.MODE_PRIVATE);
+        }
 
         fragment2_sign_up.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                username = getView().findViewById(R.id.sign_up_user_input_email);
-                password = getView().findViewById(R.id.sign_up_user_input_password);
-                confirmPassword = getView().findViewById(R.id.sign_up_user_input_password_confirm);
-                firstName = getView().findViewById(R.id.sign_up_user_input_first_name);
-                lastName = getView().findViewById(R.id.sign_up_user_input_last_name);
-                birthDate = getView().findViewById(R.id.sign_up_user_input_birthday);
 
                 signUp();
             }
@@ -141,12 +139,6 @@ public class Fragment2 extends Fragment {
                 return;
             }
 
-            /*Adding the user to the DB (Firestore)*/
-            dab.collection("User").document(String.valueOf(id)).set(user, SetOptions.merge());
-            Toast.makeText(getActivity(), "Account created", Toast.LENGTH_SHORT).show();
-
-            //Log.d(Global.debug_text, "Firebase instance: " + mAuth);
-
             /*Creating the Firebase User*/
             mAuth.createUserWithEmailAndPassword(email, Hash.hash(pass)).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
@@ -172,6 +164,14 @@ public class Fragment2 extends Fragment {
                     }
                 }
             });
+
+            /*Adding the user to the DB (Firestore)*/
+            dab.collection("User").document(String.valueOf(id)).set(user, SetOptions.merge());
+            Toast.makeText(getActivity(), "Account created", Toast.LENGTH_SHORT).show();
+
+            //Log.d(Global.debug_text, "Firebase instance: " + mAuth);
+
+
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

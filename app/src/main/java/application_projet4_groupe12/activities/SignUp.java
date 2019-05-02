@@ -71,7 +71,7 @@ public class SignUp extends AppCompatActivity {
 
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseAuth mAuth;
-    public static SQLHelper db;
+    public SQLHelper db;
 
     LoginButton loginButton;
     CallbackManager mCallbackManager;
@@ -102,7 +102,7 @@ public class SignUp extends AppCompatActivity {
             startActivity(new Intent(SignUp.this, MainActivity.class));
         } else {
             SharedPreferences session = getApplicationContext().getSharedPreferences("session", MODE_PRIVATE);
-            Boolean login_status = session.getBoolean("login_status", false);
+            boolean login_status = session.getBoolean("login_status", false);
             Log.v(Global.debug_text, "login status" + login_status);
 
             if (login_status) {
@@ -166,7 +166,8 @@ public class SignUp extends AppCompatActivity {
                                     editor.putString("id_facebook", id); // Storing boolean - true/false
                                     editor.putString("email", email); // Storing string value
                                     editor.putString("name", name); // Storing integer value
-                                    editor.commit();
+                                    editor.apply();
+                                    //editor.commit();
                                     /* end */
 
                                 } catch (JSONException e) {

@@ -1423,6 +1423,10 @@ public class SQLHelper extends SQLiteOpenHelper {
         return (myDB.delete("Admin_user", "id_user = \""+this.getUserID(username)+"\" AND id_partner = \""+partnerID+"\"", null) > 0);
     }
 
+    public void emptyAll(){
+        //TODO Vider toutes les tables
+    }
+
 
     //*****
     //ID GENERATION METHODS

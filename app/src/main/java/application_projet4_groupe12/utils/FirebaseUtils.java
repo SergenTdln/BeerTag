@@ -29,7 +29,10 @@ public class FirebaseUtils {
         try {
             db = new SQLHelper(c);
 
-            //TODO empty local db to take remote changes into account -> unnecessary if conditional import is implemented
+            db.emptyAll();
+            //TODO empty local db to take remote changes into account
+
+            //TODO go through everything to make sure pushes to remote are done when necessary @Martin
 
             if(db.TransferUser()) {
                 System.out.println("Transferred Users successfully");

@@ -24,24 +24,12 @@ import application_projet4_groupe12.utils.AppUtils;
 
 public class QRScanActivity extends AppCompatActivity {
 
-    private SectionsStatePagerAdapter mSectionsStatePagerAdapter;
-
-    private Activity mActivity;
-    private Context mContext;
-
     private ViewPager mViewPager;
-    private ArrayList<String> mFragmentItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qrscan);
-
-        mActivity = QRScanActivity.this;
-        mContext = mActivity.getApplicationContext();
-        mFragmentItems = new ArrayList<>();
-
-        mSectionsStatePagerAdapter = new SectionsStatePagerAdapter(getSupportFragmentManager());
 
         mViewPager = findViewById(R.id.viewpager);
 
@@ -58,6 +46,8 @@ public class QRScanActivity extends AppCompatActivity {
     }
 
     private void setUpViewPager() {
+
+        ArrayList<String> mFragmentItems = new ArrayList<>();
         mFragmentItems.add(getString(R.string.menu_scan));
 
         ItemMainPager itemMainPager = new ItemMainPager(getSupportFragmentManager(), mFragmentItems);
@@ -71,22 +61,22 @@ public class QRScanActivity extends AppCompatActivity {
     }
 
     private void initQrFunctionality() {
-        if ((ContextCompat.checkSelfPermission(mActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
-                || (ContextCompat.checkSelfPermission(mActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
+        if ((ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+                || (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
             ActivityCompat.requestPermissions(
-                    mActivity, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.PERMISSION_REQ);
+                    this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.PERMISSION_REQ);
         } else {
             setUpViewPager();
         }
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == Constants.PERMISSION_REQ) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 setUpViewPager();
             } else {
-                AppUtils.showToast(mContext, getString(R.string.permission_not_granted));
+                AppUtils.showToast(this, getString(R.string.permission_not_granted));
             }
         }
     }

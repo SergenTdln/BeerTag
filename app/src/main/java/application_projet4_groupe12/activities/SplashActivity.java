@@ -2,21 +2,16 @@ package application_projet4_groupe12.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
 import application_projet4_groupe12.R;
-import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.utils.ActivityUtils;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.MobileAds;
 
-import java.io.IOException;
-
 import application_projet4_groupe12.utils.FirebaseUtils;
-import application_projet4_groupe12.utils.Global;
 import io.fabric.sdk.android.Fabric;
 
 

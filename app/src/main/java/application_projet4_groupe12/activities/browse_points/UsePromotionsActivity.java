@@ -130,9 +130,10 @@ public class UsePromotionsActivity extends AppCompatActivity {
             boolean fromList = removeFromList(list, vh.promoID);
 
             boolean local = (fromDB && fromList);
-            boolean firestore = FirebaseUtils.firestoreUsePromotion(user, vh, today);
 
-            return (local && firestore);
+            FirebaseUtils.firestoreUsePromotion(user, vh, today);
+
+            return local;
         } catch (IOException e){
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), "An error occurred; we could ropen the database.", Toast.LENGTH_SHORT).show();

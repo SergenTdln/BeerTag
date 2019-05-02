@@ -26,6 +26,10 @@ public class FirebaseUtils {
     private static boolean resultInsertion;
     private static boolean resultUsePromotion;
 
+    private static volatile boolean doneAddAdmin;
+    private static volatile boolean doneRemoveAdmin;
+    private static volatile boolean doneUsePromotion;
+
     public static void transferFromFirebase(Context c){
         SQLHelper db = null;
         try {
@@ -81,11 +85,10 @@ public class FirebaseUtils {
         }
     }
 
-    public static boolean firestoreRemoveAdmin(long partnerID, long userID){
-        final CountDownLatch latch = new CountDownLatch(1); //used for threads syncing
+    public static void firestoreRemoveAdmin(long partnerID, long userID){
 
         FirebaseFirestore dab = FirebaseFirestore.getInstance();
-        DocumentReference doc = dab.collection("Admin_User").
+        DocumentReference doc = dab.collection("Admin_user").
                 document((userID)+String.valueOf(partnerID));
 
         /*Deleting fields*/
@@ -99,32 +102,20 @@ public class FirebaseUtils {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        resultRemoval = true;
-                        latch.countDown();
-                        System.out.println("Successful push to Firestore.");
+                        System.out.println("Admin Removal : Successful push to Firestore.");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        resultRemoval = false;
-                        latch.countDown();
-                        System.out.println("Unsuccessful push to Firestore. Stacktrace :");
+                        System.out.println("Admin Removal : Unsuccessful push to Firestore. Stacktrace :");
                         e.printStackTrace();
                     }
                 });
-
-        try{
-            latch.await();
-        } catch (InterruptedException e){
-            System.out.println("Thread interrupted. Stacktrace :");
-            e.printStackTrace();
-            return false;
-        }
-        return resultRemoval;
     }
 
-    public static boolean firestoreAddAdmin(long partnerID, long userID){
+    public static void firestoreAddAdmin(long partnerID, long userID){
+
         final CountDownLatch latch = new CountDownLatch(1); //used for threads syncing
 
         FirebaseFirestore dab = FirebaseFirestore.getInstance();
@@ -132,38 +123,24 @@ public class FirebaseUtils {
         Map<String, Long> data = new HashMap<>();
         data.put("id_user", userID);
         data.put("id_partner", partnerID);
-        dab.collection("Admin_User").document((userID)+String.valueOf(partnerID))
+        dab.collection("Admin_user").document((userID)+String.valueOf(partnerID))
                 .set(data, SetOptions.merge())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        resultInsertion = true;
-                        latch.countDown();
-                        System.out.println("Successful push to Firestore.");
+                        System.out.println("Admin Addition : Successful push to Firestore.");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        resultInsertion = false;
-                        latch.countDown();
-                        System.out.println("Unsuccessful push to Firestore. Stacktrace :");
+                        System.out.println("Admin Addition : Unsuccessful push to Firestore. Stacktrace :");
                         e.printStackTrace();
                     }
                 });
-
-        try{
-            latch.await();
-        } catch (InterruptedException e){
-            System.out.println("Thread interrupted. Stacktrace :");
-            e.printStackTrace();
-            return false;
-        }
-        return resultInsertion;
     }
 
-    public static boolean firestoreUsePromotion(User user, UsePromotionsRowAdapter.ViewHolder vh, String date){
-        final CountDownLatch latch = new CountDownLatch(3); //used for threads syncing
+    public static void firestoreUsePromotion(User user, UsePromotionsRowAdapter.ViewHolder vh, String date){
 
         FirebaseFirestore dab = FirebaseFirestore.getInstance();
         if(! vh.reusable) {
@@ -182,26 +159,35 @@ public class FirebaseUtils {
             data.put("imagePath", FieldValue.delete());
             data.put("pointsRequired", FieldValue.delete());
             data.put("reusable", FieldValue.delete());
-            doc.update(data);
-            /*Deleting the document*/
-            doc.delete()
+            doc.update(data)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            resultUsePromotion = true;
-                            latch.countDown();
+                            System.out.println("Promotion Usage : Successful push to Firestore : (1/4 - Deleting the fields)");
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            resultUsePromotion = false;
-                            latch.countDown();
+                            System.out.println("Promotion Usage : Unsuccessful push to Firestore : (1/4 - Deleting the fields). Stacktrace :");
+                            e.printStackTrace();
                         }
                     });
-            if (!resultUsePromotion) {
-                return false;
-            }
+            /*Deleting the document*/
+            doc.delete()
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            System.out.println("Promotion Usage : Successful push to Firestore : (2/4 - Deleting the document)");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            System.out.println("Promotion Usage : Unsuccessful push to Firestore : (2/4 - Deleting the document). Stacktrace :");
+                            e.printStackTrace();
+                        }
+                    });
         }
 
         /*Update the User's points*/
@@ -212,20 +198,16 @@ public class FirebaseUtils {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        resultUsePromotion = true;
-                        latch.countDown();
+                        System.out.println("Promotion Usage : Successful push to Firestore : (3/4 - Updating the User's points)");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        resultUsePromotion = false;
-                        latch.countDown();
+                        System.out.println("Promotion Usage : Unsuccessful push to Firestore : (3/4 - Updating the user's points). Stacktrace :");
+                        e.printStackTrace();
                     }
                 });
-        if(!resultUsePromotion){
-            return false;
-        }
 
         /*Update the User_promotion table*/
         Map<String, Object> newData = new HashMap<>();
@@ -237,25 +219,15 @@ public class FirebaseUtils {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        resultUsePromotion = true;
-                        latch.countDown();
+                        System.out.println("Promotion Usage : Successful push to Firestore : (4/4 - Updating the User_promotion table)");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        resultUsePromotion = false;
-                        latch.countDown();
+                        System.out.println("Promotion Usage : Unsuccessful push to Firestore : (4/4 - Updating the User_promotion table). Stacktrace :");
+                        e.printStackTrace();
                     }
                 });
-
-        try{
-            latch.await();
-        } catch (InterruptedException e){
-            System.out.println("Thread interrupted. Stacktrace :");
-            e.printStackTrace();
-            return false;
-        }
-        return resultUsePromotion;
     }
 }

@@ -319,10 +319,10 @@ public class SettingsPartnerActivity extends AppCompatActivity {
         try{
             db = new SQLHelper(c);
             boolean local = db.addAdmin(user.getId(), partner.getId());
-            boolean firestore = FirebaseUtils.firestoreAddAdmin(partner.getId(), user.getId());
-            System.out.println("Adding a new Admin : local="+local+", firestore="+firestore);
 
-            return (local && firestore); // TODO Problem : what if one succeeds and not the other ?
+            FirebaseUtils.firestoreAddAdmin(partner.getId(), user.getId());
+
+            return local;
         } catch (IOException e){
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), "An error occurred; we could not add this User as an admin in the database. Please try again", Toast.LENGTH_SHORT).show();
@@ -342,9 +342,10 @@ public class SettingsPartnerActivity extends AppCompatActivity {
         try{
             db = new SQLHelper(this);
             boolean local = db.removeAdmin(username, currentPartner.getId());
-            boolean firestore = FirebaseUtils.firestoreRemoveAdmin(currentPartner.getId(), db.getUserID(username));
 
-            return (local && firestore); // TODO Problem : what if one succeeds and not the other ?
+            FirebaseUtils.firestoreRemoveAdmin(currentPartner.getId(), db.getUserID(username));
+
+            return local;
         } catch (IOException e){
             e.printStackTrace();
             return false;

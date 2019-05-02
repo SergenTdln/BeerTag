@@ -46,7 +46,7 @@
     <string name="email_field">Veuillez remplir le champ email</string>
     <string name="login_success">Connexion réussie</string>
     <string name="login_check_credentials">Vérifiez vos identifiants</string>
-    <string name="settings_partner_spinner_default">Veuillez selectionner un utilisateur</string>
+    <string name="settings_partner_spinner_default">Veuillez sélectionner un utilisateur</string>
     <string name="nav_find_partner">Trouver des partenaires</string>
     <string name="title_activity_find_partner">TrouverDesPartenairesActivity</string>
     <string name="dialog_share_text">Super, votre achat a été comptabilisé ! Voulez-vous partager cela avec vos amis, avec une super photo personnalisée ? :D</string>

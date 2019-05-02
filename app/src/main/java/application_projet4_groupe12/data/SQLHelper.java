@@ -1553,9 +1553,9 @@ public class SQLHelper extends SQLiteOpenHelper {
                                     String lastName = document.getString("lastName");
                                     String firstName = document.getString("firstName");
                                     String username = document.getString("username");
-                                    String password = document.getString("hashedPassword");
+                                    String password = document.getString("passwordHashed");
                                     //Circumventing inconsistencies in FireStore naming schemes
-                                    if(password==null){password=document.getString("passwordHashed");}
+                                    if(password==null){password=document.getString("hashedPassword");}
                                     String created_on = document.getString("creationDate");
                                     String birthday = document.getString("birthday");
                                     String image_path = document.getString("imagePath");

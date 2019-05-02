@@ -88,7 +88,7 @@ public class User {
         SQLHelper db = null;
         try {
             db = new SQLHelper(c);
-            return db.isAdmin(username);
+            return db.isAdmin(db.getUserID(username));
         } catch (IOException e) {
             e.printStackTrace();
             Toast.makeText(c, e.getMessage(), Toast.LENGTH_SHORT).show();

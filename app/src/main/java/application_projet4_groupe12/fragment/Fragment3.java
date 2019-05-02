@@ -17,7 +17,10 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -43,7 +46,6 @@ import application_projet4_groupe12.exceptions.WrongDateFormatException;
 import application_projet4_groupe12.utils.AppUtils;
 import application_projet4_groupe12.utils.Global;
 
-import static android.content.ContentValues.TAG;
 import static android.content.Context.MODE_PRIVATE;
 
 public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedListener {
@@ -62,6 +64,9 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
     private Button fragment3_sign_up;
 
     String selectedUsername;
+
+    static boolean successPush1;
+    static boolean successPush2;
 
     @Nullable
     @Override
@@ -128,11 +133,10 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
         String mName = name.getText().toString();
         String mAddress = address.getText().toString();
         String mTVA = tva.getText().toString();
-        String mSelectedUsername = (String) dropDownUsers.getSelectedItem();
         if( mName.equals("") ||
                 mAddress.equals("") ||
                 mTVA.equals("") ||
-                mSelectedUsername.equals(getString(R.string.settings_partner_spinner_default)) )
+                selectedUsername.equals(getString(R.string.settings_partner_spinner_default)) )
         {
             Toast.makeText(getActivity(), "Please fill in all the fields", Toast.LENGTH_SHORT).show();
             return false;
@@ -146,16 +150,12 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
             }
 
             long partnerID = db.getFreeIDPartner();
-            long adminID = db.getUserID(mSelectedUsername);
-            if (adminID==-1){
-                Toast.makeText(getActivity(),  "The selected Admin is invalid", Toast.LENGTH_SHORT).show();
-                return false;
-            }
+            User user = db.getUser(selectedUsername);
+            User.connectUser(getContext(), user);
 
             Date date = Calendar.getInstance().getTime();
             DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             String today = formatter.format(date);
-
             partner = new Partner(partnerID, mTVA, mName, mAddress, today, ""); //ImagePath will be edited later by partner in Settings Activity
 
             /*Adding the partner to the DB (local)*/
@@ -167,14 +167,10 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
                 Toast.makeText(getActivity(), "Invalid date format : please use DD/MM/YYYY", Toast.LENGTH_SHORT).show();
                 return false;
             }
-
-            /*Adding the partner to the DB (Firestore)*/
-            dab.collection("Partner").document(String.valueOf(partner.getId())).set(partner, SetOptions.merge());
-            Toast.makeText(getActivity(), "Partner created", Toast.LENGTH_SHORT).show();
-
             /*Adding the Admin_User entry to the DB (local)*/
             try {
-                db.addAdmin(adminID, partner.getId());
+                boolean success = db.addAdmin(user.getId(), partner.getId());
+                System.out.println("Admin_User inséré : " + success);
             } catch (UnknownUserException e) {
                 Log.v(Global.debug_text,"addAdmin "+e);
                 e.printStackTrace();
@@ -182,27 +178,33 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
                 return false;
             }
 
-            /*Adding the Admin_User entry to the DB (Firestore)*/
-            Map<String, Long> data = new HashMap<>();
-            data.put("id_user", adminID);
-            data.put("id_partner", partnerID);
-            dab.collection("Admin_User").
-                    document(String.valueOf(adminID)+String.valueOf(partnerID)). //Document ID = concat of both ids (assures its unique + very easy to retrieve later on)
-                    set(data, SetOptions.merge());
-            //Log.v(Global.debug_text, "add admin no error"+mAuth.getUid());
+            /*Firebase login*/
+            boolean isLoggedIn = (mAuth.getCurrentUser() != null);
+            if (!isLoggedIn) {
+                mAuth.signInWithEmailAndPassword(User.connectedUser.getUsername(), User.connectedUser.getPasswordHashed())
+                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                Toast.makeText(getContext(), "Firebase login : success ? " + task.isSuccessful(), Toast.LENGTH_SHORT).show();
 
+                                if(pushDataToFirebase(user, partnerID)) {
+                                    System.out.println("Successful push to Firestore.");
+                                    /*Everything succeeded : Move to main menu*/
 
-            //Log.d(Global.debug_text, "Firebase instance: " + mAuth);
+                                    // Logging in
+                                    SharedPreferences session = getActivity().getSharedPreferences("session", MODE_PRIVATE);
+                                    session.edit().putBoolean("choice made", true).apply();
+                                    session.edit().putBoolean("loggin_chosed", true).apply();
+                                    session.edit().putBoolean("is admin", true).apply();
 
-            // Logging in
-            SharedPreferences session = getActivity().getSharedPreferences("session", MODE_PRIVATE);
-            session.edit().putBoolean("choice made", true).apply();
-            session.edit().putBoolean("loggin_chosed", true).apply();
-            session.edit().putBoolean("is admin", true).apply();
+                                    AppUtils.end_home_admin(getActivity());
+                                } else {
+                                    System.out.println("Unsuccessful push to Firestore.");
+                                }
+                            }
+                        });
+            }
 
-            User user = db.getUser(selectedUsername);
-            User.connectUser(getContext(), user);
-            AppUtils.end_home_admin(getActivity());
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -213,4 +215,52 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
         return true;
     }
 
+    private boolean pushDataToFirebase(User user, long partnerID){
+        //successPush1 = false; //Reset
+        //successPush2 = false; //Reset
+
+        /*Adding the partner to the DB (Firestore)*/
+        dab.collection("Partner")
+                .document(String.valueOf(partner.getId()))
+                .set(partner, SetOptions.merge())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        System.out.println("Succesfully added a Partner entry to Firestore");
+                        successPush1 = true;
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        System.out.println("Error while adding a Partner entry to Firestore. Here is the stacktrace :");
+                        e.printStackTrace();
+                        successPush1 = false;
+                    }
+                });
+
+        /*Adding the Admin_User entry to the DB (Firestore)*/
+        Map<String, Long> data = new HashMap<>();
+        data.put("id_user", user.getId());
+        data.put("id_partner", partnerID);
+        dab.collection("Admin_user").
+                document((user.getId())+String.valueOf(partnerID)). //Document ID = concat of both ids (assures its unique + very easy to retrieve later on)
+                set(data, SetOptions.merge())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        System.out.println("Successfully added a Admin_user entry to Firestore");
+                        successPush2 = true;
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        System.out.println("Error while adding a Admin_user entry to Firestore. Here is the stacktrace :");
+                        e.printStackTrace();
+                        successPush2 = false;
+                    }
+                });
+        return successPush1 && successPush2;
+    }
 }

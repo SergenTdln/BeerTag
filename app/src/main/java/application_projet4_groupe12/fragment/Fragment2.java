@@ -16,6 +16,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.AuthResult;
@@ -140,38 +142,55 @@ public class Fragment2 extends Fragment {
             }
 
             /*Creating the Firebase User*/
-            mAuth.createUserWithEmailAndPassword(email, Hash.hash(pass)).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()) {
-                        Toast.makeText(getActivity(), R.string.login_success, Toast.LENGTH_SHORT).show();
-
-                        signIn(email);
-
-                        Intent intent = new Intent(getActivity(), MainActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-                        if(getActivity()!=null){
-                            getActivity().finish();
+            mAuth.createUserWithEmailAndPassword(email, Hash.hash(pass))
+                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (! task.isSuccessful()){
+                                if(task.getException() instanceof FirebaseNetworkException) {
+                                    Toast.makeText(getActivity(), "Could not create your account. Are you offline ?", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(getActivity(), "Firebase Failed" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                                    System.out.println("User creation failed ! Here is the stacktrace :");
+                                    task.getException().printStackTrace();
+                                }
+                            } else { //Success !
+                                System.out.println("Firebase account successfully created.");
+                                /*Adding the user to the DB (Firestore)*/
+                                dab.collection("User").document(String.valueOf(id)).set(user, SetOptions.merge())
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                //Toast.makeText(getActivity(), "Firebase entry created", Toast.LENGTH_SHORT).show();
+                                                System.out.println("Sign up : Firebase entry created");
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                e.printStackTrace();
+                                                //Toast.makeText(getActivity(), "Firebase entry NOT created", Toast.LENGTH_SHORT).show();
+                                                System.out.println("Sign up : Firebase entry NOT created");
+                                            }
+                                        });
+                            }
                         }
-                    } else {
-                        Exception e = task.getException();
-                        if (e instanceof FirebaseNetworkException){
-                            Toast.makeText(getActivity(), "Could not create your account. Are you offline ?", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(getActivity(), "Firebase Failed" + e, Toast.LENGTH_LONG).show();
-                        }
-                    }
-                }
-            });
 
-            /*Adding the user to the DB (Firestore)*/
-            dab.collection("User").document(String.valueOf(id)).set(user, SetOptions.merge());
-            Toast.makeText(getActivity(), "Account created", Toast.LENGTH_SHORT).show();
+                    });
 
             //Log.d(Global.debug_text, "Firebase instance: " + mAuth);
 
+            /*Logging in*/
+            Toast.makeText(getActivity(), R.string.login_success, Toast.LENGTH_SHORT).show();
 
+            signIn(email);
+
+            Intent intent = new Intent(getActivity(), MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            if(getActivity()!=null){
+                getActivity().finish();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -179,7 +198,7 @@ public class Fragment2 extends Fragment {
         }
     }
 
-    private void  signIn(String email) {
+    private void signIn(String email) {
         try {
             db = new SQLHelper(getContext());
 
@@ -207,29 +226,4 @@ public class Fragment2 extends Fragment {
             db.close();
         }
     }
-
-//    protected void sendEmail(String email) {
-//        Log.i(Global.debug_text,"Send email");
-//
-//        String[] TO = {email};
-//        String[] CC = {"fb.sergen.tasdelen@gmail.com"}; //rien que pour tester; à virer
-//        Intent emailIntent = new Intent(Intent.ACTION_SEND);
-//        emailIntent.setData(Uri.parse("mailto:"));
-//        emailIntent.setType("text/plain");
-//
-//
-//        emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
-//        emailIntent.putExtra(Intent.EXTRA_CC, CC);
-//        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Your subject");
-//        emailIntent.putExtra(Intent.EXTRA_TEXT, "Email message goes here");
-//
-//        try {
-//            startActivity(Intent.createChooser(emailIntent, "Send mail..."));
-//            getActivity().finish();
-//            Log.i("Finished sending email...", "");
-//        } catch (android.content.ActivityNotFoundException ex) {
-//            Toast.makeText(getActivity(),
-//                    "There is no email client installed.", Toast.LENGTH_SHORT).show();
-//        }
-//    }
 }

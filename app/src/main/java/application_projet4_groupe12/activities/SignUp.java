@@ -84,6 +84,9 @@ public class SignUp extends AppCompatActivity {
 
         // Prevents the keyboard from automatically opening up when arriving on the activity
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
+        mAuth = FirebaseAuth.getInstance();
+
         if (ActivityUtils.getInstance().isLoggedInFacebook()) {
             finish();
             SharedPreferences shared = getApplicationContext().getSharedPreferences("session", MODE_PRIVATE);
@@ -106,6 +109,7 @@ public class SignUp extends AppCompatActivity {
             Log.v(Global.debug_text, "login status" + login_status);
 
             if (login_status) {
+                /*Local login*/
                 String session_email = session.getString("email", "");
                 try {
                     db = new SQLHelper(this);
@@ -116,13 +120,22 @@ public class SignUp extends AppCompatActivity {
                 } finally {
                     db.close();
                 }
+                /*Firebase login*/
+                boolean isLoggedIn = (mAuth.getCurrentUser() != null);
+                if (!isLoggedIn) {
+                    mAuth.signInWithEmailAndPassword(User.connectedUser.getUsername(), User.connectedUser.getPasswordHashed())
+                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    Toast.makeText(getBaseContext(), "Firebase login : success ? " + task.isSuccessful(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                }
             }
         }
 
         setContentView(R.layout.activity_sign_up);
         loginButton = findViewById(R.id.login_button);
-
-        mAuth = FirebaseAuth.getInstance();
 
         try {
             PackageInfo info = getPackageManager().getPackageInfo(

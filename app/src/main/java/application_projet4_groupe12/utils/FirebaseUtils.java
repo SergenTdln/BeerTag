@@ -14,12 +14,14 @@ import com.google.firebase.firestore.SetOptions;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 import application_projet4_groupe12.activities.browse_points.UsePromotionsRowAdapter;
 import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.entities.User;
 
 public class FirebaseUtils {
+
     private static boolean resultRemoval;
     private static boolean resultInsertion;
     private static boolean resultUsePromotion;
@@ -80,7 +82,7 @@ public class FirebaseUtils {
     }
 
     public static boolean firestoreRemoveAdmin(long partnerID, long userID){
-        resultRemoval = false; // Reset
+        final CountDownLatch latch = new CountDownLatch(1); //used for threads syncing
 
         FirebaseFirestore dab = FirebaseFirestore.getInstance();
         DocumentReference doc = dab.collection("Admin_User").
@@ -98,19 +100,32 @@ public class FirebaseUtils {
                     @Override
                     public void onSuccess(Void aVoid) {
                         resultRemoval = true;
+                        latch.countDown();
+                        System.out.println("Successful push to Firestore.");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         resultRemoval = false;
+                        latch.countDown();
+                        System.out.println("Unsuccessful push to Firestore. Stacktrace :");
+                        e.printStackTrace();
                     }
                 });
+
+        try{
+            latch.await();
+        } catch (InterruptedException e){
+            System.out.println("Thread interrupted. Stacktrace :");
+            e.printStackTrace();
+            return false;
+        }
         return resultRemoval;
     }
 
     public static boolean firestoreAddAdmin(long partnerID, long userID){
-        resultInsertion = false; //Reset
+        final CountDownLatch latch = new CountDownLatch(1); //used for threads syncing
 
         FirebaseFirestore dab = FirebaseFirestore.getInstance();
 
@@ -123,22 +138,38 @@ public class FirebaseUtils {
                     @Override
                     public void onSuccess(Void aVoid) {
                         resultInsertion = true;
+                        latch.countDown();
+                        System.out.println("Successful push to Firestore.");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         resultInsertion = false;
+                        latch.countDown();
+                        System.out.println("Unsuccessful push to Firestore. Stacktrace :");
+                        e.printStackTrace();
                     }
                 });
+
+        try{
+            latch.await();
+        } catch (InterruptedException e){
+            System.out.println("Thread interrupted. Stacktrace :");
+            e.printStackTrace();
+            return false;
+        }
         return resultInsertion;
     }
 
     public static boolean firestoreUsePromotion(User user, UsePromotionsRowAdapter.ViewHolder vh, String date){
+        final CountDownLatch latch = new CountDownLatch(3); //used for threads syncing
+
         FirebaseFirestore dab = FirebaseFirestore.getInstance();
         if(! vh.reusable) {
             /*Delete the promotion*/
-            resultUsePromotion = false; //Reset
+
+            //resultUsePromotion = false; //Reset
             DocumentReference doc = dab.collection("Promotion").document(String.valueOf(vh.promoID));
             /*Deleting fields*/
             Map<String, Object> data = new HashMap<>();
@@ -158,12 +189,14 @@ public class FirebaseUtils {
                         @Override
                         public void onSuccess(Void aVoid) {
                             resultUsePromotion = true;
+                            latch.countDown();
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             resultUsePromotion = false;
+                            latch.countDown();
                         }
                     });
             if (!resultUsePromotion) {
@@ -174,18 +207,22 @@ public class FirebaseUtils {
         /*Update the User's points*/
         int pointsCost = Integer.parseInt(vh.pointsRequired.getText().toString());
         DocumentReference docUserPoints = dab.collection("User_points").document((user.getId())+String.valueOf(vh.shopID));
-        docUserPoints.update("points", FieldValue.increment((-1)*pointsCost))
+        docUserPoints
+                .update("points", FieldValue.increment((-1)*pointsCost))
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         resultUsePromotion = true;
+                        latch.countDown();
                     }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                resultUsePromotion = false; // TODO Problem : what if the first succeeded and not the second ?
-            }
-        });
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        resultUsePromotion = false;
+                        latch.countDown();
+                    }
+                });
         if(!resultUsePromotion){
             return false;
         }
@@ -201,15 +238,24 @@ public class FirebaseUtils {
                     @Override
                     public void onSuccess(Void aVoid) {
                         resultUsePromotion = true;
+                        latch.countDown();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        resultUsePromotion = false; // TODO Problem : what if the first succeeded and not the second ?
+                        resultUsePromotion = false;
+                        latch.countDown();
                     }
                 });
 
+        try{
+            latch.await();
+        } catch (InterruptedException e){
+            System.out.println("Thread interrupted. Stacktrace :");
+            e.printStackTrace();
+            return false;
+        }
         return resultUsePromotion;
     }
 }

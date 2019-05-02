@@ -320,6 +320,7 @@ public class SettingsPartnerActivity extends AppCompatActivity {
             db = new SQLHelper(c);
             boolean local = db.addAdmin(user.getId(), partner.getId());
             boolean firestore = FirebaseUtils.firestoreAddAdmin(partner.getId(), user.getId());
+            System.out.println("Adding a new Admin : local="+local+", firestore="+firestore);
 
             return (local && firestore); // TODO Problem : what if one succeeds and not the other ?
         } catch (IOException e){

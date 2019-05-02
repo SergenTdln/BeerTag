@@ -415,7 +415,7 @@ public class SQLHelper extends SQLiteOpenHelper {
                     c.getString(c.getColumnIndex("last_name")),
                     c.getString(c.getColumnIndex("birthday")),
                     c.getString(c.getColumnIndex("image_path")),
-                    this.isAdmin(c.getString(c.getColumnIndex("username")))
+                    this.isAdmin(userId)
             );
             c.close();
             return out;
@@ -449,7 +449,7 @@ public class SQLHelper extends SQLiteOpenHelper {
                     c.getString(c.getColumnIndex("last_name")),
                     c.getString(c.getColumnIndex("birthday")),
                     c.getString(c.getColumnIndex("image_path")),
-                    this.isAdmin(username)
+                    this.isAdmin(getUserID(username))
             );
             c.close();
             return out;
@@ -709,7 +709,7 @@ public class SQLHelper extends SQLiteOpenHelper {
     public List<Long> getAllNonAdminUserIDs(){
         List<Long> out = new LinkedList<>();
         List<String> allUserIDs = getElementFromDB("User", "_id", null);
-        List<String> allAdminIDs = getElementFromDB("Admin_User", "id_user", null);
+        List<String> allAdminIDs = getElementFromDB("Admin_user", "id_user", null);
         for (String userID : allUserIDs) {
             if(! allAdminIDs.contains(userID)){// if not present
                 out.add(Long.parseLong(userID));
@@ -1003,7 +1003,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      */
     public boolean doesUserAdminExist(long partnerID, long userID){
         boolean out;
-        Cursor c = getEntriesFromDB("Admin_User",
+        Cursor c = getEntriesFromDB("Admin_user",
                 new String[]{"id_user"},
                 "id_user = \""+userID+"\" AND id_partner = \""+partnerID+"\"",
                 null);
@@ -1049,12 +1049,11 @@ public class SQLHelper extends SQLiteOpenHelper {
 
     /**
      * Returns whether this user is an Admin, that is if he appears in the Admin_user table.
-     * @param username the username to look for
+     * @param userID the internal ID of the user to look for
      * @return True if the user identified by <code>username</code> is an Admin for any Partner, or False otherwise
      */
-    public boolean isAdmin(String username){
-        long id = getUserID(username);
-        return (getElementFromDB("Admin_user", "id_user", "id_user = \""+id+"\"")
+    public boolean isAdmin(long userID){
+        return (getElementFromDB("Admin_user", "id_user", "id_user = \""+userID+"\"")
                 .size() > 0);
     }
 
@@ -1423,8 +1422,18 @@ public class SQLHelper extends SQLiteOpenHelper {
         return (myDB.delete("Admin_user", "id_user = \""+this.getUserID(username)+"\" AND id_partner = \""+partnerID+"\"", null) > 0);
     }
 
+    /**
+     * Empties all the tables in the database
+     */
     public void emptyAll(){
-        //TODO Vider toutes les tables
+        myDB.delete("Address", null, null);
+        myDB.delete("Admin_user", null, null);
+        myDB.delete("Partner", null, null);
+        myDB.delete("Promotion", null, null);
+        myDB.delete("Shop_location", null, null);
+        myDB.delete("User", null, null);
+        myDB.delete("User_points", null, null);
+        myDB.delete("User_promotion", null, null);
     }
 
 
@@ -1545,6 +1554,8 @@ public class SQLHelper extends SQLiteOpenHelper {
                                     String firstName = document.getString("firstName");
                                     String username = document.getString("username");
                                     String password = document.getString("hashedPassword");
+                                    //Circumventing inconsistencies in FireStore naming schemes
+                                    if(password==null){password=document.getString("passwordHashed");}
                                     String created_on = document.getString("creationDate");
                                     String birthday = document.getString("birthday");
                                     String image_path = document.getString("imagePath");

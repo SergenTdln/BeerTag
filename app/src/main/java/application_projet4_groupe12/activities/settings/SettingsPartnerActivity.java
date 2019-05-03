@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.view.ContextMenu;
 import android.view.MenuItem;
@@ -19,7 +18,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -96,6 +94,7 @@ public class SettingsPartnerActivity extends AppCompatActivity {
         addAdmin = (Button) findViewById(R.id.settings_partner_manage_admins_add_button);
         addAdmin.setOnClickListener(new View.OnClickListener() {
             @Override
+
             public void onClick(View v) {
                 String selected = (String) dropDownUsers.getSelectedItem();
                 if(selected.equals(getString(R.string.settings_partner_spinner_default))){
@@ -165,6 +164,9 @@ public class SettingsPartnerActivity extends AppCompatActivity {
                     Uri selectedImage = imageReturnedIntent.getData();
                     String[] filePathColumn = {MediaStore.Images.Media.DATA};
 
+                    if(selectedImage==null){
+                        break;
+                    }
                     Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
                     cursor.moveToFirst();
 

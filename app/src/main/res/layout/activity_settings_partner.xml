@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -136,7 +137,7 @@
                                     android:layout_height="30dp"
                                     android:layout_alignParentTop="true"
                                     android:layout_marginTop="8dp"
-                                    android:text="@string/settings_change_name"
+                                    android:text="@string/settings_change_partner_name"
                                     android:textSize="23sp"
                                     app:layout_constraintStart_toStartOf="parent"
                                     app:layout_constraintTop_toBottomOf="@id/settings_partner_sub_title" />

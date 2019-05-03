@@ -132,6 +132,8 @@ public class UsePromotionsActivity extends AppCompatActivity {
             boolean local = (fromDB && fromList);
 
             FirebaseUtils.firestoreUsePromotion(user, vh, today);
+            //TODO firestore push doesn't work ?
+
 
             return local;
         } catch (IOException e){

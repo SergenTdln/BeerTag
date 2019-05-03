@@ -99,7 +99,13 @@
     <string name="permission_granted">Autorisation accordée !</string>
     <string name="select_file">Sélectionner une image</string>
     <string name="settings_change_address">Change l\'addresse du partenaire</string>
-    <string name="settings_change_name">Changer le nom du partenaire</string>
+    <string name="default_current_password">Votre mot de passe actuel</string>
+    <string name="default_new_password">Votre nouveau mot de passe</string>
+    <string name="settings_change_birthday">Changez votre anniversaire (vraiment ?)</string>
+    <string name="settings_change_partner_name">Changez le nom public du Partenaire</string>
+    <string name="settings_change_password">Changez votre mot de passe :</string>
+    <string name="settings_change_picture">Changez votre photo de profil :</string>
+    <string name="settings_change_user_name">Changez votre nom :</string>
 
     <!--<string name="login_fields">Veuillez completer tous les champs</string>-->
     <!--<string name="login_success">Connection</string>-->

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -71,7 +72,7 @@
                     android:id="@+id/textView9"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Réglages"
+                    android:text="@string/settings_title"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
                     android:textColor="@android:color/white" />
 
@@ -112,7 +113,11 @@
 
                             <android.support.constraint.ConstraintLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
+                                android:layout_height="wrap_content"
+                                android:paddingStart="8dp"
+                                android:paddingTop="8dp"
+                                android:paddingEnd="8dp"
+                                android:paddingBottom="8dp">
 
                                 <TextView
                                     android:id="@+id/settings_user_sub_title"
@@ -130,7 +135,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="16dp"
-                                    android:text="Change your name :"
+                                    android:text="@string/settings_change_user_name"
                                     android:textSize="20sp"
                                     app:layout_constraintStart_toStartOf="parent"
                                     app:layout_constraintTop_toBottomOf="@+id/settings_user_sub_title" />
@@ -168,7 +173,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="16dp"
-                                    android:text="Change your password :"
+                                    android:text="@string/settings_change_password"
                                     android:textSize="20sp"
                                     app:layout_constraintStart_toStartOf="parent"
                                     app:layout_constraintTop_toBottomOf="@id/settings_user_change_first_name" />
@@ -179,7 +184,7 @@
                                     android:minWidth="160dp"
                                     android:layout_height="40dp"
                                     android:layout_marginTop="8dp"
-                                    android:hint="Your current password"
+                                    android:hint="@string/default_current_password"
                                     android:textSize="15sp"
                                     android:scrollHorizontally="true"
                                     android:maxLines="1"
@@ -193,7 +198,7 @@
                                     android:minWidth="160dp"
                                     android:layout_height="40dp"
                                     android:layout_marginTop="8dp"
-                                    android:hint="Your new password"
+                                    android:hint="@string/default_new_password"
                                     android:textSize="15sp"
                                     android:scrollHorizontally="true"
                                     android:inputType="textPassword"
@@ -206,7 +211,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="16dp"
-                                    android:text="Change your birthdate (seriously ?) :"
+                                    android:text="@string/settings_change_birthday"
                                     android:textSize="20sp"
                                     app:layout_constraintStart_toStartOf="parent"
                                     app:layout_constraintTop_toBottomOf="@id/settings_user_change_password_new" />
@@ -217,7 +222,7 @@
                                     android:minWidth="160dp"
                                     android:layout_height="40dp"
                                     android:layout_marginTop="8dp"
-                                    android:hint="Your new birthdate (DD/MM/YYYY)"
+                                    android:hint="@string/birth_date_default"
                                     android:textSize="15sp"
                                     android:scrollHorizontally="true"
                                     android:inputType="date"
@@ -230,7 +235,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="16dp"
-                                    android:text="Change your profile picture :"
+                                    android:text="@string/settings_change_picture"
                                     android:textSize="20sp"
                                     app:layout_constraintStart_toStartOf="parent"
                                     app:layout_constraintTop_toBottomOf="@id/settings_user_change_birthday" />
@@ -250,7 +255,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="8dp"
-                                    android:text="Select file"
+                                    android:text="@string/select_file"
                                     android:textSize="15sp"
                                     android:textColor="@color/colorPrimaryDark"
                                     app:layout_constraintStart_toStartOf="parent"

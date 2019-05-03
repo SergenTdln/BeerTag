@@ -101,9 +101,15 @@
     <string name="select_file">Select a file</string>
     <string name="manage_admins">Manage your administrators :</string>
     <string name="change_logo">Change your logo :</string>
-    <string name="settings_change_name">Change the Partner\'s name :</string>
+    <string name="settings_change_partner_name">Change the Partner\'s name :</string>
+    <string name="settings_change_user_name">Change your name :</string>
+    <string name="settings_change_password">Change your password :</string>
     <string name="settings_change_address">Change the Partner\'s address :</string>
     <string name="default_address">Default Address</string>
+    <string name="default_current_password">Your current password</string>
+    <string name="default_new_password">Your new password</string>
+    <string name="settings_change_birthday">Change your birthdate (seriously ?) :</string>
+    <string name="settings_change_picture">Change your profile picture :</string>
 
     <string name="type_here_bar">Generate barcode</string>
     <string name="type_here_qr">Generate QR code</string>

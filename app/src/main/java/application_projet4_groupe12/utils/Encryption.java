@@ -1,19 +1,15 @@
 package application_projet4_groupe12.utils;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Base64;
 import android.util.Log;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Calendar;
-import java.util.Date;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -24,7 +20,6 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 
 import application_projet4_groupe12.activities.ExpiredActivity;
-import application_projet4_groupe12.activities.MainActivity;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.facebook.FacebookSdk.getApplicationContext;

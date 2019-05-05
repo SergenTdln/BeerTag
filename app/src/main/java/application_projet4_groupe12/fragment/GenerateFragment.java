@@ -15,21 +15,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.data.SQLHelper;
-import application_projet4_groupe12.entities.Address;
 import application_projet4_groupe12.entities.Partner;
-import application_projet4_groupe12.entities.Shop;
 import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.utils.CodeGenerator;
 import application_projet4_groupe12.utils.Encryption;
@@ -154,7 +150,7 @@ public class GenerateFragment extends Fragment {
         try {
             db = new SQLHelper(c);
             List<Long> shopsIDs = db.getAllShopsIDs(currPartner.getId());
-            List<String> shopsIDsAsStrings= new ArrayList<String>();
+            List<String> shopsIDsAsStrings= new ArrayList<>();
             shopsIDsAsStrings.add(0, getString(R.string.generate_fragment_spinner_default));
             for (Long id : shopsIDs) {
                 shopsIDsAsStrings.add(String.valueOf(id));

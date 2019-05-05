@@ -1,9 +1,7 @@
 package application_projet4_groupe12.activities;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.Notification;
-import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -11,14 +9,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -26,17 +20,11 @@ import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-import application_projet4_groupe12.BuildConfig;
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.data.preference.AppPreference;
@@ -45,8 +33,6 @@ import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.utils.ActivityUtils;
 import application_projet4_groupe12.utils.Encryption;
 import application_projet4_groupe12.utils.Global;
-
-import static com.facebook.FacebookSdk.getApplicationContext;
 
 
 public class QRResultActivity extends AppCompatActivity {

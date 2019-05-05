@@ -76,61 +76,64 @@ public class Fragment1 extends Fragment {
 
         fragment1_sign_in.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                username = getView().findViewById(R.id.sign_in_input_email);
-                password = getView().findViewById(R.id.sign_in_input_password);
+            public void onClick(View view){
+                View v = getView();
+                if(v != null) {
+                    username = v.findViewById(R.id.sign_in_input_email);
+                    password = v.findViewById(R.id.sign_in_input_password);
 
-                //trim pour virer les espaces blancs
-                String email = username.getText().toString().trim();
-                String pass = password.getText().toString().trim();
+                    //trim pour virer les espaces blancs
+                    String email = username.getText().toString().trim();
+                    String pass = password.getText().toString().trim();
 
-                if (TextUtils.isEmpty(email) || TextUtils.isEmpty(pass)) {
-                    Toast.makeText(getActivity(),R.string.login_fields, Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    try {
-                        db = new SQLHelper(getContext());
-                        if(db.doesUserExist(email)) {
-                            String hashedPassword = Hash.hash(pass);
-                            System.out.println("hashedPassword = "+hashedPassword);
-                            if (db.getHashedPassword(email).equals(hashedPassword)) { //If password is correct
+                    if(TextUtils.isEmpty(email) || TextUtils.isEmpty(pass)) {
+                        Toast.makeText(getActivity(), R.string.login_fields, Toast.LENGTH_SHORT).show();
+                    } else {
+                        try {
+                            db = new SQLHelper(getContext());
+                            if(db.doesUserExist(email)) {
+                                String hashedPassword = Hash.hash(pass);
+                                System.out.println("hashedPassword = " + hashedPassword);
+                                if(db.getHashedPassword(email).equals(hashedPassword)) { //If password is correct
 
-                                mAuth.signInWithEmailAndPassword(email, Hash.hash(pass)).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<AuthResult> task) {
-                                        if (task.isSuccessful()) {
-                                            Toast.makeText(getActivity(), R.string.login_success, Toast.LENGTH_SHORT).show();
+                                    mAuth.signInWithEmailAndPassword(email, Hash.hash(pass)).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<AuthResult> task){
+                                            if(task.isSuccessful()) {
+                                                Toast.makeText(getActivity(), R.string.login_success, Toast.LENGTH_SHORT).show();
 
-                                            signIn(email);
+                                                signIn(email);
 
-                                            Intent intent = new Intent(getActivity(), MainActivity.class);
-                                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                            startActivity(intent);
-                                            if(getActivity()!=null){
-                                                getActivity().finish();
-                                            }
-                                        } else {Exception e = task.getException();
-                                            if (e instanceof FirebaseNetworkException){
-                                                Toast.makeText(getActivity(), "Could not connect to your account. Are you offline ?", Toast.LENGTH_SHORT).show();
+                                                Intent intent = new Intent(getActivity(), MainActivity.class);
+                                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                startActivity(intent);
+                                                if(getActivity() != null) {
+                                                    getActivity().finish();
+                                                }
                                             } else {
-                                                Toast.makeText(getActivity(), "Firebase Failed" + e, Toast.LENGTH_LONG).show();
+                                                Exception e = task.getException();
+                                                if(e instanceof FirebaseNetworkException) {
+                                                    Toast.makeText(getActivity(), "Could not connect to your account. Are you offline ?", Toast.LENGTH_SHORT).show();
+                                                } else {
+                                                    Toast.makeText(getActivity(), "Firebase Failed" + e, Toast.LENGTH_LONG).show();
+                                                }
                                             }
                                         }
-                                    }
-                                });
+                                    });
 
+                                } else {
+                                    Toast.makeText(getActivity(), "Wrong password", Toast.LENGTH_SHORT).show();
+                                }
                             } else {
-                                Toast.makeText(getActivity(), "Wrong password", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), "This username does not exist", Toast.LENGTH_SHORT).show();
                             }
-                        } else {
-                            Toast.makeText(getActivity(), "This username does not exist", Toast.LENGTH_SHORT).show();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } finally {
+                            db.close();
                         }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } finally {
-                        db.close();
-                    }
 
+                    }
                 }
             }
         });

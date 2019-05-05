@@ -2,9 +2,8 @@ package application_projet4_groupe12.fragment;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -19,7 +18,6 @@ import com.google.zxing.Result;
 import java.util.ArrayList;
 import java.util.List;
 
-import application_projet4_groupe12.activities.MainActivity;
 import application_projet4_groupe12.utils.Global;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 import application_projet4_groupe12.R;
@@ -27,8 +25,6 @@ import application_projet4_groupe12.activities.QRResultActivity;
 import application_projet4_groupe12.data.preference.AppPreference;
 import application_projet4_groupe12.data.preference.PrefKey;
 import application_projet4_groupe12.utils.ActivityUtils;
-
-import static android.content.Context.MODE_PRIVATE;
 
 public class QRScanFragment extends Fragment {
 
@@ -52,7 +48,7 @@ public class QRScanFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_qrscan, container, false);
 
 
@@ -64,7 +60,9 @@ public class QRScanFragment extends Fragment {
 
     private void initVar() {
         mActivity = getActivity();
-        mContext = mActivity.getApplicationContext();
+        if(mActivity!=null) {
+            mContext = mActivity.getApplicationContext();
+        }
 
         isFlash = AppPreference.getInstance(mContext).getBoolean(PrefKey.FLASH, false); // flash off by default
         isAutoFocus = AppPreference.getInstance(mContext).getBoolean(PrefKey.FOCUS, true); // auto focus on by default

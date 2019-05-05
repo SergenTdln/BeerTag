@@ -2,8 +2,6 @@ package application_projet4_groupe12.data.preference;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -58,15 +56,11 @@ public class AppPreference {
 
     public void setStringArray(String key, ArrayList<String> values) {
         if (values != null && !values.isEmpty()) {
-            String value = "";
+            StringBuilder value = new StringBuilder();
             for (String str : values) {
-                if(value.isEmpty()) {
-                    value = str;
-                } else {
-                    value = value + "," + str;
-                }
+                value.append(",").append(str);
             }
-            setString(key, value);
+            setString(key, value.toString());
         }
     }
 

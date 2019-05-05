@@ -30,16 +30,4 @@ public class ActivityUtils {
 
         return token != null;
     }
-
-    public void return_user() {
-        if (isLoggedInFacebook()) {
-            //
-        }
-
-
-        return;
-    }
-
-
-
 }

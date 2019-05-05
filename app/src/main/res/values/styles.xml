@@ -1,3 +1,4 @@
+<!--suppress CheckTagEmptyBody -->
 <resources>
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">#80000000</item>

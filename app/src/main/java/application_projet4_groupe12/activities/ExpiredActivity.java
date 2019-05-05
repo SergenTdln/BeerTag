@@ -5,7 +5,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.RelativeLayout;
 
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.utils.AppUtils;

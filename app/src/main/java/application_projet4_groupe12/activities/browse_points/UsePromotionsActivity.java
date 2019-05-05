@@ -17,7 +17,6 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -25,7 +24,6 @@ import java.util.List;
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.entities.Promotion;
-import application_projet4_groupe12.entities.Shop;
 import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.utils.FirebaseUtils;
 

@@ -109,6 +109,30 @@
     <string name="share_my_picture">Super photo! Vous pouvez la partager en appuyant sur le boutton ci-dessous ! =D. N\'hésitez pas à la partager sur vos réseaux sociaux, c\'est sûr, vous allez avoir plein de likes et devenir un riche influenceur.</string>
     <string name="share">Partager</string>
     <string name="your_picture">Votre photo</string>
+    <string name="button">Bouton</string>
+    <string name="connect_as_admin">Se connecter en tant qu\'admin</string>
+    <string name="connect_as_user">Se connecter en tant qu\'utilisateur</string>
+    <string name="default_user_firstname">Prénom par défaut</string>
+    <string name="default_user_fullname">Nom complet par défaut</string>
+    <string name="default_user_lastname">Nom de famille par défaut</string>
+    <string name="delete">Supprimer</string>
+    <string name="disabled">Désactivé</string>
+    <string name="drink_responsibly">Buvez avec prudence</string>
+    <string name="group_12">Groupe 12</string>
+    <string name="hello">Bonjour :)</string>
+    <string name="home">Accueil</string>
+    <string name="i_read">J\'ai lu</string>
+    <string name="location">Localisation</string>
+    <string name="notification">Notification</string>
+    <string name="please_select_one">Veuillez sélectionner l\'interface voulue</string>
+    <string name="see_left_menu">Tout se passe à partir du menu à gauche</string>
+    <string name="take_picture">Prenez une photo</string>
+    <string name="use_promo">Utiliser cette promotion</string>
+    <string name="verify">VÉRIFIER</string>
+    <string name="version">Version %1$s</string>
+    <string name="whats_beer_tag">BeerTag, le système de fidélité</string>
+    <string name="whoops">Oups !</string>
+    <string name="you_have_both_types">Ce compte est à la fois utilisateur et administrateur.</string>
 
     <!--<string name="login_fields">Veuillez completer tous les champs</string>-->
     <!--<string name="login_success">Connection</string>-->

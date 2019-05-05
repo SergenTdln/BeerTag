@@ -152,9 +152,12 @@ public class Fragment2 extends Fragment {
                                 if(task.getException() instanceof FirebaseNetworkException) {
                                     Toast.makeText(getActivity(), "Could not create your account. Are you offline ?", Toast.LENGTH_SHORT).show();
                                 } else {
-                                    Toast.makeText(getActivity(), "Firebase Failed" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                                    System.out.println("User creation failed ! Here is the stacktrace :");
-                                    task.getException().printStackTrace();
+                                    Exception e = task.getException();
+                                    if(e!=null) {
+                                        Toast.makeText(getActivity(), "Firebase Failed" + e.getMessage(), Toast.LENGTH_LONG).show();
+                                        System.out.println("User creation failed ! Here is the stacktrace :");
+                                        e.printStackTrace();
+                                    }
                                 }
                             } else { //Success !
                                 System.out.println("Firebase account successfully created.");

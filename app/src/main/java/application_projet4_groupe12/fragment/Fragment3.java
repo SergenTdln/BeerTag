@@ -1,6 +1,7 @@
 package application_projet4_groupe12.fragment;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -23,10 +24,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
 import java.io.IOException;
@@ -85,7 +83,7 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
             List<String> allUsernamesList = db.getAllUsernames();
             allUsernamesList.add(0, getString(R.string.settings_partner_spinner_default));
 
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_adapter_plain_text, allUsernamesList);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), R.layout.spinner_adapter_plain_text, allUsernamesList);
             dropDownUsers.setAdapter(adapter);
         } catch (IOException e) {
             e.printStackTrace();
@@ -98,11 +96,14 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
         fragment3_sign_up.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                name = getView().findViewById(R.id.sign_up_partner_input_name);
-                address = getView().findViewById(R.id.sign_up_partner_input_address);
-                tva = getView().findViewById(R.id.sign_up_partner_input_tva);
+                View view = getView();
+                if(view!=null) {
+                    name = view.findViewById(R.id.sign_up_partner_input_name);
+                    address = view.findViewById(R.id.sign_up_partner_input_address);
+                    tva = view.findViewById(R.id.sign_up_partner_input_tva);
 
-                signUp();
+                    signUp();
+                }
             }
         });
 
@@ -113,7 +114,7 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String mSelectedUsername = (String) parent.getItemAtPosition(position);
         if(position==0) {
-            //Default item is selected : do nothing
+            return;
         } else if(User.isAdmin(getContext(), mSelectedUsername)){
             //An User cannot be admin of two Partners at the same time
             Toast.makeText(getContext(), "This User is already an admin for another Partner. Please select another User account", Toast.LENGTH_SHORT).show();
@@ -194,12 +195,15 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
                                     /*Everything succeeded : Move to main menu*/
 
                                     // Logging in
-                                    SharedPreferences session = getActivity().getSharedPreferences("session", MODE_PRIVATE);
-                                    session.edit().putBoolean("choice made", true).apply();
-                                    session.edit().putBoolean("loggin_chosed", true).apply();
-                                    session.edit().putBoolean("is admin", true).apply();
+                                    Activity act = getActivity();
+                                    if(act!=null) {
+                                        SharedPreferences session = act.getSharedPreferences("session", MODE_PRIVATE);
+                                        session.edit().putBoolean("choice made", true).apply();
+                                        session.edit().putBoolean("loggin_chosed", true).apply();
+                                        session.edit().putBoolean("is admin", true).apply();
 
-                                    AppUtils.end_home_admin(getActivity());
+                                        AppUtils.end_home_admin(act);
+                                    }
                                 } else {
                                     System.out.println("Unsuccessful push to Firestore.");
                                 }

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--suppress CheckTagEmptyBody -->
 <resources>
     <color name="red">#FF0089</color>
     <color name="blue">#36C6EA</color>

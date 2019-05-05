@@ -677,7 +677,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @return a List of <code>User</code> instances. This list might be empty if this <code>Partner</code> has no administrator. (Which should seriously be avoided)
      */
     public List<User> getAllAdmins(long partnerID){
-        List<User> ret = new LinkedList<User>();
+        List<User> ret = new LinkedList<>();
         List<String> adminsIDs = getElementFromDB("Admin_user", "id_user", "id_partner = \""+partnerID+"\"");
 
         for (String userId : adminsIDs) {
@@ -1459,9 +1459,8 @@ public class SQLHelper extends SQLiteOpenHelper {
         char tzb = tzCode.charAt(0);
         char tze = tzCode.charAt(tzCode.length()-1);
 
-        StringBuilder sb = new StringBuilder();
-        sb.append(month).append(day).append(hour).append(min).append(sec).append(millisec);
-        return Long.parseLong(sb.toString());
+        String s = "" + (month) + (day) + (hour) + (min) + (sec) + (millisec);
+        return Long.parseLong(s);
     }
 
     /**

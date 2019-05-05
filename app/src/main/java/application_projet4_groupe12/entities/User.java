@@ -51,24 +51,20 @@ public class User {
     /**
      * Connects the User <code>u</code> to his account in the application.
      * @param u the User instance to connect
-     * @return True if the user was connected
      */
-    public static boolean connectUser(Context c, User u){
+    public static void connectUser(Context c, User u){
         if(connectedUser!=null){
             disconnectUser(c);
             connectedUser = u;
-            return true;
         } else {
             connectedUser = u;
-            return true;
         }
     }
 
     /**
      * Disconnects the currently connected User from the application. Its data is refreshed in the database before disconnecting.
-     * @return True if the User was successfully disconnected from the application
      */
-    public static boolean disconnectUser(Context c){
+    public static void disconnectUser(Context c){
         SQLHelper db = null;
         try {
             db = new SQLHelper(c);
@@ -81,7 +77,6 @@ public class User {
             }
         }
         connectedUser = null;
-        return true;
     }
 
     public static boolean isAdmin(Context c, String username){
@@ -114,6 +109,10 @@ public class User {
                 e.printStackTrace();
                 Toast.makeText(c, "Could not retrieve Partner from database.", Toast.LENGTH_SHORT).show();
                 return null;
+            } finally {
+                if(db!=null){
+                    db.close();
+                }
             }
         } else {
             return null;

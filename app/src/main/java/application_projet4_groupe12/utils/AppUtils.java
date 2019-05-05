@@ -7,8 +7,6 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -20,7 +18,6 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-
 
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,11 +31,9 @@ import java.io.IOException;
 import application_projet4_groupe12.BuildConfig;
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.activities.AdminActivity;
-import application_projet4_groupe12.activities.AlcoolSensiActivity;
 import application_projet4_groupe12.activities.MainActivity;
 import application_projet4_groupe12.activities.ShareActivity;
 import application_projet4_groupe12.activities.SignUp;
-import application_projet4_groupe12.entities.Partner;
 import application_projet4_groupe12.entities.User;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -72,8 +67,10 @@ public class AppUtils {
     public static void copyToClipboard(Context context, String text) {
         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("label", text);
-        clipboard.setPrimaryClip(clip);
-        showToast(context, context.getResources().getString(R.string.copied));
+        if(clipboard!=null) {
+            clipboard.setPrimaryClip(clip);
+            showToast(context, context.getResources().getString(R.string.copied));
+        }
     }
 
     /**

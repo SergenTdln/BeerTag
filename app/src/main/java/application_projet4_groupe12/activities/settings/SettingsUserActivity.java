@@ -2,7 +2,6 @@ package application_projet4_groupe12.activities.settings;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,7 +25,6 @@ import java.io.FileOutputStream;
 import java.net.URL;
 
 import application_projet4_groupe12.R;
-import application_projet4_groupe12.activities.MainActivity;
 import application_projet4_groupe12.entities.User;
 import application_projet4_groupe12.exceptions.WrongDateFormatException;
 import application_projet4_groupe12.utils.ActivityUtils;
@@ -115,7 +113,7 @@ public class SettingsUserActivity extends AppCompatActivity {
                     newPassword.setBackgroundResource(R.drawable.border_error);
                     return;
                 }
-                if( (!currPasswordS.equals("")) && (!newPasswordS.equals(""))){
+                if( (!currPasswordS.equals("")) ){
                     if(newPasswordS.length()<6){
                         currentPassword.setBackgroundResource(0);
                         newPassword.setBackgroundResource(R.drawable.border_error);

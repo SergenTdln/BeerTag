@@ -35,10 +35,8 @@ public class FirebaseUtils {
         try {
             db = new SQLHelper(c);
 
+            //Empty local db to take remote changes into account
             db.emptyAll();
-            //TODO empty local db to take remote changes into account
-
-            //TODO go through everything to make sure pushes to remote are done when necessary @Martin
 
             if(db.TransferUser()) {
                 System.out.println("Transferred Users successfully");

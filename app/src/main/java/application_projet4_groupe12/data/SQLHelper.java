@@ -1539,7 +1539,6 @@ public class SQLHelper extends SQLiteOpenHelper {
     //*****
     //FIREBASE SYNC METHODS
     //*****
-    //TODO conditional transfer (see TransferUser_points)
 
     public boolean TransferUser() {
         dab.collection("User")
@@ -1769,14 +1768,7 @@ public class SQLHelper extends SQLiteOpenHelper {
                                 cv.put("\"id_shop\"", id_shop);
                                 cv.put("\"points\"", points);
 
-                                int current = getPoints(id_user, id_shop);
-                                if (current == -1){
-                                    myDB.insert("User_points", null, cv);
-                                } else if(current != points) {
-                                    myDB.update("User_points", cv, "\"id_user\" = "+id_user+" AND \"id_shop\" = "+id_shop, null);
-                                }// else {
-                                    //Do nothing
-                                //}
+                                myDB.insert("User_points", null, cv);
                             }
                         } else {
                             Log.e("TAG", "Error getting documents: ", task.getException());

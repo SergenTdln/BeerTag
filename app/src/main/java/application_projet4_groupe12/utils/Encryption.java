@@ -8,6 +8,7 @@ import android.util.Base64;
 import android.util.Log;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -36,11 +37,11 @@ public class Encryption {
 
     public static String encryptQrCode(String value) {
         try {
-            DESKeySpec keySpec = new DESKeySpec(cryptoPass.getBytes("UTF8"));
+            DESKeySpec keySpec = new DESKeySpec(cryptoPass.getBytes(StandardCharsets.UTF_8));
             SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
             SecretKey key = keyFactory.generateSecret(keySpec);
 
-            byte[] clearText = value.getBytes("UTF8");
+            byte[] clearText = value.getBytes(StandardCharsets.UTF_8);
             Cipher cipher = Cipher.getInstance("DES");
             cipher.init(Cipher.ENCRYPT_MODE, key);
 
@@ -49,8 +50,6 @@ public class Encryption {
             return encryptedValue;
 
         } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (InvalidKeySpecException e) {
             e.printStackTrace();
@@ -71,7 +70,7 @@ public class Encryption {
 //        String[] str = new Date[0];
         String decryptedValue = null;
         try {
-            DESKeySpec keySpec = new DESKeySpec(cryptoPass.getBytes("UTF8"));
+            DESKeySpec keySpec = new DESKeySpec(cryptoPass.getBytes(StandardCharsets.UTF_8));
             SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
             SecretKey key = keyFactory.generateSecret(keySpec);
             byte[] encrypedPwdBytes = new byte[0];
@@ -121,8 +120,6 @@ public class Encryption {
 
         } catch (InvalidKeyException e) {
             e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
         } catch (InvalidKeySpecException e) {
             e.printStackTrace();
         } catch (NoSuchAlgorithmException e) {
@@ -142,13 +139,13 @@ public class Encryption {
     If the qrcode has not expired (has to be used within 2 minutes) then its considered as valid
      */
     private static Boolean validity_expired(long qrtime) {
-        Boolean expired = false;
+        boolean expired = false;
         Long now_time = GetUnixTime();
 
         Log.v(Global.debug_text, "qr time" + qrtime);
         Log.v(Global.debug_text, "now  time" + now_time);
 
-        Long diff = now_time - qrtime;
+        long diff = now_time - qrtime;
         Log.v(Global.debug_text, "time diff " + diff);
         if (diff >= 600000) {
             expired = true;
@@ -162,9 +159,7 @@ public class Encryption {
      */
     public static Long GetUnixTime() {
         Calendar calendar = Calendar.getInstance();
-        long now = calendar.getTimeInMillis();
-//        int utc = (int)(now / 1000);
-        return now;
+        return calendar.getTimeInMillis();
 
     }
 
@@ -172,8 +167,7 @@ public class Encryption {
         Calendar calendar = Calendar.getInstance();
         long now = calendar.getTimeInMillis();
 //        int utc = (int)(now / 1000);
-        String time = String.valueOf(now);
-        return time;
+        return String.valueOf(now);
 
     }
 }

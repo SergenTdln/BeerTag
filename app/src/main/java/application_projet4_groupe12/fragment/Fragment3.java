@@ -1,5 +1,6 @@
 package application_projet4_groupe12.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -154,6 +155,7 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
             User.connectUser(getContext(), user);
 
             Date date = Calendar.getInstance().getTime();
+            @SuppressLint("SimpleDateFormat")
             DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             String today = formatter.format(date);
             partner = new Partner(partnerID, mTVA, mName, mAddress, today, ""); //ImagePath will be edited later by partner in Settings Activity

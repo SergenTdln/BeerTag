@@ -30,8 +30,7 @@ public class FacebookUtils {
     }
 
     public String getFacebookId(){
-        String id = Profile.getCurrentProfile().getId();
-        return id;
+        return Profile.getCurrentProfile().getId();
     }
 
 

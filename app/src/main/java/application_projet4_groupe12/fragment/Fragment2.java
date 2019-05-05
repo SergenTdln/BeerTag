@@ -1,5 +1,6 @@
 package application_projet4_groupe12.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -43,7 +44,6 @@ import application_projet4_groupe12.utils.Hash;
 
 public class Fragment2 extends Fragment {
 
-    private Button fragment2_sign_up;
     private SQLHelper db;
     private User user;
     private FirebaseFirestore dab = FirebaseFirestore.getInstance();
@@ -55,6 +55,7 @@ public class Fragment2 extends Fragment {
     private EditText firstName;
     private EditText lastName;
     private EditText birthDate;
+    private Button fragment2_sign_up;
 
     SharedPreferences session;
 
@@ -122,10 +123,11 @@ public class Fragment2 extends Fragment {
             long id = db.getFreeIDUser();
 
             Date date = Calendar.getInstance().getTime();
+            @SuppressLint("SimpleDateFormat")
             DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             String today = formatter.format(date);
 
-            user = new User(id, email, Hash.hash(pass), today, firstName.getText().toString(), lastName.getText().toString(), birthDate.getText().toString(), Long.toString(id)+"_pic.png", false);
+            user = new User(id, email, Hash.hash(pass), today, firstName.getText().toString(), lastName.getText().toString(), birthDate.getText().toString(), (id)+"_pic.png", false);
 
             /*Adding the user to the DB (local)*/
             try {

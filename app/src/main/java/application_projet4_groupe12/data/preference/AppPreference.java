@@ -10,36 +10,33 @@ import java.util.Arrays;
 
 public class AppPreference {
 
-    // declare context
-    private static Context mContext;
-
     // singleton
     private static AppPreference appPreference = null;
 
     // common
-    private SharedPreferences sharedPreferences, settingsPreferences;
+    private SharedPreferences sharedPreferences;
+    //private SharedPreferences settingsPreferences; // never accessed ?
     private SharedPreferences.Editor editor;
 
     public static AppPreference getInstance(Context context) {
         if(appPreference == null) {
-            mContext = context;
-            appPreference = new AppPreference();
+            appPreference = new AppPreference(context);
         }
         return appPreference;
     }
-    private AppPreference() {
-        sharedPreferences = mContext.getSharedPreferences(PrefKey.APP_PREF_NAME, Context.MODE_PRIVATE);
-        settingsPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+    private AppPreference(Context context) {
+        sharedPreferences = context.getSharedPreferences(PrefKey.APP_PREF_NAME, Context.MODE_PRIVATE);
+        //settingsPreferences = PreferenceManager.getDefaultSharedPreferences(context); // never accessed ?
         editor = sharedPreferences.edit();
+        editor.apply(); // Just to make the compiler happy
     }
 
-    public void setString(String key, String value) {
+    private void setString(String key, String value) {
         editor.putString(key , value);
         editor.commit();
     }
     public String getString(String key) {
-        String string = sharedPreferences.getString(key, null);
-        return string;
+        return sharedPreferences.getString(key, null);
     }
 
     public void setBoolean(String key, boolean value) {

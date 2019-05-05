@@ -95,7 +95,6 @@ public class AdminActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         return super.onOptionsItemSelected(item);
     }
 

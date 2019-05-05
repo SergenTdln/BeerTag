@@ -8,7 +8,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
-import android.media.ExifInterface;
+import android.support.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -135,8 +135,7 @@ public class ShareActivity extends AppCompatActivity {
             outHeight = maxSize;
             outWidth = (inWidth * maxSize) / inHeight;
         }
-        Bitmap resizedBitmap = Bitmap.createScaledBitmap(bm, outWidth, outHeight, false);
-        return resizedBitmap;
+        return Bitmap.createScaledBitmap(bm, outWidth, outHeight, false);
     }
 
 

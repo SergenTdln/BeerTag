@@ -147,7 +147,7 @@ public class SettingsPartnerActivity extends AppCompatActivity {
      */
     private void onBtnPickGallery() {
         Intent pickPhoto = new Intent(Intent.ACTION_PICK,
-            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(pickPhoto , 123);//one can be replaced with any action code
     }
 
@@ -158,17 +158,18 @@ public class SettingsPartnerActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
 
-        switch(requestCode) {
-            case 123:
-                if(resultCode == RESULT_OK){
-                    Uri selectedImage = imageReturnedIntent.getData();
-                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
+        if(requestCode==123){
+            if(resultCode == RESULT_OK){
+                Uri selectedImage = imageReturnedIntent.getData();
+                String[] filePathColumn = {MediaStore.Images.Media.DATA};
 
-                    if(selectedImage==null){
-                        break;
-                    }
-                    Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+                if(selectedImage==null){
+                    return;
+                }
+                Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+                if(cursor!=null) {
                     cursor.moveToFirst();
+
 
                     int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                     String imagePath = cursor.getString(columnIndex);
@@ -179,7 +180,7 @@ public class SettingsPartnerActivity extends AppCompatActivity {
                     String outputFilePath = currentPartner.getId() + "_pic.png";
                     FileInputStream streamIn = AppUtils.getStreamIn(new File(imagePath));
                     FileOutputStream streamOut = AppUtils.getStreamOut(this, outputFilePath);
-                    if (streamIn != null && streamOut != null && AppUtils.copyFile(streamIn, streamOut)) {
+                    if(streamIn != null && streamOut != null && AppUtils.copyFile(streamIn, streamOut)) {
                         //Image successfully coped
                         currentPartner.setImagePath(this, outputFilePath);
                         //Show new pic in this Activity
@@ -190,11 +191,8 @@ public class SettingsPartnerActivity extends AppCompatActivity {
                         //Image  was not changed
                         System.err.println("Profile pic was not changed");
                     }
-
                 }
-                break;
-            default:
-                break;
+            }
         }
     }
 
@@ -234,9 +232,9 @@ public class SettingsPartnerActivity extends AppCompatActivity {
                         return true;
                     }
 
-                    //case R.id.delete_admin_context_item_disabled :
+                case R.id.delete_admin_context_item_disabled :
                     //Do nothing ?
-                    //    return true;
+                    return true;
                 default:
                     return false;
             }

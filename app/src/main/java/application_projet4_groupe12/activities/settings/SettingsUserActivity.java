@@ -157,7 +157,7 @@ public class SettingsUserActivity extends AppCompatActivity {
      */
     private void onBtnPickGallery() {
         Intent pickPhoto = new Intent(Intent.ACTION_PICK,
-            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(pickPhoto , 123);//one can be replaced with any action code
     }
 
@@ -168,13 +168,16 @@ public class SettingsUserActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
 
-        switch(requestCode) {
-            case 123:
-                if(resultCode == RESULT_OK){
-                    Uri selectedImage = imageReturnedIntent.getData();
-                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
+        if(requestCode==123){
+            if(resultCode == RESULT_OK) {
+                Uri selectedImage = imageReturnedIntent.getData();
+                String[] filePathColumn = {MediaStore.Images.Media.DATA};
 
-                    Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+                if(selectedImage == null) {
+                    return;
+                }
+                Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+                if(cursor != null) {
                     cursor.moveToFirst();
 
                     int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
@@ -183,24 +186,22 @@ public class SettingsUserActivity extends AppCompatActivity {
 
 
                     //New pic's name
-                    String outputFilePath = User.connectedUser.getId()+"_pic.png";
+                    String outputFilePath = User.connectedUser.getId() + "_pic.png";
                     FileInputStream streamIn = AppUtils.getStreamIn(new File(imagePath));
                     FileOutputStream streamOut = AppUtils.getStreamOut(this, outputFilePath);
-                    if(streamIn!=null && streamOut!=null && AppUtils.copyFile(streamIn, streamOut)) {
+                    if(streamIn != null && streamOut != null && AppUtils.copyFile(streamIn, streamOut)) {
                         //Image successfully coped
                         User.connectedUser.setImagePath(this, outputFilePath);
                         //Show new pic in this Activity
                         System.out.println("Profile pic was changed");
-                        picture.setImageBitmap(BitmapFactory.decodeFile(this.getFilesDir()+"/"+outputFilePath));
+                        picture.setImageBitmap(BitmapFactory.decodeFile(this.getFilesDir() + "/" + outputFilePath));
                     } else {
                         //An error occurred
                         //Image  was not changed
                         System.err.println("Profile pic was not changed");
                     }
                 }
-                break;
-            default:
-                break;
+            }
         }
     }
 

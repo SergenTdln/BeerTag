@@ -55,9 +55,7 @@ public class FindPartnerActivity extends FragmentActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.findpartneractivity_layout);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            checkUserLocationPermission();
-        }
+        checkUserLocationPermission();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()

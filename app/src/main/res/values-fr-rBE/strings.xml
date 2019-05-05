@@ -39,7 +39,7 @@
     <string name="nav_admin_settings">Paramètres</string>
     <string name="nav_admin_browse_clients">Consulter les points de mes clients</string>
     <string name="browse_clients_title">Consulter les points de mes clients</string>
-    <string name="browse_clients_default_user_fullname">Nom d\'utilisateur par défaut</string>
+    <string name="browse_clients_default_user_fullname">Nom de l\'utilisateur par défaut</string>
     <string name="browse_clients_default_user_username">Email d\'utilisateur par défaut</string>
     <string name="browse_clients_shop_title">Établissement situé :</string>
     <string name="login_fields">Veuillez remplir tous les champs</string>
@@ -106,6 +106,9 @@
     <string name="settings_change_password">Changez votre mot de passe :</string>
     <string name="settings_change_picture">Changez votre photo de profil :</string>
     <string name="settings_change_user_name">Changez votre nom :</string>
+    <string name="share_my_picture">Super photo! Vous pouvez la partager en appuyant sur le boutton ci-dessous ! =D. N\'hésitez pas à la partager sur vos réseaux sociaux, c\'est sûr, vous allez avoir plein de likes et devenir un riche influenceur.</string>
+    <string name="share">Partager</string>
+    <string name="your_picture">Votre photo</string>
 
     <!--<string name="login_fields">Veuillez completer tous les champs</string>-->
     <!--<string name="login_success">Connection</string>-->

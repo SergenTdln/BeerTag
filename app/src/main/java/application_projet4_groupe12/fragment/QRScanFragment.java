@@ -180,16 +180,13 @@ public class QRScanFragment extends Fragment {
     //todo : corriger le retour à Home @Sergen j'imagine ?
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
+        if(item.getItemId() == android.R.id.home){
 //                finish()
 
                 return true;
 
-            default:
+        } else {
                 return super.onOptionsItemSelected(item);
         }
     }
-
-
 }

@@ -51,7 +51,7 @@
                     android:id="@+id/imageView"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    app:srcCompat="@drawable/logo" />
+                    app:srcCompat="@drawable/ic_launcher" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -59,7 +59,7 @@
                     android:layout_marginTop="@dimen/spacing_middle"
                     android:text="@string/app_name"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                    android:textColor="@color/white"
+                    android:textColor="@color/darkwhite"
                     android:textStyle="bold" />
 
                 <TextView
@@ -67,7 +67,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_small"
-                    android:text="Version 1.0"
+                    android:text="@string/version"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     android:textColor="@color/cardview_shadow_start_color" />
 
@@ -82,7 +82,7 @@
                 android:text="@string/dialog_share_text"
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                android:textColor="@color/white" />
+                android:textColor="@color/darkwhite" />
 
         </LinearLayout>
 
@@ -99,7 +99,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="Prendre la photo"
+                android:text="@string/take_picture"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
                 android:textColor="@android:color/white"
                 app:fontFamily="sans-serif-medium" />

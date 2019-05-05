@@ -1,5 +1,6 @@
 package application_projet4_groupe12.activities.browse_points;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -88,8 +89,7 @@ public class UsePromotionsActivity extends AppCompatActivity {
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         UsePromotionsRowAdapter.ViewHolder vh = (UsePromotionsRowAdapter.ViewHolder) info.targetView.getTag();
-        switch (item.getItemId()) {
-            case R.id.use_promotion_context_item:
+        if(item.getItemId() == R.id.use_promotion_context_item){
                 if (usePromotion(this, User.connectedUser, vh, promotions)) {
                     Toast.makeText(this, "Promotion successfully used", Toast.LENGTH_SHORT).show();
                     fillListView(listView, promotions); //Refreshing the displayed list
@@ -104,8 +104,8 @@ public class UsePromotionsActivity extends AppCompatActivity {
             //case R.id.use_promotions_context_item_2 :
              //Do nothing ?
             //    return true;
-            default:
-                return false;
+        } else {
+            return false;
         }
 
     }
@@ -123,6 +123,7 @@ public class UsePromotionsActivity extends AppCompatActivity {
             db = new SQLHelper(c);
 
             Date date = Calendar.getInstance().getTime();
+            @SuppressLint("SimpleDateFormat")
             DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             String today = formatter.format(date);
 

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/darkwhite">
 
     <View
         android:layout_width="match_parent"
@@ -76,6 +76,7 @@
                         android:maxLength="50"
                         android:maxLines="1"
                         android:inputType="textEmailAddress"
+                        android:hint="@string/your_username"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
                         android:textStyle="bold" />
                     <!---->
@@ -101,6 +102,7 @@
                         android:maxLength="50"
                         android:maxLines="1"
                         android:inputType="textPassword"
+                        android:hint="@string/your_password"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
                         android:textStyle="bold" />
 
@@ -124,6 +126,7 @@
                         android:maxLength="50"
                         android:maxLines="1"
                         android:inputType="textPassword"
+                        android:hint="@string/your_password"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
                         android:textStyle="bold" />
                     <!---->
@@ -149,6 +152,7 @@
                         android:maxLength="50"
                         android:maxLines="1"
                         android:inputType="textPersonName"
+                        android:hint="@string/first_name"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
                         android:textStyle="bold" />
 
@@ -173,6 +177,7 @@
                         android:maxLength="50"
                         android:maxLines="1"
                         android:inputType="textPersonName"
+                        android:hint="@string/last_name"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
                         android:textStyle="bold" />
 
@@ -211,7 +216,7 @@
                         android:background="@drawable/btn_rounded_primary"
                         android:text="@string/fragment2_confirm"
                         android:textAllCaps="false"
-                        android:textColor="@color/white"
+                        android:textColor="@color/darkwhite"
                         android:textStyle="bold" />
 
                     <LinearLayout

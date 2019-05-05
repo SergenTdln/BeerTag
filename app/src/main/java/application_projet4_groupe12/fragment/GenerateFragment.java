@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -36,7 +37,6 @@ import application_projet4_groupe12.utils.Global;
 
 public class GenerateFragment extends Fragment {
 
-    private Activity mActivity;
     private Context mContext;
 
     private EditText inputText;
@@ -60,7 +60,7 @@ public class GenerateFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_qrgenerate, container, false);
 
         initView(rootView);
@@ -71,10 +71,10 @@ public class GenerateFragment extends Fragment {
     }
 
     private void initVar() {
-        mActivity = getActivity();
-        mContext = mActivity.getApplicationContext();
-
-
+        Activity mActivity = getActivity();
+        if(mActivity!=null) {
+            mContext = mActivity.getApplicationContext();
+        }
     }
 
     private void initView(View rootView) {

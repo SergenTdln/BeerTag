@@ -58,6 +58,12 @@
     <string name="login_success">Login success</string>
     <string name="login_check_credentials">Check credentials</string>
 
+    <string name="hello">Hello :)</string>
+    <string name="you_have_both_types">You have both an User and Partner account.</string>
+    <string name="please_select_one">Please select the desired interface</string>
+    <string name="connect_as_user">Connect as User</string>
+    <string name="connect_as_admin">Connect as Admin</string>
+
     <!--Navigation view-->
     <string name="nav_scan_code">Scan a code</string>
     <string name="nav_generate_code">Generate a code</string>
@@ -70,7 +76,7 @@
     <string name="nav_add_admin">Add an Administrator</string>
     <string name="nav_admin_settings">Settings</string>
     <string name="nav_admin_browse_clients">Look up my clients\' points</string>
-    <string name="nav_find_partner">Find partner</string>
+    <string name="nav_find_partner">Find partners near me</string>
     <string name="nav_switch_menu">Switch the User Interface</string>
 
     <!--Browse points-->
@@ -87,6 +93,7 @@
     <string name="promo_is_not_reusable">This promotion is NOT reusable</string>
     <string name="use_promotions_title">Use promotions</string>
     <string name="use_promotions_points_collected">Points collected :</string>
+    <string name="use_promo">Use this promotion</string>
 
     <!--Browse clients-->
     <string name="browse_clients_title">Browse my clients\' points</string>
@@ -135,4 +142,26 @@
     <string name="qr_amount_text">Please enter your purchase\'s cost</string>
     <string name="qr_expired_text">The scanned QR code is invalid or has expired&#8230;</string>
     <string name="qr_scan_text">Please scan a QR code</string>
+    <string name="your_picture">Your picture</string>
+    <string name="share">Share</string>
+    <string name="share_my_picture">Great picture ! You can now share it by pressing this button ! =D Do not hesitate to do so, as it will surely grant you a lot of likes and make you a very rich influencer.</string>
+    <string name="i_read">I read</string>
+    <string name="notification">Notification</string>
+    <string name="drink_responsibly">Drink responsibly</string>
+    <string name="see_left_menu">It all starts in the left menu</string>
+    <string name="whats_beer_tag">BeerTag, the 2.0 fidelity system that makes your life easier ! Have fun !</string>
+    <string name="group_12">Group 12</string>
+    <string name="whoops">Whoops !</string>
+    <string name="home">Home</string>
+    <string name="default_user_fullname">Default User Full Name</string>
+    <string name="default_user_firstname">Default User First Name</string>
+    <string name="default_user_lastname">Default User Last Name</string>
+    <string name="button">Button</string>
+    <string name="textview" translatable="false">TextView</string>
+    <string name="verify">VERIFY</string>
+    <string name="delete">Delete</string>
+    <string name="version">Version %1$s</string>
+    <string name="take_picture">Take a picture</string>
+    <string name="location">Location</string>
+    <string name="disabled">Disabled</string>
 </resources>

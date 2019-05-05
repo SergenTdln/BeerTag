@@ -240,6 +240,7 @@ public class SQLHelper extends SQLiteOpenHelper {
             String path = DATABASE_PATH + DATABASE_NAME;
             this.myDB = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READWRITE);
         }
+        //noinspection UnnecessaryLocalVariable
         Cursor cursor = myDB.query("\""+table+"\"",
                 columns,
                 conditionSQL,

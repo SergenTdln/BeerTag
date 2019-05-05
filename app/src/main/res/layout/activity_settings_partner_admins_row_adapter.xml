@@ -2,7 +2,6 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
@@ -15,7 +14,7 @@
         android:fontFamily="@font/roboto"
         android:gravity="start|center_vertical"
         android:ellipsize="marquee"
-        android:text="Default User Full Name"
+        android:text="@string/default_user_fullname"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -28,7 +27,7 @@
         android:fontFamily="@font/roboto"
         android:gravity="start|center_vertical"
         android:ellipsize="marquee"
-        android:text="Default Username"
+        android:text="@string/default_username"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/settings_partner_row_adapter_user_full_name" />

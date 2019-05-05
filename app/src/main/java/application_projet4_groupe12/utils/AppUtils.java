@@ -46,10 +46,8 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class AppUtils {
 
-    private static long backPressed = 0;
-
     public static void tapToExit(Activity activity, int interface_number) {
-        backPressed = System.currentTimeMillis();
+        long backPressed = System.currentTimeMillis();
         if (backPressed + 1000 > System.currentTimeMillis()){
             if(activity.isTaskRoot()){
                 SharedPreferences session = getApplicationContext().getSharedPreferences("session", MODE_PRIVATE);
@@ -217,14 +215,16 @@ public class AppUtils {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
         dialog.setContentView(R.layout.dialog_share);
         dialog.setCancelable(true);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-
+        Window here = dialog.getWindow();
+        if(here!=null) {
+            here.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        }
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
         lp.copyFrom(dialog.getWindow().getAttributes());
         lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
         lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
 
-        ((TextView) dialog.findViewById(R.id.tv_version)).setText("Version " + BuildConfig.VERSION_NAME);
+        ((TextView) dialog.findViewById(R.id.tv_version)).setText(activity.getString(R.string.version, BuildConfig.VERSION_NAME));
 
         dialog.findViewById(R.id.bt_getcode).setOnClickListener(new View.OnClickListener() {
             @Override

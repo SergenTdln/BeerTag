@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#2d000000"
@@ -53,17 +53,12 @@
                     android:paddingLeft="@dimen/spacing_middle"
                     android:paddingRight="@dimen/spacing_middle"
                     android:paddingTop="@dimen/spacing_medium"
-                    android:text="Votre photo"
+                    android:text="@string/your_picture"
                     android:textAllCaps="true"
                     android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                     android:textColor="@android:color/black" />
 
             </LinearLayout>
-
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
 
         </android.support.design.widget.CollapsingToolbarLayout>
 
@@ -78,7 +73,7 @@
         android:fitsSystemWindows="true"
         android:scrollbars="none"
         android:scrollingCache="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        app:layout_behavior="android.support.design.widget.AppBarLayout$ScrollingViewBehavior">
 
 
         <LinearLayout
@@ -91,7 +86,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/spacing_large"
-                android:text="Super photo! Vous pouvez la partager en appuyant sur le boutton ci-dessous ! =D. N'hésitez pas à la partager sur vos réseaux sociaux, c'est sur, vous allez avoir plein de likes et devenir un riche influenceur."
+                android:text="@string/share_my_picture"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="#000000" />
 
@@ -105,20 +100,17 @@
                     android:layout_height="43dp"
                     android:layout_marginTop="148dp"
                     android:background="@color/admin_colorPrimary"
-                    android:text="Partager"
-                    android:textColor="@color/white"
+                    android:text="@string/share"
+                    android:textColor="@color/darkwhite"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
             </android.support.constraint.ConstraintLayout>
 
-
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>
-
-
 
 </android.support.design.widget.CoordinatorLayout>
 

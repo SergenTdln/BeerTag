@@ -1,5 +1,6 @@
 package application_projet4_groupe12.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -146,8 +147,8 @@ public class SignUp extends AppCompatActivity {
                 md.update(signature.toByteArray());
                 Log.i(Global.debug_text, Base64.encodeToString(md.digest(), Base64.DEFAULT));
             }
-        } catch (PackageManager.NameNotFoundException e) {
-        } catch (NoSuchAlgorithmException e) {
+        } catch (PackageManager.NameNotFoundException ignored) {
+        } catch (NoSuchAlgorithmException ignored) {
         }
 
         mCallbackManager = CallbackManager.Factory.create();
@@ -277,6 +278,7 @@ public class SignUp extends AppCompatActivity {
 //                                    int id = Integer.valueOf(session_id); //id de la session facebook
                                     long db_id = db.getFreeIDUser();
                                     Date date = Calendar.getInstance().getTime();
+                                    @SuppressLint("SimpleDateFormat")
                                     DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                                     String today = formatter.format(date);
 

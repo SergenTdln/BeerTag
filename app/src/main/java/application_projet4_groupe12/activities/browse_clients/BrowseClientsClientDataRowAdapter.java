@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.util.List;
+import java.util.Locale;
 
 import application_projet4_groupe12.R;
 
@@ -41,7 +42,7 @@ public class BrowseClientsClientDataRowAdapter extends ArrayAdapter<BrowseClient
         if(assoc!=null){
             viewHolder.userFullname.setText(assoc.getFullname());
             viewHolder.userUsername.setText(assoc.getUsername());
-            viewHolder.pointsAmount.setText(Integer.toString(assoc.getPoints()));
+            viewHolder.pointsAmount.setText(String.format(Locale.getDefault(), "%d",assoc.getPoints()));
         }
 
         convertView.setEnabled(false);

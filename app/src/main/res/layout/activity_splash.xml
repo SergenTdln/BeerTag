@@ -15,7 +15,7 @@
         android:adjustViewBounds="false"
         android:cropToPadding="false"
         android:scaleType="centerInside"
-        android:src="@drawable/logo"
+        android:src="@drawable/ic_launcher"
        />
 
     <TextView
@@ -26,7 +26,7 @@
         android:layout_marginTop="20dp"
         android:gravity="center"
         android:text="@string/splash_text"
-        android:textColor="@color/white"
+        android:textColor="@color/darkwhite"
         android:textSize="40sp" />
 
     <TextView
@@ -35,7 +35,7 @@
         android:layout_below="@+id/text"
         android:gravity="center"
         android:text="@string/subsplash_text"
-        android:textColor="@color/white"
+        android:textColor="@color/darkwhite"
         android:textSize="15sp" />
 
 </RelativeLayout>

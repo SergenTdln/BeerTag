@@ -39,13 +39,13 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class Fragment1 extends Fragment {
 
-    private Button fragment1_sign_in;
     private SQLHelper db;
     private User user;
 
     private FirebaseAuth mAuth;
     private EditText username;
     private EditText password;
+    private Button fragment1_sign_in;
 
     SharedPreferences session;
 

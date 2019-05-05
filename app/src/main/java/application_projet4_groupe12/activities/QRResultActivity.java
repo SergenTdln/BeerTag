@@ -148,13 +148,12 @@ public class QRResultActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
+        if(item.getItemId() == android.R.id.home){
                 startActivity(new Intent(QRResultActivity.this, AdminActivity.class));
                 finish();
-
-            default:
-                return super.onOptionsItemSelected(item);
+                return true;
+        } else {
+            return super.onOptionsItemSelected(item);
         }
     }
 
@@ -174,9 +173,9 @@ public class QRResultActivity extends AppCompatActivity {
     }
 
     private Boolean hasQrExpired() {
-        Boolean has_expired = false;
+        boolean has_expired = false;
         SharedPreferences shared = getSharedPreferences("session", MODE_PRIVATE);
-        Boolean expired_qr = shared.getBoolean("expired_qr", false);
+        boolean expired_qr = shared.getBoolean("expired_qr", false);
         if (expired_qr) {
             Log.v(Global.debug_text, "expired initcheckqrexp");
             has_expired = true;
@@ -215,7 +214,9 @@ public class QRResultActivity extends AppCompatActivity {
                         .bigPicture(bitmap)
                         .bigLargeIcon(null));
 
-        notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
+        if(notificationManager!=null) {
+            notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
+        }
     }
 
     private void increaseCount() {

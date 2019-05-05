@@ -13,12 +13,12 @@ public abstract class Hash {
             // Create a MD5 Hash
             MessageDigest digest = java.security.MessageDigest.getInstance(("MD5"));
             digest.update((input.getBytes()));
-            byte messageDigest[] = digest.digest();
+            byte[] messageDigest = digest.digest();
 
             // The MD5 Hash is in array form so  it need to be convert into a String
             StringBuilder output = new StringBuilder();
-            for (int i=0; i<messageDigest.length; i++) {
-                output.append(Integer.toHexString(0xFF & messageDigest[i]));
+            for(byte b : messageDigest) {
+                output.append(Integer.toHexString(0xFF & b));
             }
 
             return output.toString();

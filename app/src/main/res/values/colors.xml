@@ -1,18 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--suppress CheckTagEmptyBody -->
 <resources>
-    <color name="red">#FF0089</color>
-    <color name="blue">#36C6EA</color>
     <color name="colorPrimary">#2261FF</color>
     <!--<color name="colorPrimary">#E42261FF</color>-->
     <color name="colorPrimaryDark">#033A86</color>
-    <color name="colorAccent">#6E1C03</color>
     <color name="darkwhite">#F0F0F0</color>
     <color name="grey">#a6a6a6</color>
     <color name="light_red">#ff4d4d</color>
-    <color name="fab">#FFEB3B</color>
     <color name="viewfinder_mask">#60000000</color>
-    <color name="placeholder">#d9aeaeae</color>
     <color name="viewfinder_laser">#F4F2FA</color>
     <color name="viewfinder_border">@color/colorPrimaryDark</color>
     <color name="black">#000000</color>
@@ -20,9 +15,6 @@
     <!-- -->
     <color name="login_text">#FFFFFF</color>
     <!--<color name="login_text_hint">#97FFFFFF</color>-->
-    <color name="login_text_hint">#FFFFFF</color>
-
-
 
 
     <!-- admin colors -->

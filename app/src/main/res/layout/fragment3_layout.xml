@@ -48,7 +48,6 @@
                     android:padding="@dimen/spacing_mlarge">
 
                     <TextView
-                        android:id="@+id/sign_up_partner_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
@@ -60,7 +59,6 @@
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/sign_up_partner_input_name_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/your_name"
@@ -85,7 +83,6 @@
                         android:layout_height="@dimen/spacing_mlarge" />
 
                     <TextView
-                        android:id="@+id/sign_up_partner_input_address_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/your_address"
@@ -110,7 +107,6 @@
                         android:layout_height="@dimen/spacing_mlarge" />
 
                     <TextView
-                        android:id="@+id/sign_up_partner_input_tva_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/your_tva_number"
@@ -135,7 +131,6 @@
                         android:layout_height="@dimen/spacing_mlarge" />
 
                     <TextView
-                        android:id="@+id/sign_up_partner_input_admin_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/fragment3_spinner_title"
@@ -163,7 +158,6 @@
                         android:layout_height="@dimen/spacing_mlarge" />
 
                     <TextView
-                        android:id="@+id/sign_up_partner_text_details"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/fragment3_conclusion"

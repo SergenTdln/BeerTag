@@ -6,7 +6,6 @@
     <string name="nav_header_title">Projet P4 </string>
     <string name="nav_header_subtitle">Groupe 12</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Paramètres</string>
     <string name="sign_up">INSCRIPTION</string>
     <string name="splash_text">Beer Tag</string>
     <string name="subsplash_text">Beer Tag, le système de fidélité 2.0</string>
@@ -15,14 +14,8 @@
     <string name="permission_not_granted">Autorisation refusée !</string>
     <string name="copied">Le résultat a bien été copié.</string>
     <string name="result">Résultat</string>
-    <string name="valid_email">E-mail valide</string>
-    <string name="invalid_email">E-mail invalide !</string>
-    <string name="existing_email">Cette addresse e-mail est déjà utilisée</string>
-    <string name="account_done">Compte créé avec succès</string>
-    <string name="password_no_match">Les mots de passe ne correspondent pas</string>
     <string name="nav_scan_code">Scanner un code</string>
     <string name="nav_generate_code">Générer un code</string>
-    <string name="type_here_bar">Générer un code-barres</string>
     <string name="type_here_qr">Générer un code QR</string>
     <string name="nav_browse_points">Consulter mes points</string>
     <string name="nav_settings">Paramètres</string>
@@ -33,19 +26,14 @@
     <string name="browse_points_default_shop_address">Addresse par défaut</string>
     <string name="settings_title">Paramètres</string>
     <string name="default_username">Email par défaut</string>
-    <string name="nav_title_priv_account">Votre compte utilisateur</string>
-    <string name="nav_title_admin_default">Gestion du partenaire &quot;Partenaire par défaut&quot;</string>
     <string name="nav_add_admin">Ajouter un administrateur</string>
     <string name="nav_admin_settings">Paramètres</string>
     <string name="nav_admin_browse_clients">Consulter les points de mes clients</string>
     <string name="browse_clients_title">Consulter les points de mes clients</string>
     <string name="browse_clients_default_user_fullname">Nom de l\'utilisateur par défaut</string>
     <string name="browse_clients_default_user_username">Email d\'utilisateur par défaut</string>
-    <string name="browse_clients_shop_title">Établissement situé :</string>
     <string name="login_fields">Veuillez remplir tous les champs</string>
-    <string name="email_field">Veuillez remplir le champ email</string>
     <string name="login_success">Connexion réussie</string>
-    <string name="login_check_credentials">Vérifiez vos identifiants</string>
     <string name="settings_partner_spinner_default">Veuillez sélectionner un utilisateur</string>
     <string name="nav_find_partner">Trouver des partenaires</string>
     <string name="title_activity_find_partner">TrouverDesPartenairesActivity</string>
@@ -109,7 +97,6 @@
     <string name="share_my_picture">Super photo! Vous pouvez la partager en appuyant sur le boutton ci-dessous ! =D. N\'hésitez pas à la partager sur vos réseaux sociaux, c\'est sûr, vous allez avoir plein de likes et devenir un riche influenceur.</string>
     <string name="share">Partager</string>
     <string name="your_picture">Votre photo</string>
-    <string name="button">Bouton</string>
     <string name="connect_as_admin">Se connecter en tant qu\'admin</string>
     <string name="connect_as_user">Se connecter en tant qu\'utilisateur</string>
     <string name="default_user_firstname">Prénom par défaut</string>

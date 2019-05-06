@@ -57,7 +57,7 @@ public class Fragment2 extends Fragment {
     private EditText birthDate;
     private Button fragment2_sign_up;
 
-    SharedPreferences session;
+    private SharedPreferences session;
 
     private int MIN_PASSWD_LENGTH = 6; //This is a Firebase limitation
 

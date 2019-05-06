@@ -33,7 +33,7 @@ public class AppPreference {
         editor.putString(key , value);
         editor.commit();
     }
-    public String getString(String key) {
+    private String getString(String key) {
         return sharedPreferences.getString(key, null);
     }
 

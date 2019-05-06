@@ -14,7 +14,7 @@ public class ShopFrame {
 
     private long id;
     private long idShop;
-    String filePath;
+    private String filePath;
 
     public ShopFrame(){}
 

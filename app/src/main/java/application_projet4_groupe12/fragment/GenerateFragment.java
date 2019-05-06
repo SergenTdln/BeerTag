@@ -39,7 +39,7 @@ public class GenerateFragment extends Fragment {
     private ImageView outputBitmap;
     private Spinner spinner;
 
-    Partner currPartner;
+    private Partner currPartner;
 
     private static final int TYPE_QR = 0;
     private static int TYPE = TYPE_QR;

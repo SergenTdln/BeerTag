@@ -29,19 +29,17 @@ import android.widget.TextView;
 public class AdminActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    static boolean active = false;
+    private static boolean active = false;
 
-    SharedPreferences session_share;
+    private Toolbar toolbar;
+    private FloatingActionButton fab_gen;
+    private DrawerLayout drawer;
+    private NavigationView navigationView;
 
-    Toolbar toolbar;
-    FloatingActionButton fab_gen;
-    DrawerLayout drawer;
-    NavigationView navigationView;
-
-    ImageView navHeaderImage;
-    TextView navHeaderText1;
-    TextView navHeaderText2;
-    TextView navHeaderText3;
+    private ImageView navHeaderImage;
+    private TextView navHeaderText1;
+    private TextView navHeaderText2;
+    private TextView navHeaderText3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +83,6 @@ public class AdminActivity extends AppCompatActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
         return super.onOptionsItemSelected(item);
     }

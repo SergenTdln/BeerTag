@@ -16,7 +16,7 @@ import java.util.List;
 import application_projet4_groupe12.R;
 import application_projet4_groupe12.entities.User;
 
-public class SettingsPartnerAdminDataRowAdapter extends ArrayAdapter<User> {
+class SettingsPartnerAdminDataRowAdapter extends ArrayAdapter<User> {
 
     public SettingsPartnerAdminDataRowAdapter(Context context, @NonNull List<User> elements){
         super(context, 0, elements);

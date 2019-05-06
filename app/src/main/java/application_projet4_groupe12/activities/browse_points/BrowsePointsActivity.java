@@ -19,8 +19,8 @@ import application_projet4_groupe12.utils.Global;
 
 public class BrowsePointsActivity extends AppCompatActivity {
 
-    String sessionEmail;
-    ListView listView;
+    private String sessionEmail;
+    private ListView listView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

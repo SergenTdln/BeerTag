@@ -182,7 +182,6 @@ public class AppUtils {
 
         //reset la session globale fb ou standar
         if (ActivityUtils.getInstance().isLoggedInFacebook()) {
-            String session_id = new FacebookUtils().getFacebookId();
             SharedPreferences fb_login = getApplicationContext().getSharedPreferences("session", Context.MODE_PRIVATE);
             fb_login.edit().clear().apply();
         } else {

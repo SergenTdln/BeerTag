@@ -72,12 +72,12 @@ public class SignUp extends AppCompatActivity {
 
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseAuth mAuth;
-    public SQLHelper db;
+    private SQLHelper db;
 
-    LoginButton loginButton;
-    CallbackManager mCallbackManager;
-    String TAG = "debug";
-    String name;
+    private LoginButton loginButton;
+    private CallbackManager mCallbackManager;
+    private String TAG = "debug";
+    private String name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -47,7 +47,7 @@ public class Fragment1 extends Fragment {
     private EditText password;
     private Button fragment1_sign_in;
 
-    SharedPreferences session;
+    private SharedPreferences session;
 
     private  CallbackManager callbackManager;
 

@@ -11,7 +11,7 @@ import com.google.zxing.common.BitMatrix;
 
 public class CodeGenerator extends AsyncTask<Void, Void, Bitmap>{
 
-    public static final int QR_DIMENSION = 1080;
+    private static final int QR_DIMENSION = 1080;
 
     private static final int WHITE = 0xFFFFFFFF;
     private static final int BLACK = 0xFF000000;

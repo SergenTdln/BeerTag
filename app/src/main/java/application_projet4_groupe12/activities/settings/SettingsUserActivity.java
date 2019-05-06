@@ -34,15 +34,15 @@ import application_projet4_groupe12.utils.Hash;
 
 public class SettingsUserActivity extends AppCompatActivity {
 
-    TextView subTitle;
-    EditText newFirstName;
-    EditText newLastName;
-    EditText currentPassword;
-    EditText newPassword;
-    EditText newBirthday;
-    ImageView picture;
-    Button selectFileButton;
-    ImageButton buttonOut;
+    private TextView subTitle;
+    private EditText newFirstName;
+    private EditText newLastName;
+    private EditText currentPassword;
+    private EditText newPassword;
+    private EditText newBirthday;
+    private ImageView picture;
+    private Button selectFileButton;
+    private ImageButton buttonOut;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

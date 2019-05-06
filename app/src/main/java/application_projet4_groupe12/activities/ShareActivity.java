@@ -32,7 +32,7 @@ import static android.media.MediaRecorder.VideoSource.CAMERA;
 
 public class ShareActivity extends AppCompatActivity {
 
-    Uri outPutfileUri;
+    private Uri outPutfileUri;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -139,7 +139,7 @@ public class ShareActivity extends AppCompatActivity {
     }
 
 
-    public String start_share(Bitmap bitmap) {
+    private String start_share(Bitmap bitmap) {
         // enregistrer sur l'appareil pour la passer à une autre activité
         String fileName = "img";
         try {

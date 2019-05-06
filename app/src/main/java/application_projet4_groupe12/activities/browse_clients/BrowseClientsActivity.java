@@ -19,7 +19,7 @@ import application_projet4_groupe12.utils.Global;
 
 public class BrowseClientsActivity extends AppCompatActivity {
 
-    ListView listView;
+    private ListView listView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

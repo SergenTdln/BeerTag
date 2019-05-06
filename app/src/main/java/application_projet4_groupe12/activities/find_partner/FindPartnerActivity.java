@@ -125,16 +125,13 @@ public class FindPartnerActivity extends FragmentActivity implements
 
     }
 
-    public boolean checkUserLocationPermission() {
+    private void checkUserLocationPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Request_User_Location_Code);
             } else {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Request_User_Location_Code);
             }
-            return false;
-        } else {
-            return true;
         }
     }
 
@@ -153,7 +150,7 @@ public class FindPartnerActivity extends FragmentActivity implements
         }
     }
 
-    protected synchronized void buildGoogleApiClient() {
+    private synchronized void buildGoogleApiClient() {
         googleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -211,7 +208,7 @@ public class FindPartnerActivity extends FragmentActivity implements
 
     }
 
-    public LatLng getLocationFromAddress(Context context, String strAddress)
+    private LatLng getLocationFromAddress(Context context, String strAddress)
     {
         Geocoder coder= new Geocoder(context);
         List<android.location.Address> address;

@@ -126,7 +126,7 @@ public class QRScanFragment extends Fragment {
     }
 
 
-    public void setupFormats() {
+    private void setupFormats() {
         List<BarcodeFormat> formats = new ArrayList<>();
         if (mSelectedIndices == null || mSelectedIndices.isEmpty()) {
             mSelectedIndices = new ArrayList<>();

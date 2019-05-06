@@ -29,13 +29,13 @@ import application_projet4_groupe12.utils.FirebaseUtils;
 
 public class UsePromotionsActivity extends AppCompatActivity {
 
-    ListView listView;
-    TextView subTitle;
-    TextView subTitle2;
+    private ListView listView;
+    private TextView subTitle;
+    private TextView subTitle2;
 
-    List<Promotion> promotions;
-    long currentShopID;
-    String currentShopDescr;
+    private List<Promotion> promotions;
+    private long currentShopID;
+    private String currentShopDescr;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

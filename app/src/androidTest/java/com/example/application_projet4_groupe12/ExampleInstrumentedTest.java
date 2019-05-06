@@ -10,7 +10,7 @@ import static junit.framework.Assert.assertEquals;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 @RunWith(AndroidJUnit4.class)
-public class ExampleInstrumentedTest {
+class ExampleInstrumentedTest {
     @Test
     public void useAppContext() {
         // Context of the app under test.

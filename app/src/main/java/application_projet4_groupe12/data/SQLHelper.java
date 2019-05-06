@@ -401,7 +401,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param userId the ID of the User to retrieve
      * @return a User instance, or null if this id was not present in the database
      */
-    public User getUser(long userId){
+    private User getUser(long userId){
         Cursor c = getEntriesFromDB("User", null, "_id = \""+userId+"\"", null);
         if(c.moveToFirst()){
             if(c.getCount() > 1){
@@ -466,7 +466,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param shopID the Shop_location to look for
      * @return an internal Partner ID as a long, or -1 if <code>shopID</code> was not present in the database
      */
-    public long getPartnerID(long shopID){
+    private long getPartnerID(long shopID){
         Cursor c = getEntriesFromDB("Shop_location",
                 new String[]{"id_partner"},
                 "_id = \""+shopID+"\"",
@@ -503,7 +503,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param userID the internal ID of the user we are looking for
      * @return The username of this User as a String, or null if this <code>userID</code> is not present in the database.
      */
-    public String getUsername(long userID){
+    private String getUsername(long userID){
         List<String> res = this.getElementFromDB("User", "username", "_id = \""+userID+"\"");
         if( res.isEmpty() ){
             //No user with such ID was found in the database
@@ -582,7 +582,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param promoID the internal ID of the Promotion to look for
      * @return the amount of points required as an int.
      */
-    public int getPointsRequired(long promoID){
+    private int getPointsRequired(long promoID){
         List<String> list = getElementFromDB("Promotion", "points_required", "_id = \""+promoID+"\"");
         return Integer.parseInt(list.get(0));
     }
@@ -606,7 +606,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param userId the User to look for
      * @return a <code>List</code> of <code>Long</code> instances. This <code>List</code> might be empty if this User doesn't have any favorite shops.
      */
-    public List<Long> getFavoriteShopsIDs(long userId){
+    private List<Long> getFavoriteShopsIDs(long userId){
         List<Long> ret = new LinkedList<>();
         List<String> res = getElementFromDB("Favorite_shops", "id_shop", "id_user = \""+userId+"\"");
         for (String s : res) {
@@ -648,7 +648,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param shopID the Shop to look for
      * @return a list of Longs. This list can be empty if this Shop has no client registered in the database.
      */
-    public List<Long> getAllClientsUserIDs(long shopID){
+    private List<Long> getAllClientsUserIDs(long shopID){
         List<Long> res = new LinkedList<>();
         List<String> userIds = getElementFromDB("User_points", "id_user", "id_shop = \""+shopID+"\" AND points > 0");
         for (String userID : userIds){
@@ -707,7 +707,7 @@ public class SQLHelper extends SQLiteOpenHelper {
         }
         return out;
     }
-    public List<Long> getAllNonAdminUserIDs(){
+    private List<Long> getAllNonAdminUserIDs(){
         List<Long> out = new LinkedList<>();
         List<String> allUserIDs = getElementFromDB("User", "_id", null);
         List<String> allAdminIDs = getElementFromDB("Admin_user", "id_user", null);
@@ -749,7 +749,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * Returns a list of all the currently active promotions at the given shop.
      * @return a list of Promotion instances. This list may be empty if there is no currently active promotions in the database.
      */
-    public List<Promotion> getAllActivePromotions(long shopID){
+    private List<Promotion> getAllActivePromotions(long shopID){
         List<Promotion> ret = new LinkedList<>();
         Cursor c = getEntriesFromDB("Promotion", null, "active = \"1\" AND id_shop = \""+shopID+"\"", null);
         if(c.moveToFirst()){
@@ -852,7 +852,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param shopID the Shop to look for
      * @return a list of BrowseClientsClientDataAssociation instances. This list might be empty if no User has earned points from this Shop so far.
      */
-    public List<BrowseClientsClientDataAssociation> getAllClientsPointsAtShop(long shopID){
+    private List<BrowseClientsClientDataAssociation> getAllClientsPointsAtShop(long shopID){
         List<BrowseClientsClientDataAssociation> res = new ArrayList<>();
 
         List<Long> users = getAllClientsUserIDs(shopID);
@@ -873,7 +873,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param addressID the internal ID of the address to look for
      * @return True if this address already exists, False otherwise
      */
-    public boolean doesAddressExist(long addressID){
+    private boolean doesAddressExist(long addressID){
         boolean out;
         Cursor c = getEntriesFromDB("Address",
                 new String[]{"_id"},
@@ -889,7 +889,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param partnerID the internal ID of the partner to look for
      * @return True if this partnerID already exists, False otherwise
      */
-    public boolean doesPartnerExist(long partnerID){
+    private boolean doesPartnerExist(long partnerID){
         boolean out;
         Cursor c = getEntriesFromDB("Partner",
                 new String[]{"name"},
@@ -921,7 +921,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param promotionID the internal ID of the promotion to look for
      * @return True if this promotion already exists, False otherwise
      */
-    public boolean doesPromotionExist(long promotionID){
+    private boolean doesPromotionExist(long promotionID){
         boolean out;
         Cursor c = getEntriesFromDB("Promotion",
                 new String[]{"_id"},
@@ -937,7 +937,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param frameID the internal ID of the frame to look for
      * @return True if this frame already exists, False otherwise
      */
-    public boolean doesFrameExist(long frameID){
+    private boolean doesFrameExist(long frameID){
         boolean out;
         Cursor c = getEntriesFromDB("Shop_frame",
                 new String[]{"_id"},
@@ -953,7 +953,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param shopID the internal ID of the shop to look for
      * @return True if this shop already exists, False otherwise
      */
-    public boolean doesShopExist(long shopID){
+    private boolean doesShopExist(long shopID){
         boolean out;
         Cursor c = getEntriesFromDB("Shop_location",
                 new String[]{"_id"},
@@ -985,7 +985,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param userID the internal ID of the User to look for
      * @return True if this user already exists, False otherwise
      */
-    public boolean doesUserExist(long userID){
+    private boolean doesUserExist(long userID){
         boolean out;
         Cursor c = getEntriesFromDB("User",
                 new String[]{"_id"},
@@ -1002,7 +1002,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param userID the internal ID of the User to look for
      * @return True if such a pair exists in the database, False otherwise
      */
-    public boolean doesUserAdminExist(long partnerID, long userID){
+    private boolean doesUserAdminExist(long partnerID, long userID){
         boolean out;
         Cursor c = getEntriesFromDB("Admin_user",
                 new String[]{"id_user"},
@@ -1019,7 +1019,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param userID the internal ID of the User to look for
      * @return True if such a pair exists in the database, False otherwise
      */
-    public boolean doesFavoriteShopExist(long shopID, long userID){
+    private boolean doesFavoriteShopExist(long shopID, long userID){
         boolean out;
         Cursor c = getEntriesFromDB("Favorite_shops",
                 new String[]{"id_user"},
@@ -1037,7 +1037,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param dateUsed the date to look for
      * @return True if such an association exists in the database, False otherwise
      */
-    public boolean promotionUsed(long promotionID, long userID, String dateUsed){
+    private boolean promotionUsed(long promotionID, long userID, String dateUsed){
         boolean out;
         Cursor c = getEntriesFromDB("User_promotion",
                     new String[]{"id_user"},
@@ -1063,7 +1063,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * @param promoID the internal ID of the Promotion to look for
      * @return True if this Promotion is reusable, or False otherwise
      */
-    public boolean isReusable(long promoID){
+    private boolean isReusable(long promoID){
         List<String> res = getElementFromDB("Promotion", "is_reusable", "_id = \""+promoID+"\"");
         return (Integer.parseInt(res.get(0))==1);
     }
@@ -1199,7 +1199,7 @@ public class SQLHelper extends SQLiteOpenHelper {
      * For example, this could be caused by an SQLite error OR because this address was already present : this means that you should always
      * call <code>doesAddressExist()</code> BEFORE trying to insert the address.
      */
-    public boolean addAddress(Address address){
+    private boolean addAddress(Address address){
         if(doesAddressExist(address.getId())){
             return false;
         }

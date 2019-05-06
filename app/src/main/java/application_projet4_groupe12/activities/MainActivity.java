@@ -48,18 +48,17 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
 
-    static boolean active = false;
-    private AdView mAdView;
+    private static boolean active = false;
 
-    SharedPreferences shared_login_choice;
-    Toolbar toolbar;
-    FloatingActionButton fab;
-    DrawerLayout drawer;
-    NavigationView navigationView;
+    private SharedPreferences shared_login_choice;
+    private Toolbar toolbar;
+    private FloatingActionButton fab;
+    private DrawerLayout drawer;
+    private NavigationView navigationView;
 
-    ImageView navHeaderImage;
-    TextView navHeaderText1;
-    TextView navHeaderText2;
+    private ImageView navHeaderImage;
+    private TextView navHeaderText1;
+    private TextView navHeaderText2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

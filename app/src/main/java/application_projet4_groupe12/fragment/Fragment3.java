@@ -62,10 +62,10 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
     private Spinner dropDownUsers;
     private Button fragment3_sign_up;
 
-    String selectedUsername;
+    private String selectedUsername;
 
-    static boolean successPush1;
-    static boolean successPush2;
+    private static boolean successPush1;
+    private static boolean successPush2;
 
     @Nullable
     @Override
@@ -131,7 +131,7 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
         //Do nothing
     }
 
-    private boolean signUp() {
+    private void signUp() {
         String mName = name.getText().toString();
         String mAddress = address.getText().toString();
         String mTVA = tva.getText().toString();
@@ -141,14 +141,14 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
                 selectedUsername.equals(getString(R.string.settings_partner_spinner_default)) )
         {
             Toast.makeText(getActivity(), "Please fill in all the fields", Toast.LENGTH_SHORT).show();
-            return false;
+            return;
         }
         try {
             db = new SQLHelper(getContext());
 
             if (db.doesPartnerExist(mTVA))  {
                 Toast.makeText(getActivity(),  "This TVA number is already used", Toast.LENGTH_SHORT).show();
-                return false;
+                return;
             }
 
             long partnerID = db.getFreeIDPartner();
@@ -168,7 +168,7 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
             } catch (WrongDateFormatException e){
                 e.printStackTrace();
                 Toast.makeText(getActivity(), "Invalid date format : please use DD/MM/YYYY", Toast.LENGTH_SHORT).show();
-                return false;
+                return;
             }
             /*Adding the Admin_User entry to the DB (local)*/
             try {
@@ -178,7 +178,7 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
                 Log.v(Global.debug_text,"addAdmin "+e);
                 e.printStackTrace();
                 Toast.makeText(getActivity(), "Invalid User : \""+selectedUsername+"\"", Toast.LENGTH_SHORT).show();
-                return false;
+                return;
             }
 
             /*Firebase login*/
@@ -218,7 +218,6 @@ public class Fragment3 extends Fragment implements AdapterView.OnItemSelectedLis
         } finally {
             db.close();
         }
-        return true;
     }
 
     private boolean pushDataToFirebase(User user, long partnerID){

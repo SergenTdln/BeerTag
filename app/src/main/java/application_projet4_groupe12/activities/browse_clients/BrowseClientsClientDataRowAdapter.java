@@ -15,7 +15,7 @@ import java.util.Locale;
 import application_projet4_groupe12.R;
 
 
-public class BrowseClientsClientDataRowAdapter extends ArrayAdapter<BrowseClientsClientDataAssociation> {
+class BrowseClientsClientDataRowAdapter extends ArrayAdapter<BrowseClientsClientDataAssociation> {
 
     public BrowseClientsClientDataRowAdapter(Context context, @NonNull List<BrowseClientsClientDataAssociation> elements){
         super(context, 0, elements);

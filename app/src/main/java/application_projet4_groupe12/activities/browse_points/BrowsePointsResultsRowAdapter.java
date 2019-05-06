@@ -21,7 +21,7 @@ import application_projet4_groupe12.data.SQLHelper;
 import application_projet4_groupe12.entities.Promotion;
 import application_projet4_groupe12.entities.User;
 
-public class BrowsePointsResultsRowAdapter extends ArrayAdapter<BrowsePointsAssociation> {
+class BrowsePointsResultsRowAdapter extends ArrayAdapter<BrowsePointsAssociation> {
 
 
     public BrowsePointsResultsRowAdapter(Context context, @NonNull List<BrowsePointsAssociation> elements){

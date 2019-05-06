@@ -24,9 +24,9 @@ import application_projet4_groupe12.utils.AppUtils;
 
 public class ShareActivityResult extends AppCompatActivity {
 
-    ProgressDialog progressDialog;
+    private ProgressDialog progressDialog;
     RelativeLayout cropView;
-    Button share_button;
+    private Button share_button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +75,7 @@ public class ShareActivityResult extends AppCompatActivity {
 
 
 
-    public void shareImage(Bitmap bitmap) {
+    private void shareImage(Bitmap bitmap) {
         progressDialog.dismiss();
         Uri uri = getImageUri(ShareActivityResult.this, bitmap);
         Intent intent = new Intent(Intent.ACTION_SEND);
@@ -85,7 +85,7 @@ public class ShareActivityResult extends AppCompatActivity {
     }
 
 
-    public Uri getImageUri(Context inContext, Bitmap inImage) {
+    private Uri getImageUri(Context inContext, Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "MyMeme", null);
@@ -93,7 +93,7 @@ public class ShareActivityResult extends AppCompatActivity {
     }
 
 
-    public Bitmap drawBeerTagLogo(Bitmap bitmap){
+    private Bitmap drawBeerTagLogo(Bitmap bitmap){
         Bitmap iconBitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.icon);
         int positionLeft=0;
         int positionTop=0;

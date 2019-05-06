@@ -20,7 +20,7 @@ import application_projet4_groupe12.R;
  * A ListView (list of clients of this shop + their points there
  *  -> This class has to create the instances of BrowseClientsClientDataRowAdapter for those sub-lists
  */
-public class BrowseClientsShopDataRowAdapter extends ArrayAdapter<BrowseClientsShopDataAssociation> {
+class BrowseClientsShopDataRowAdapter extends ArrayAdapter<BrowseClientsShopDataAssociation> {
 
     public BrowseClientsShopDataRowAdapter(Context context, @NonNull List<BrowseClientsShopDataAssociation> elements){
         super(context, 0, elements);

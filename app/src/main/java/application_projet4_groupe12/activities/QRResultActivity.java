@@ -54,21 +54,14 @@ public class QRResultActivity extends AppCompatActivity {
         initViews();
         initFunctionality();
 
-        if(!hasQrExpired()){
-            loadMainActivity();
-            increaseCount();
-        } else {
-            loadExpiredActivity();
-        }
-        //invalid ok mais ko valid TODO
-        /*if ( (!hasQrExpired()) && (valid_qr_code)) {
+        if ( (!hasQrExpired()) && (valid_qr_code)) {
             loadMainActivity();
             increaseCount();
         } else if (!valid_qr_code){
             loadExpiredActivity();
         } else {
             loadExpiredActivity();
-        }*/
+        }
     }
 
     private void initVars() {
@@ -103,6 +96,7 @@ public class QRResultActivity extends AppCompatActivity {
             Log.v(Global.debug_text,"invalid qr code decrypted");
             valid_qr_code = false;
         } else {
+            valid_qr_code = true;
             String[] data = decryptedQrCode.split("_5%/");
             int achat = Integer.parseInt(data[0]);
             long shopID = Long.valueOf(data[1]);

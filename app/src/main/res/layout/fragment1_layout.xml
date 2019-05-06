@@ -125,16 +125,20 @@
                         android:textColor="@color/darkwhite"
                         android:textStyle="bold" />
 
-                    <Button
-                        android:layout_width="match_parent"
-                        android:layout_height="55dp"
-                        android:layout_marginLeft="-4dp"
-                        android:layout_marginRight="-4dp"
-                        android:background="@drawable/btn_rounded_white_outline"
-                        android:text="@string/lost_password"
-                        android:textAllCaps="false"
-                        android:textColor="@color/colorPrimary"
-                        android:textStyle="bold" />
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/spacing_mlarge" />
+
+                    <!--<Button-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="55dp"-->
+                        <!--android:layout_marginLeft="-4dp"-->
+                        <!--android:layout_marginRight="-4dp"-->
+                        <!--android:background="@drawable/btn_rounded_white_outline"-->
+                        <!--android:text="@string/lost_password"-->
+                        <!--android:textAllCaps="false"-->
+                        <!--android:textColor="@color/colorPrimary"-->
+                        <!--android:textStyle="bold" />-->
 
                     <LinearLayout
                         android:layout_width="match_parent"
